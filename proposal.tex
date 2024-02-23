@@ -1,0 +1,145 @@
+\documentclass[11pt,journal]{IEEEtran}
+
+\usepackage{times}
+\usepackage{amssymb}
+\usepackage{amsmath,amsfonts}
+\usepackage{amsthm}
+\usepackage{graphicx}
+
+\usepackage{color}
+\usepackage{xcolor}
+
+\usepackage{scalefnt}
+
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{shapes.symbols,shapes.callouts,snakes,shapes.geometric,arrows}
+
+\usepackage{hhline}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{pdfpages}
+\usepackage{subfigure}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{balance}
+\usepackage{epsfig}
+
+
+\newcommand{\todo}[1]{} %essentially a block comment
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+
+\hyphenation{designs design algo-rithms devel-oped micro-pipeline after
+  algo-rithm AFSM AFSMs}
+
+\begin{document}
+
+\title{Chess Board CE Project}
+
+\author{Nicole Sundberg,~\IEEEmembership{Student Member, IEEE}, Griffin Rodgers
+  \thanks{The authors are in the Computer Engineering
+    department at the University of Utah.}
+}
+\maketitle
+
+
+\begin{abstract}
+This project consists of a chess board that clearly indicates possible moves when pieces are lifted and records moves alongside an application that tracks game statistics and more. The board will indicate possible moves via LEDs under the chess squares and will keep track of pieces lifted or moved. We will also be implementing the application in order to display the results and progress of the match per account. Finally, an AI will be developed to allow the player to play on the chess board against a computer player. By the end of the first semester, we will have a single square prototyped such that it can light up, record if a piece was picked up or put down, and transmit that data in a way that can be visually read. We will also have the finalized schemas of the databases we will be using for our project along with other plans for the system engineering of the project.
+\end{abstract}
+
+\section{Introduction}
+
+\IEEEPARstart{T}{his} project was based on our group's love of chess and learning. Our team was extremely interested in learning more about chess rules along with the AIs that drive chess computer players. We wanted to create a board that could teach others to play in an effort to bring new individuals into the chess community. Because of this, we thought that creating a new chess board that clearly shows possible moves and records game information would be the perfect project. This project allows us to challenge our technical skills by creating a chess board with our own design and requiring several different portions including an electrical schematic, data transmission plans, databases, app design, and API usage. 
+
+\subsection{Project Synopsis}
+This project will consist of a board that can record piece data such as when pieces are picked up or put down, visually display legal moves, detect when illegal moves are made and give a visual cue when this occurs, and can transmit data to a database. The project will also utilize 
+
+\subsection{Project Demonstration}
+To demonstrate our project, we will have our custom chess board available to interested parties. When they lift a piece on the board, all valid moves and their associated squares will light up on the board, and once the piece is placed on a valid square, that move is logged by our app that is connected to the board. The player would also have the option of playing against a chess AI, and the opposite end of the board will indicate which pieces needed to be moved on behalf of the AI when the AI takes its move. The application will also have a co-demonstration where we can showcase the game history functionality and allow the user to playback previously played games.
+
+% Refer to figures as follows:
+% The circuit in Fig.~\ref{fig:circuit}.
+
+% Citations are as follows
+% Algorithm returning longest netlist delay path \cite{knuth:book1973}.
+
+
+\section{Background}
+
+\subsection{Related Work}
+
+Similar products to our chess board design are on the market including ChessUp. 
+
+You may want to subsection the background.
+
+Include plenty of figures.
+
+%% This is a figure with two side by side images.
+% \begin{figure}[thb]\centering
+%   \begin{minipage}{0.48\columnwidth}
+%     \centerline{\psfig{file=images/IMG_2712-crop.jpg, height=30mm, angle=0}}
+%     \begin{center} (a) \end{center}
+%   \end{minipage}
+%   \begin{minipage}{0.5\columnwidth}
+%     \centerline{\psfig{file=images/img2.png, height=30mm, angle=0}}
+%     \begin{center} (b) \end{center}
+%   \end{minipage}
+%   \caption{The die and substrate (a), and complete system (b).}
+%   \label{fig:chip-system}
+% \end{figure}
+
+
+
+\subsection{Specific Comparable Work}
+% This is how you label a section of the text:
+% \label{sec:falsePath}
+
+You can include equations such as Eqn.~\ref{eqn:booleanDifference}
+\cite{boole:book1872}.
+
+\begin{equation}
+  \frac{df}{df_x} = f_x \oplus f_{\overline{x}}
+  \label{eqn:booleanDifference}
+\end{equation}
+
+
+
+\section{Proposal Body Goes Here}
+
+\subsection{Include Subsections}
+
+You probably want subsections for tasks, testing and integration,
+management and communication, schedule and milestones, risk
+assessment, bill of materials (not necessarily in this order)
+
+
+% \section{Results}
+% \label{sec:results}
+% 
+% This section probably won't be in the proposal.
+
+
+\section{Conclusion}
+
+
+
+\section*{Acknowledgment}
+
+Include this section if needed.
+
+The authors would like to thank \ldots
+
+
+
+\bibliographystyle{plain}  % IEEEtran -- needs IEEEtran.bst
+% Balance the citations to equalize the columns manually
+% \balance
+\bibliography{main3}
+
+\end{document}
+
+
+% LocalWords:  Eqn df
