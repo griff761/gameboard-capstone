@@ -13,7 +13,7 @@
 
 \usepackage{pgf}
 \usepackage{tikz}
-\usetikzlibrary{shapes.symbols,shapes.callouts,snakes,shapes.geometric,arrows}
+\usetikzlibrary{shapes.symbols,shapes.callouts,decorations,shapes.geometric,arrows}
 
 \usepackage{hhline}
 \usepackage{multirow}
@@ -39,7 +39,7 @@
 
 \title{Chess Board CE Project}
 
-\author{Nicole Sundberg, Griffin Rodgers, Kenan Ntambwe
+\author{Nicole Sundberg, Griffin Rodgers, Kenan Ntambwe, Jack Marshall
   \thanks{The authors are in the Computer Engineering
     department at the University of Utah.}
 }
@@ -54,11 +54,7 @@ This project consists of a chess board that clearly indicates possible moves whe
 
 \IEEEPARstart{T}{his} project was based on our group's love of chess and learning. Our team was extremely interested in learning more about chess rules along with the AIs that drive chess computer players. We wanted to create a board that could teach others to play in an effort to bring new individuals into the chess community. Because of this, we thought that creating a new chess board that clearly shows possible moves and records game information would be the perfect project. This project allows us to challenge our technical skills by creating a chess board with our own design and requiring several different portions including an electrical schematic, data transmission plans, databases, app design, and API usage. 
 
-\subsection{Project Synopsis}
-This project will consist of a board that can record piece data such as when pieces are picked up or put down, visually display legal moves, detect when illegal moves are made and give a visual cue when this occurs, and can transmit data to a database. The project will also utilize 
 
-\subsection{Project Demonstration}
-To demonstrate our project, we will have our custom chess board available to interested parties. When they lift a piece on the board, all valid moves and their associated squares will light up on the board, and once the piece is placed on a valid square, that move is logged by our app that is connected to the board. The player would also have the option of playing against a chess AI, and the opposite end of the board will indicate which pieces needed to be moved on behalf of the AI when the AI takes its move. The application will also have a co-demonstration where we can showcase the game history functionality and allow the user to playback previously played games.
 
 % Refer to figures as follows:
 % The circuit in Fig.~\ref{fig:circuit}.
@@ -71,11 +67,11 @@ To demonstrate our project, we will have our custom chess board available to int
 
 \subsection{Related Work}
 
-Similar products to our chess board design are on the market including ChessUp. 
+Similar products to our chess board design are on the market as both commercial products and open-source hobbyist projects. These products generally suffer from at least one of the following problems: high cost, requires access to specialized tools (e.g. 3D Printer), or lack quality of life features. Despite these shortcomings, many of them contain other novel features that we should consider emulating, such as move assistance, where you can enable and configure the board to suggest optimal moves in the current game.
 
-You may want to subsection the background.
+% You may want to subsection the background.
 
-Include plenty of figures.
+% Include plenty of figures.
 
 %% This is a figure with two side by side images.
 % \begin{figure}[thb]\centering
@@ -96,24 +92,68 @@ Include plenty of figures.
 \subsection{Specific Comparable Work}
 % This is how you label a section of the text:
 % \label{sec:falsePath}
+ChessUp is a smart chess board that was funded via Kickstarter. Some of its features include LEDs to signal correct/incorrect moves, a companion app allowing play against friends and family, and unique "touchsense" pieces that can detect when a piece is touched and show the available moves for that piece.\cite{chessup} 
+% You can include equations such as Eqn.~\ref{eqn:booleanDifference}
+% \cite{boole:book1872}.
 
-You can include equations such as Eqn.~\ref{eqn:booleanDifference}
-\cite{boole:book1872}.
-
-\begin{equation}
-  \frac{df}{df_x} = f_x \oplus f_{\overline{x}}
-  \label{eqn:booleanDifference}
-\end{equation}
+% \begin{equation}
+%   \frac{df}{df_x} = f_x \oplus f_{\overline{x}}
+%   \label{eqn:booleanDifference}
+% \end{equation}
 
 
 
-\section{Proposal Body Goes Here}
+\section{Proposed Work}
 
-\subsection{Include Subsections}
 
-You probably want subsections for tasks, testing and integration,
-management and communication, schedule and milestones, risk
-assessment, bill of materials (not necessarily in this order)
+\subsection{Project Synopsis}
+This project will consist of a board that can record piece data such as when pieces are picked up or put down, visually display legal moves, detect when illegal moves are made and give a visual cue when this occurs, and can transmit data to a database. The project will also utilize 
+
+\subsection{Project Demonstration}
+To demonstrate our project, we will have our custom chess board available to interested parties. When they lift a piece on the board, all valid moves and their associated squares will light up on the board, and once the piece is placed on a valid square, that move is logged by our app that is connected to the board. The player would also have the option of playing against a chess AI, and the opposite end of the board will indicate which pieces needed to be moved on behalf of the AI when the AI takes its move. The application will also have a co-demonstration where we can showcase the game history functionality and allow the user to play back previously played games.
+
+\subsection{Team Responsibilities and Milestones}
+This project can be broken down into the following parts: Board Hardware, Board-to-Application Communications, Application Design, and API/Database Management. All portions will be responsible for their own testing and documentation in order to ensure each individual portion works as expected and can be easily understood. 
+
+In order to ensure all project components are working and integrated by our final project date we propose the following schedule:
+
+
+\textbf{Basic Functionality (through June 5th):} Create a single testing square for the board. Allow this square to determine if a piece is placed/picked up and show it visually. Begin application design, have very basic downloadable prototype. Plan and document database and API usage as well as hardware-software communications.
+
+\textbf{Minor Integration (through June 5th):} Have multiple squares for the board. The squares should now have communications implemented to the app. The application should show changes in the squares visually. Saving moves to the database should now be implemented.
+
+\textbf{Final Integration (through June 5th):} All board pieces should be completed and polished. All communications between the board and the application should be implemented. The application should allow for replaying previous games virtually. API to chess.com or other sources should work to allow for AI games to be played. 
+
+\subsection{Team Management}
+In order to keep our team on track and aligned in its goals, we have implemented the use of several tools. We created a team discord to maintain easy communication between team members as well as easy resource storage as we work to design the project. We have also implemented the use of a github task board to ensure that we are all working on tasks as expected and can easily see progress and review the work before finalizing it. We have left notetaking as well as progress updates under Nicole to minimize any issues with switching team members and schedules per week.
+
+\subsection{Testing And Integration}
+Solely hardware and solely software sections should be tested independently prior to integration. Hardware should ensure that the squares can all detect placing/picking up pieces as well as that all squares can be lit up. Software implementation should ensure that chess rules are understood and work properly. API and Database management should be planned out prior to implementation and integration with the software. Finally, communications should be planned prior to implementation to ensure all portions work together properly. 
+
+Our milestones allow for slow integration to mitigate any potential issues and allow for time to fix them as we complete the different portions of the project. 
+
+\subsection{Risk Assessment}
+Some concerns for this project include the possibility of magnets interfering with the planned circuitry. To ensure that the project may continue through these issues, we plan on building several prototypes for the squares before creating the final board. These prototypes will include different sensors and setups to ensure that we find a solution that will best work for the whole board. After prototyping these different squares we will determine which design to follow for the rest of the board.
+
+It is also possible that we may run into issues with our planned APIs. Since these APIs are controlled by outside sources and usability might change, we are unable to guarantee that the APIs will work as expected. In the case that we are unable to use the APIs in the planned manner, we will create our own chess AI to use for single-player mode. This way, we will be able to guarantee the functionality even without the API working as expected.
+
+There is a high probability of setbacks associated with an AI integration, as well as the reliable communication between the chess board, the application, the device accessing the application, the database for logging, and the AI utilizing both its own advanced chess algorithms and the database's most recent logs (for a given, current game). To reduce the number of these confounding variables, specific attention will be dedicated to the development/deployment of applications on Android SDK and self-maintaining, 3rd-party servers for database utilization.
+\subsection{Bill Of Materials}
+\begin{table}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Qty} & \textbf{Part}               \\ \hline
+1            & Roll of LEDs                \\ \hline
+64           & Hall-effect magnetic sensor \\ \hline
+1            & 1kg PLA Filament            \\ \hline
+1            & Raspberry Pi                \\ \hline
+32           & Magnets                     \\ \hline
+1            & USB Power Delivery board    \\ \hline
+\end{tabular}
+\end{table}
+% You probably want subsections for tasks, testing and integration,
+% management and communication, schedule and milestones, risk
+% assessment, bill of materials (not necessarily in this order)
 
 
 % \section{Results}
@@ -134,10 +174,10 @@ The authors would like to thank \ldots
 
 
 
-\bibliographystyle{plain}  % IEEEtran -- needs IEEEtran.bst
+\bibliographystyle{IEEEtran}  % IEEEtran -- needs IEEEtran.bst
 % Balance the citations to equalize the columns manually
 % \balance
-\bibliography{main3}
+\bibliography{proposal}
 
 \end{document}
 
