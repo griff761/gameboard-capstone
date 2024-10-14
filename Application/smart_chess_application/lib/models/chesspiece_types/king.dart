@@ -5,7 +5,7 @@ import 'empty.dart';
 class King extends ChessPiece
 {
   bool firstMove = true;
-  King({required super.xPos, required super.yPos, required super.team, super.type = ChessPieceType.pawn});
+  King({required super.xPos, required super.yPos, required super.team, super.type = ChessPieceType.king});
 
   @override
   List<List<int>> getValidMoves(Chessboard currentBoard) {
@@ -27,12 +27,12 @@ class King extends ChessPiece
     }
 
 
-    //castling
-    //TODO: ADD CASTLING LOGIC
+
 
     if(firstMove)
       {
-
+        //castling
+        //TODO: ADD CASTLING LOGIC
       }
     return moves;
   }

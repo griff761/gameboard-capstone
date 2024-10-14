@@ -48,5 +48,16 @@ abstract class ChessPiece
     return currentBoard.board[x][y].team == team;
   }
 
+  bool otherTeamInSpace(int x, int y, Chessboard, currentBoard)
+  {
+    ChessPieceTeam pieceTeam = currentBoard.board[x][y].team;
+    return pieceTeam != team && pieceTeam != ChessPieceTeam.none;
+  }
+
+  bool spaceEmpty(int x, int y, Chessboard currentBoard)
+  {
+    return currentBoard.board[x][y].team == ChessPieceTeam.none;
+  }
+
 }
 

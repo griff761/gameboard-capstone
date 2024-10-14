@@ -2,18 +2,17 @@ import '../chessboard.dart';
 import '../chesspiece.dart';
 import 'empty.dart';
 
-class Rook extends ChessPiece
+class Bishop extends ChessPiece
 {
-  bool firstMove = true;
-  Rook({required super.xPos, required super.yPos, required super.team, super.type = ChessPieceType.rook});
+  Bishop({required super.xPos, required super.yPos, required super.team, super.type = ChessPieceType.bishop});
 
   @override
   List<List<int>> getValidMoves(Chessboard currentBoard) {
     List<List<int>> moves = [];
     List<int> xPositions = [];
     List<int> yPositions = [];
-    bool flag = true;
-    for(int i = xPos + 1; i <= 7 && !sameTeamInSpace(i, yPos, currentBoard); i++)
+
+    for(int i = 1; i <= 7 && !sameTeamInSpace(i, yPos, currentBoard); i++)
     {
       xPositions.add(i);
     }
@@ -40,11 +39,6 @@ class Rook extends ChessPiece
       moves.add([xPos, y]);
     }
 
-    if(firstMove)
-      {
-        //TODO: castling logic here
-      }
-
     return moves;
   }
 
@@ -59,7 +53,6 @@ class Rook extends ChessPiece
 
   @override
   void move(int newX, int newY, Chessboard currentBoard) {
-    firstMove = false;
     currentBoard.board[xPos][yPos] = Empty(xPos: xPos, yPos: yPos);
     currentBoard.board[xPos][yPos] = this;
   }

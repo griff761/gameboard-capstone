@@ -5,14 +5,13 @@ import 'empty.dart';
 class Rook extends ChessPiece
 {
   bool firstMove = true;
-  Rook({required super.xPos, required super.yPos, required super.team, super.type = ChessPieceType.rook});
+  Rook({required super.xPos, required super.yPos, required super.team, super.type = ChessPieceType.pawn});
 
   @override
   List<List<int>> getValidMoves(Chessboard currentBoard) {
     List<List<int>> moves = [];
     List<int> xPositions = [];
     List<int> yPositions = [];
-    bool flag = true;
     for(int i = xPos + 1; i <= 7 && !sameTeamInSpace(i, yPos, currentBoard); i++)
     {
       xPositions.add(i);
