@@ -1,0 +1,6 @@
+[submodule "PicoFirmware/mcp23s17/Pico_MCP23S17"]
+	path = PicoFirmware/mcp23s17/Pico_MCP23S17
+	url = https://github.com/kylenahas/Pico_MCP23S17.git
+[submodule "PicoFirmware/Pico_MCP23S17"]
+	path = PicoFirmware/Pico_MCP23S17
+	url = https://github.com/kylenahas/Pico_MCP23S17.git
