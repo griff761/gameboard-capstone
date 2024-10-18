@@ -4,13 +4,18 @@ import time
 
 try:
     mcp = MCP23S17(address=0x00, sck=18, mosi=19, miso=16, cs=17)
+    mcp1 = MCP23S17(address=0x01, sck=18, mosi=19, miso=16, cs=17)
     #mcp = MCP23S17(address=0x00, sck=2, mosi=3, miso=4, cs=5)
     mcp.open()
+    mcp1.open()
 
     led = Pin("LED", Pin.OUT, value=0)
 
     mcp.setDirPORTA(mcp.DIR_OUTPUT)
     mcp.setDirPORTB(mcp.DIR_OUTPUT)
+
+    mcp1.setDirPORTA(mcp1.DIR_OUTPUT)
+    mcp1.setDirPORTB(mcp1.DIR_OUTPUT)
 
     """
     Alternatively, can also be done by:
@@ -29,6 +34,7 @@ try:
     print("Starting blinky on all pins (CTRL+C to quit)")
     while True:
         mcp.writeGPIO(0xFFFF)  # Set all pins high
+        mcp1.writeGPIO(0xFFFF)  # Set all pins high
         """
         Can also by achieved by:
 
@@ -41,6 +47,7 @@ try:
         time.sleep(0.2)
 
         mcp.writeGPIO(0x0000)  # Set all pins low
+        mcp1.writeGPIO(0x0000)  # Set all pins low
 
         """
         ... or like this:
@@ -55,3 +62,4 @@ try:
 
 finally:
   mcp.close()
+  mcp1.close()

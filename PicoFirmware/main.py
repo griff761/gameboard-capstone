@@ -44,7 +44,7 @@ try:
 
     print("Starting reading pin A7 (CTRL+C to quit)")
     while True:
-        new_btn = mcp.digitalRead(7)
+        new_btn = mcp1.digitalRead(7)
         if new_btn != old_btn:
             if new_btn == 1:
                 print("Button pressed!")
