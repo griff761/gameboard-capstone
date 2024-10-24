@@ -14,12 +14,12 @@ chip2 = MCP3008(spi, cs2)
 
 while True:
     #print(chip.read(0))
-    temp = (2 / 1023) * chip.read(0)
+    temp = (3.3 / 1023) * chip.read(0)
     print(temp)
     if (temp > 1.3) or (temp < 0.7):
         led.on()
     else:
         led.off()
-    sleep_ms(12)
-    print((2 / 1023) * chip2.read(0))
-    sleep_ms(12)
+    sleep_ms(1)
+    print((3.3 / 1023) * chip2.read(0))
+    sleep_ms(1)
