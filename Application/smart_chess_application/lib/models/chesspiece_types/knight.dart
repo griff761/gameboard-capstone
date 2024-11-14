@@ -2,10 +2,10 @@ import '../chessboard.dart';
 import '../chesspiece.dart';
 import 'empty.dart';
 
-class Pawn extends ChessPiece
+class Knight extends ChessPiece
 {
   bool firstMove = true;
-  Pawn({required super.xPos, required super.yPos, required super.team, super.type = ChessPieceType.pawn});
+  Knight({required super.xPos, required super.yPos, required super.team, super.type = ChessPieceType.knight});
 
   @override
   List<List<int>> getValidMoves(Chessboard currentBoard) {

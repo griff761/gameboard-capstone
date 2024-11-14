@@ -7,7 +7,7 @@ enum ChessPieceTeam {black, white, none}
 abstract class ChessPiece
 {
 
-  ChessPiece({required this.type, required this.xPos, required this.yPos, required team});
+  ChessPiece({required this.type, required this.xPos, required this.yPos, required this.team});
 
   ChessPieceType type = ChessPieceType.empty;
 
@@ -16,7 +16,7 @@ abstract class ChessPiece
   int yPos = -1; //assume can be 1-8
 
   //piece type
-  ChessPieceTeam team = ChessPieceTeam.white;
+  ChessPieceTeam team = ChessPieceTeam.none;
 
   List<List<int>> getValidMoves(Chessboard currentBoard); //returns all valid moves for this piece
 
@@ -45,10 +45,12 @@ abstract class ChessPiece
 
   bool sameTeamInSpace(int x, int y, Chessboard currentBoard)
   {
+    ChessPieceTeam myTeam = team;
+    ChessPieceTeam otherTeam = currentBoard.board[x][y].team;
     return currentBoard.board[x][y].team == team;
   }
 
-  bool otherTeamInSpace(int x, int y, Chessboard, currentBoard)
+  bool otherTeamInSpace(int x, int y, Chessboard currentBoard)
   {
     ChessPieceTeam pieceTeam = currentBoard.board[x][y].team;
     return pieceTeam != team && pieceTeam != ChessPieceTeam.none;

@@ -16,19 +16,35 @@ class Rook extends ChessPiece
     for(int i = xPos + 1; i <= 7 && !sameTeamInSpace(i, yPos, currentBoard); i++)
     {
       xPositions.add(i);
+      if(otherTeamInSpace(i, yPos, currentBoard))
+        {
+          break;
+        }
     }
     for(int i = xPos - 1; i >= 0 && !sameTeamInSpace(i, yPos, currentBoard); i--)
     {
       xPositions.add(i);
+      if(otherTeamInSpace(i, yPos, currentBoard))
+      {
+        break;
+      }
     }
 
     for(int i = yPos + 1; i <= 7 && !sameTeamInSpace(xPos, i, currentBoard); i++)
     {
       yPositions.add(i);
+      if(otherTeamInSpace(xPos, i, currentBoard))
+      {
+        break;
+      }
     }
-    for(int i = yPos - 1; i <= 7 && !sameTeamInSpace(xPos, i, currentBoard); i--)
+    for(int i = yPos - 1; i >= 0 && !sameTeamInSpace(xPos, i, currentBoard); i--)
     {
       yPositions.add(i);
+      if(otherTeamInSpace(xPos, i, currentBoard))
+      {
+        break;
+      }
     }
 
     for(int x in xPositions)
