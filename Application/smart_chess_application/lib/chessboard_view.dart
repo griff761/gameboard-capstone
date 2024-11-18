@@ -4,6 +4,8 @@ import 'package:chess_vectors_flutter/chess_vectors_flutter.dart';
 import 'models/chessboard.dart';
 import 'models/chesspiece.dart';
 
+// import 'assets/chesspiece_blackBishop.png';
+
 class ChessboardView extends StatefulWidget {
   const ChessboardView({super.key});
   @override
@@ -100,7 +102,7 @@ class ChessboardViewState extends State<ChessboardView> {
     //       }
     //   }
   }
-
+  String testString = "assets/chesspiece_blackBishop.png";
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -111,7 +113,7 @@ class ChessboardViewState extends State<ChessboardView> {
               children: squares)
         ),
         Text(text),
-        IconButton(icon:Icon(Icons.add),
+        IconButton(icon: Image.asset(testString),
           onPressed: () {
             // c.move(1, 2, 3, 2);
             // for(int i = 0; i < 64; i++)

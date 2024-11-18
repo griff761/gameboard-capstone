@@ -64,6 +64,19 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/chesspiece_blackBishop.png
+    - assets/chesspiece_blackKing.png
+    - assets/chesspiece_blackKnight.png
+    - assets/chesspiece_blackPawn.png
+    - assets/chesspiece_blackQueen.png
+    - assets/chesspiece_blackRook.png
+    - assets/chesspiece_whiteBishop.png
+    - assets/chesspiece_whiteKing.png
+    - assets/chesspiece_whiteKnight.png
+    - assets/chesspiece_whitePawn.png
+    - assets/chesspiece_whiteQueen.png
+    - assets/chesspiece_whiteRook.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
