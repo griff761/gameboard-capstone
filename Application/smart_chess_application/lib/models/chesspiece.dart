@@ -7,13 +7,13 @@ enum ChessPieceTeam {black, white, none}
 abstract class ChessPiece
 {
 
-  ChessPiece({required this.type, required this.xPos, required this.yPos, required this.team});
+  ChessPiece({required this.type, required this.row, required this.col, required this.team});
 
   ChessPieceType type = ChessPieceType.empty;
 
   //location data
-  int xPos = -1; //assume can be 1-8
-  int yPos = -1; //assume can be 1-8
+  int row = -1; //assume can be 1-8
+  int col = -1; //assume can be 1-8
 
   //piece type
   ChessPieceTeam team = ChessPieceTeam.none;
@@ -32,8 +32,8 @@ abstract class ChessPiece
     return false;
   }
   void move(int newX, int newY, Chessboard currentBoard) {
-    currentBoard.board[xPos][yPos] = Empty(xPos: xPos, yPos: yPos);
-    currentBoard.board[xPos][yPos] = this;
+    currentBoard.board[row][col] = Empty(row: row, col: col);
+    currentBoard.board[row][col] = this;
   }
 
   String getSymbol();

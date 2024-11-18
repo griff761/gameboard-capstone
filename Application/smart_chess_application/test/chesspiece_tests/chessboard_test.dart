@@ -16,14 +16,16 @@ import 'package:smart_chess_application/models/chesspiece_types/rook.dart';
 void main() {
 
 
-  test('rook basic movement', () {
+  test('standard board toString method', () {
     Chessboard c = Chessboard();
+    print(c.toString());
     c.empty();
-    print(c.board);
+    // print(c.board);
     Rook r = Rook(row: 3, col: 3, team: ChessPieceTeam.white);
     c.board[3][3] = r;
 
-    print(r.getValidMoves(c));
+    print(c.toString());
+
   });
 
 

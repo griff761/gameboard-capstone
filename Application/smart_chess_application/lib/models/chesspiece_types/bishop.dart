@@ -4,7 +4,7 @@ import 'empty.dart';
 
 class Bishop extends ChessPiece
 {
-  Bishop({required super.xPos, required super.yPos, required super.team, super.type = ChessPieceType.bishop});
+  Bishop({required super.row, required super.col, required super.team, super.type = ChessPieceType.bishop});
 
   @override
   List<List<int>> getValidMoves(Chessboard currentBoard) {
@@ -12,31 +12,31 @@ class Bishop extends ChessPiece
     List<int> xPositions = [];
     List<int> yPositions = [];
 
-    for(int i = 1; i <= 7 && !sameTeamInSpace(i, yPos, currentBoard); i++)
+    for(int i = 1; i <= 7 && !sameTeamInSpace(i, col, currentBoard); i++)
     {
       xPositions.add(i);
     }
-    for(int i = xPos - 1; i >= 0 && !sameTeamInSpace(i, yPos, currentBoard); i--)
+    for(int i = row - 1; i >= 0 && !sameTeamInSpace(i, col, currentBoard); i--)
     {
       xPositions.add(i);
     }
 
-    for(int i = yPos + 1; i <= 7 && !sameTeamInSpace(xPos, i, currentBoard); i++)
+    for(int i = col + 1; i <= 7 && !sameTeamInSpace(row, i, currentBoard); i++)
     {
       yPositions.add(i);
     }
-    for(int i = yPos - 1; i <= 7 && !sameTeamInSpace(xPos, i, currentBoard); i--)
+    for(int i = col - 1; i <= 7 && !sameTeamInSpace(row, i, currentBoard); i--)
     {
       yPositions.add(i);
     }
 
     for(int x in xPositions)
     {
-      moves.add([x, yPos]);
+      moves.add([x, col]);
     }
     for(int y in yPositions)
     {
-      moves.add([xPos, y]);
+      moves.add([row, y]);
     }
 
     return moves;
@@ -45,16 +45,16 @@ class Bishop extends ChessPiece
   @override
   String getSymbol() {
     if(super.team == ChessPieceTeam.white) {
-      return "R";
+      return "B";
     } else {
-      return "r";
+      return "b";
     }
   }
 
   @override
   void move(int newX, int newY, Chessboard currentBoard) {
-    currentBoard.board[xPos][yPos] = Empty(xPos: xPos, yPos: yPos);
-    currentBoard.board[xPos][yPos] = this;
+    currentBoard.board[row][col] = Empty(row: row, col: col);
+    currentBoard.board[row][col] = this;
   }
 
 }

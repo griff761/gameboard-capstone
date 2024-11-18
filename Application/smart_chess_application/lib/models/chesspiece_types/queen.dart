@@ -5,44 +5,39 @@ import 'empty.dart';
 class Queen extends ChessPiece
 {
   bool firstMove = true;
-  Queen({required super.xPos, required super.yPos, required super.team, super.type = ChessPieceType.queen});
+  Queen({required super.row, required super.col, required super.team, super.type = ChessPieceType.queen});
 
   @override
   List<List<int>> getValidMoves(Chessboard currentBoard) {
     List<List<int>> moves = [];
     List<int> xPositions = [];
     List<int> yPositions = [];
-    for(int i = xPos + 1; i <= 7 && !sameTeamInSpace(i, yPos, currentBoard); i++)
+    for(int i = row + 1; i <= 7 && !sameTeamInSpace(i, col, currentBoard); i++)
     {
       xPositions.add(i);
     }
-    for(int i = xPos - 1; i >= 0 && !sameTeamInSpace(i, yPos, currentBoard); i--)
+    for(int i = row - 1; i >= 0 && !sameTeamInSpace(i, col, currentBoard); i--)
     {
       xPositions.add(i);
     }
 
-    for(int i = yPos + 1; i <= 7 && !sameTeamInSpace(xPos, i, currentBoard); i++)
+    for(int i = col + 1; i <= 7 && !sameTeamInSpace(row, i, currentBoard); i++)
     {
       yPositions.add(i);
     }
-    for(int i = yPos - 1; i <= 7 && !sameTeamInSpace(xPos, i, currentBoard); i--)
+    for(int i = col - 1; i <= 7 && !sameTeamInSpace(row, i, currentBoard); i--)
     {
       yPositions.add(i);
     }
 
     for(int x in xPositions)
     {
-      moves.add([x, yPos]);
+      moves.add([x, col]);
     }
     for(int y in yPositions)
     {
-      moves.add([xPos, y]);
+      moves.add([row, y]);
     }
-
-    if(firstMove)
-      {
-        //TODO: castling logic here
-      }
 
     return moves;
   }
@@ -50,17 +45,17 @@ class Queen extends ChessPiece
   @override
   String getSymbol() {
     if(super.team == ChessPieceTeam.white) {
-      return "R";
+      return "Q";
     } else {
-      return "r";
+      return "q";
     }
   }
 
   @override
   void move(int newX, int newY, Chessboard currentBoard) {
     firstMove = false;
-    currentBoard.board[xPos][yPos] = Empty(xPos: xPos, yPos: yPos);
-    currentBoard.board[xPos][yPos] = this;
+    currentBoard.board[row][col] = Empty(row: row, col: col);
+    currentBoard.board[row][col] = this;
   }
 
 }

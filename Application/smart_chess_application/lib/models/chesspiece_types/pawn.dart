@@ -5,21 +5,23 @@ import 'empty.dart';
 class Pawn extends ChessPiece
 {
   bool firstMove = true;
-  Pawn({required super.xPos, required super.yPos, required super.team, super.type = ChessPieceType.pawn});
+  Pawn({required super.row, required super.col, required super.team, super.type = ChessPieceType.pawn});
 
   @override
   List<List<int>> getValidMoves(Chessboard currentBoard) {
-    int direction = team == ChessPieceTeam.black ? 1 : -1;
-    List<List<int>> moves = [[]];
+    int direction = team == ChessPieceTeam.white ? 1 : -1;
+    List<List<int>> moves = [];
     if(firstMove)
       {
-        if (inBounds(yPos + 2*direction) && !sameTeamInSpace(xPos, yPos + 2*direction, currentBoard)) {
-          moves.add([xPos, yPos + 2*direction]);
+        if (inBounds(row + 2*direction) && !sameTeamInSpace(row + 2*direction, col, currentBoard)) {
+          moves.add([row + 2*direction, col]);
         }
       }
-    if (inBounds(yPos + direction) && !sameTeamInSpace(xPos, yPos + 2*direction, currentBoard)) {
-      moves.add([xPos, yPos + direction]);
+    if (inBounds(row + direction) && !sameTeamInSpace(row + direction, col, currentBoard)) {
+      moves.add([row + direction, col]);
     }
+
+    //TODO -- implement en passant move
     return moves;
   }
 
@@ -35,8 +37,8 @@ class Pawn extends ChessPiece
   @override
   void move(int newX, int newY, Chessboard currentBoard) {
     firstMove = false;
-    currentBoard.board[super.xPos][super.yPos] = Empty(xPos: super.xPos, yPos: super.yPos);
-    currentBoard.board[xPos][yPos] = this;
+    currentBoard.board[row][col] = Empty(row: row, col: col);
+    currentBoard.board[row][col] = this;
   }
 
 }

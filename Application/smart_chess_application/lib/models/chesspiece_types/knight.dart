@@ -5,20 +5,20 @@ import 'empty.dart';
 class Knight extends ChessPiece
 {
   bool firstMove = true;
-  Knight({required super.xPos, required super.yPos, required super.team, super.type = ChessPieceType.knight});
+  Knight({required super.row, required super.col, required super.team, super.type = ChessPieceType.knight});
 
   @override
   List<List<int>> getValidMoves(Chessboard currentBoard) {
     int direction = team == ChessPieceTeam.black ? 1 : -1;
-    List<List<int>> moves = [[]];
+    List<List<int>> moves = [];
     if(firstMove)
       {
-        if (inBounds(yPos + 2*direction) && !sameTeamInSpace(xPos, yPos + 2*direction, currentBoard)) {
-          moves.add([xPos, yPos + 2*direction]);
+        if (inBounds(col + 2*direction) && !sameTeamInSpace(row, col + 2*direction, currentBoard)) {
+          moves.add([row, col + 2*direction]);
         }
       }
-    if (inBounds(yPos + direction) && !sameTeamInSpace(xPos, yPos + 2*direction, currentBoard)) {
-      moves.add([xPos, yPos + direction]);
+    if (inBounds(col + direction) && !sameTeamInSpace(row, col + 2*direction, currentBoard)) {
+      moves.add([row, col + direction]);
     }
     return moves;
   }
@@ -26,17 +26,17 @@ class Knight extends ChessPiece
   @override
   String getSymbol() {
     if(super.team == ChessPieceTeam.white) {
-      return "P";
+      return "N";
     } else {
-      return "p";
+      return "n";
     }
   }
 
   @override
   void move(int newX, int newY, Chessboard currentBoard) {
     firstMove = false;
-    currentBoard.board[super.xPos][super.yPos] = Empty(xPos: super.xPos, yPos: super.yPos);
-    currentBoard.board[xPos][yPos] = this;
+    currentBoard.board[row][col] = Empty(row: row, col: col);
+    currentBoard.board[row][col] = this;
   }
 
 }

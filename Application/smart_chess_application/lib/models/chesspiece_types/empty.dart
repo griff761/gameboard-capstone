@@ -4,7 +4,7 @@ import '../chesspiece.dart';
 class Empty extends ChessPiece
 {
   bool firstMove = true;
-  Empty({required super.xPos, required super.yPos, super.team = ChessPieceTeam.none, super.type = ChessPieceType.empty});
+  Empty({required super.row, required super.col, super.team = ChessPieceTeam.none, super.type = ChessPieceType.empty});
 
   @override
   List<List<int>> getValidMoves(Chessboard currentBoard) {

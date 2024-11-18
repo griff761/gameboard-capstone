@@ -5,7 +5,7 @@ import 'empty.dart';
 class King extends ChessPiece
 {
   bool firstMove = true;
-  King({required super.xPos, required super.yPos, required super.team, super.type = ChessPieceType.king});
+  King({required super.row, required super.col, required super.team, super.type = ChessPieceType.king});
 
   @override
   List<List<int>> getValidMoves(Chessboard currentBoard) {
@@ -13,17 +13,17 @@ class King extends ChessPiece
     List<List<int>> moves = [];
 
     //move up, down, left, right if those spaces are not in check
-    if (inBounds(yPos + 1) && !sameTeamInSpace(xPos, yPos + 1, currentBoard) && currentBoard.inCheck(xPos, yPos + 1, team)) {
-      moves.add([xPos, yPos + 1]);
+    if (inBounds(col + 1) && !sameTeamInSpace(row, col + 1, currentBoard) && currentBoard.inCheck(row, col + 1, team)) {
+      moves.add([row, col + 1]);
     }
-    if (inBounds(yPos - 1) && !sameTeamInSpace(xPos, yPos - 1, currentBoard) && currentBoard.inCheck(xPos, yPos - 1, team)) {
-      moves.add([xPos, yPos - 1]);
+    if (inBounds(col - 1) && !sameTeamInSpace(row, col - 1, currentBoard) && currentBoard.inCheck(row, col - 1, team)) {
+      moves.add([row, col - 1]);
     }
-    if (inBounds(xPos + 1) && !sameTeamInSpace(xPos + 1, yPos, currentBoard) && currentBoard.inCheck(xPos + 1, yPos, team)) {
-      moves.add([xPos + 1, yPos]);
+    if (inBounds(row + 1) && !sameTeamInSpace(row + 1, col, currentBoard) && currentBoard.inCheck(row + 1, col, team)) {
+      moves.add([row + 1, col]);
     }
-    if (inBounds(xPos - 1) && !sameTeamInSpace(xPos - 1, yPos, currentBoard) && currentBoard.inCheck(xPos - 1, yPos, team)) {
-      moves.add([xPos - 1, yPos]);
+    if (inBounds(row - 1) && !sameTeamInSpace(row - 1, col, currentBoard) && currentBoard.inCheck(row - 1, col, team)) {
+      moves.add([row - 1, col]);
     }
 
 
@@ -49,8 +49,8 @@ class King extends ChessPiece
   @override
   void move(int newX, int newY, Chessboard currentBoard) {
     firstMove = false;
-    currentBoard.board[super.xPos][super.yPos] = Empty(xPos: super.xPos, yPos: super.yPos);
-    currentBoard.board[xPos][yPos] = this;
+    currentBoard.board[row][col] = Empty(row: row, col: col);
+    currentBoard.board[row][col] = this;
   }
 
 }

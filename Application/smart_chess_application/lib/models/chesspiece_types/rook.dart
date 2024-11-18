@@ -5,7 +5,7 @@ import 'empty.dart';
 class Rook extends ChessPiece
 {
   bool firstMove = true;
-  Rook({required super.xPos, required super.yPos, required super.team, super.type = ChessPieceType.rook});
+  Rook({required super.row, required super.col, required super.team, super.type = ChessPieceType.rook});
 
   @override
   List<List<int>> getValidMoves(Chessboard currentBoard) {
@@ -13,35 +13,35 @@ class Rook extends ChessPiece
     List<int> xPositions = [];
     List<int> yPositions = [];
     bool flag = true;
-    for(int i = xPos + 1; i <= 7 && !sameTeamInSpace(i, yPos, currentBoard); i++)
+    for(int i = row + 1; i <= 7 && !sameTeamInSpace(i, col, currentBoard); i++)
     {
       xPositions.add(i);
-      if(otherTeamInSpace(i, yPos, currentBoard))
+      if(otherTeamInSpace(i, col, currentBoard))
         {
           break;
         }
     }
-    for(int i = xPos - 1; i >= 0 && !sameTeamInSpace(i, yPos, currentBoard); i--)
+    for(int i = row - 1; i >= 0 && !sameTeamInSpace(i, col, currentBoard); i--)
     {
       xPositions.add(i);
-      if(otherTeamInSpace(i, yPos, currentBoard))
+      if(otherTeamInSpace(i, col, currentBoard))
       {
         break;
       }
     }
 
-    for(int i = yPos + 1; i <= 7 && !sameTeamInSpace(xPos, i, currentBoard); i++)
+    for(int i = col + 1; i <= 7 && !sameTeamInSpace(row, i, currentBoard); i++)
     {
       yPositions.add(i);
-      if(otherTeamInSpace(xPos, i, currentBoard))
+      if(otherTeamInSpace(row, i, currentBoard))
       {
         break;
       }
     }
-    for(int i = yPos - 1; i >= 0 && !sameTeamInSpace(xPos, i, currentBoard); i--)
+    for(int i = col - 1; i >= 0 && !sameTeamInSpace(row, i, currentBoard); i--)
     {
       yPositions.add(i);
-      if(otherTeamInSpace(xPos, i, currentBoard))
+      if(otherTeamInSpace(row, i, currentBoard))
       {
         break;
       }
@@ -49,11 +49,11 @@ class Rook extends ChessPiece
 
     for(int x in xPositions)
     {
-      moves.add([x, yPos]);
+      moves.add([x, col]);
     }
     for(int y in yPositions)
     {
-      moves.add([xPos, y]);
+      moves.add([row, y]);
     }
 
     if(firstMove)
@@ -76,8 +76,8 @@ class Rook extends ChessPiece
   @override
   void move(int newX, int newY, Chessboard currentBoard) {
     firstMove = false;
-    currentBoard.board[xPos][yPos] = Empty(xPos: xPos, yPos: yPos);
-    currentBoard.board[xPos][yPos] = this;
+    currentBoard.board[row][col] = Empty(row: row, col: col);
+    currentBoard.board[row][col] = this;
   }
 
 }
