@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   chess_vectors_flutter: ^1.1.0
   stockfish: ^1.5.0
+  flutter_hooks: ^0.18.6
 
 dev_dependencies:
   flutter_test:

@@ -25,7 +25,7 @@ class Bishop extends ChessPiece
     {
       yPositions.add(i);
     }
-    for(int i = col - 1; i <= 7 && !sameTeamInSpace(row, i, currentBoard); i--)
+    for(int i = col - 1; i >= 0 && !sameTeamInSpace(row, i, currentBoard); i--)
     {
       yPositions.add(i);
     }
@@ -54,7 +54,7 @@ class Bishop extends ChessPiece
   @override
   void move(int newX, int newY, Chessboard currentBoard) {
     currentBoard.board[row][col] = Empty(row: row, col: col);
-    currentBoard.board[row][col] = this;
+    currentBoard.board[newX][newY] = this;
   }
 
 }

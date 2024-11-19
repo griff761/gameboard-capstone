@@ -38,7 +38,7 @@ class Pawn extends ChessPiece
   void move(int newX, int newY, Chessboard currentBoard) {
     firstMove = false;
     currentBoard.board[row][col] = Empty(row: row, col: col);
-    currentBoard.board[row][col] = this;
+    currentBoard.board[newX][newY] = this;
   }
 
 }

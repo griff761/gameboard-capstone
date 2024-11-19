@@ -38,7 +38,9 @@ class ChessboardViewState extends State<ChessboardView> {
       {
         x1 = pos[0];
         y1 = pos[1];
-        text = "move " + x1.toString() + "," + y1.toString() + " ";
+        setState(() {
+          text = "move " + x1.toString() + "," + y1.toString() + " ";
+        });
         print(text);
       }
     else
@@ -57,6 +59,8 @@ class ChessboardViewState extends State<ChessboardView> {
       }
 
   }
+
+  List<Widget> iconList = [];
 
   @override
   void initState() {
@@ -93,6 +97,19 @@ class ChessboardViewState extends State<ChessboardView> {
                 icon: index[c.board[i][j].getSymbol()] ?? 0,));
         }
     }
+    iconList.add(WhiteRook());
+    iconList.add(BlackRook());
+    iconList.add(WhiteKnight());
+    iconList.add(BlackKnight());
+    iconList.add(WhiteBishop());
+    iconList.add(BlackBishop());
+    iconList.add(WhiteQueen());
+    iconList.add(BlackQueen());
+    iconList.add(WhiteKing());
+    iconList.add(BlackKing());
+    iconList.add(WhitePawn());
+    iconList.add(BlackPawn());
+    iconList.add(const Icon(Icons.add, size: 0));
 
     // for(int i = 0; i < 8; i++)
     //   {
@@ -102,6 +119,7 @@ class ChessboardViewState extends State<ChessboardView> {
     //       }
     //   }
   }
+  int cryIndex = 0;
   String testString = "assets/chesspiece_blackBishop.png";
   @override
   Widget build(BuildContext context) {
@@ -121,8 +139,13 @@ class ChessboardViewState extends State<ChessboardView> {
             //     // squares[i].update();
             //   }
             setState(() {
+              cryIndex++;
             });
-          },)
+          },),
+        IconButton(icon: iconList[cryIndex],
+        onPressed: () {
+
+        })
       ]
     );
   }
@@ -163,6 +186,13 @@ class ChessSquareState extends State<ChessSquare> {
 
   List<Widget> iconList = [];
 
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    icon = widget.icon;
+  }
 
 
   int help = 0;
