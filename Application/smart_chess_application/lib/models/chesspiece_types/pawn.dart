@@ -21,6 +21,17 @@ class Pawn extends ChessPiece
       moves.add([row + direction, col]);
     }
 
+    //taking another piece
+    if(inBounds(row + direction) && inBounds(col+1) && otherTeamInSpace(row+direction, col + 1, currentBoard))
+      {
+        moves.add([row+direction, col+1]);
+      }
+
+    if(inBounds(row + direction) && inBounds(col-1) && otherTeamInSpace(row+direction, col - 1, currentBoard))
+    {
+      moves.add([row+direction, col-1]);
+    }
+
     //TODO -- implement en passant move
     return moves;
   }
@@ -37,8 +48,7 @@ class Pawn extends ChessPiece
   @override
   void move(int newX, int newY, Chessboard currentBoard) {
     firstMove = false;
-    currentBoard.board[row][col] = Empty(row: row, col: col);
-    currentBoard.board[newX][newY] = this;
+    super.move(newX, newY, currentBoard);
   }
 
 }

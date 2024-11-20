@@ -32,8 +32,12 @@ abstract class ChessPiece
     return false;
   }
   void move(int newX, int newY, Chessboard currentBoard) {
+    // firstMove = false;
+    currentBoard.removePiece(newX, newY);
     currentBoard.board[row][col] = Empty(row: row, col: col);
-    currentBoard.board[row][col] = this;
+    currentBoard.board[newX][newY] = this;
+    row = newX;
+    col = newY;
   }
 
   String getSymbol();

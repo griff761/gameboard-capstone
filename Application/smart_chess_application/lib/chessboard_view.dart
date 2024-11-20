@@ -21,8 +21,11 @@ class ChessboardViewState extends State<ChessboardView> {
   List<List<GlobalKey<ChessSquareState>>> keys = [[],[],[],[],[],[],[],[]];
   List<Widget> squares = [];
 
+  List<List<int>> possibleMoves = [];
+
   Color color1 = Colors.black12;
   Color color2 = Colors.white;
+  Color possibleMove = Colors.lightBlueAccent;
 
   String text = "STARTING";
   bool pieceToMoveClick = false;
@@ -31,17 +34,49 @@ class ChessboardViewState extends State<ChessboardView> {
   int x2 = -2;
   int y2 = -2;
 
+  void setMoveColors()
+  {
+    for(int i = 0; i < possibleMoves.length; i++)
+    {
+      int x = possibleMoves[i][0];
+      int y = possibleMoves[i][1];
+      // print("possible move:")
+      keys[x][y].currentState?.updateColor(possibleMove);
+    }
+  }
+  void clearMoveColors()
+  {
+    for(int i = 0; i < possibleMoves.length; i++)
+    {
+      int x = possibleMoves[i][0];
+      int y = possibleMoves[i][1];
+      keys[x][y].currentState?.resetColor();
+    }
+  }
+
 
   void boardUpdate(List<int> pos) {
+    // print("BOARD UPDATE: " + pos[0])
     pieceToMoveClick = !pieceToMoveClick; //toggle
     if(pieceToMoveClick)
       {
         x1 = pos[0];
         y1 = pos[1];
+        // print(x1.toString + ", " + y1.toString)
+        possibleMoves = c.board[x1][y1].getValidMoves(c);
         setState(() {
           text = "move " + x1.toString() + "," + y1.toString() + " ";
+          setMoveColors();
         });
         print(text);
+      }
+    else if(x1 == pos[0] && y1 == pos[1])
+      {
+        setState(() {
+          clearMoveColors();
+          text = "";
+        });
+        possibleMoves = [];
       }
     else
       {
@@ -51,13 +86,13 @@ class ChessboardViewState extends State<ChessboardView> {
         print(text);
         print(c.move(x1, y1, x2, y2));
         setState(() {
+          clearMoveColors();
           keys[x1][y1].currentState?.updateIcon(index[c.board[x1][y1].getSymbol()] ?? 0);
           keys[x2][y2].currentState?.updateIcon(index[c.board[x2][y2].getSymbol()] ?? 0);
-          // symbols[x1][y1] = c.board[x1][y1].getSymbol();
-          // symbols[x2][y2] = c.board[x2][y2].getSymbol();
         });
+        possibleMoves = [];
       }
-
+    print(c.toString());
   }
 
   List<Widget> iconList = [];
@@ -133,6 +168,8 @@ class ChessboardViewState extends State<ChessboardView> {
         Text(text),
         IconButton(icon: Image.asset(testString),
           onPressed: () {
+            keys[5][4].currentState?.resetColor();
+
             // c.move(1, 2, 3, 2);
             // for(int i = 0; i < 64; i++)
             //   {
@@ -144,7 +181,7 @@ class ChessboardViewState extends State<ChessboardView> {
           },),
         IconButton(icon: iconList[cryIndex],
         onPressed: () {
-
+          keys[5][4].currentState?.updateColor(Colors.blue);
         })
       ]
     );
@@ -186,12 +223,15 @@ class ChessSquareState extends State<ChessSquare> {
 
   List<Widget> iconList = [];
 
+  Color color = Colors.white;
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     icon = widget.icon;
+    color = widget.color;
   }
 
 
@@ -217,9 +257,9 @@ class ChessSquareState extends State<ChessSquare> {
     // icon = widget.icon;
     // iconIndex = index[widget.icon]!;
       return Container(
-          color: widget.color,
+          color: color,
           child: IconButton(
-        color: widget.color,
+        color: color,
         icon: iconList[icon] ?? const Icon(Icons.add, size: 0),
         onPressed: () {
           print(widget.x.toString() + ", " + widget.y.toString());
@@ -248,6 +288,19 @@ class ChessSquareState extends State<ChessSquare> {
       help = i;
     });
     print(icon);
+  }
+
+  void updateColor(Color c)
+  {
+    setState(() {
+      color = c;
+    });
+  }
+  void resetColor()
+  {
+    setState(() {
+      color = widget.color;
+    });
   }
 
   // void update()

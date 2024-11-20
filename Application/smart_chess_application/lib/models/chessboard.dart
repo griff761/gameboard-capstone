@@ -168,7 +168,11 @@ board =
  void removePiece(int x, int y)
  {
   ChessPiece p = board[x][y];
-  if(p.team == ChessPieceTeam.black)
+  if(p.team == ChessPieceTeam.none)
+   {
+    return;
+   }
+  else if(p.team == ChessPieceTeam.black)
    {
     blackPieces.remove(p);
    }
