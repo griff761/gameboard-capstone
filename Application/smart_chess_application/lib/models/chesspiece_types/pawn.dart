@@ -47,7 +47,7 @@ class Pawn extends ChessPiece
       moves.add([row+direction, col+1]);
     }
 
-    if(inBounds(row + direction) && inBounds(col-1) && (otherTeamInSpace(row+direction, col - 1, currentBoard) || (row+direction == r && col+1 == c)))
+    if(inBounds(row + direction) && inBounds(col-1) && (otherTeamInSpace(row+direction, col - 1, currentBoard) || (row+direction == r && col-1 == c)))
     {
       moves.add([row+direction, col-1]);
     }

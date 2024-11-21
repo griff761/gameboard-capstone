@@ -27,6 +27,7 @@ class Chessboard
  ChessPiece wKing = Empty(row: -1,col: -1);
  ChessPiece bKing = Empty(row: -1,col: -1);
 
+ ChessPieceTeam turn = ChessPieceTeam.white;
 
 
  /*
@@ -153,7 +154,20 @@ board =
 
    for(ChessPiece p in pieces)
     {
-     List<List<int>> moves = (p is Pawn) ? (p as Pawn).getValidTakingMoves(this, row, col) : p.getValidMoves(this);
+     List<List<int>> moves = [];
+     if(p is Pawn)
+      {
+       moves = (p as Pawn).getValidTakingMoves(this, row, col);
+      }
+     else if(p is King)
+      {
+       moves = (p as King).getMovesForCheck(this);
+      }
+     else
+      {
+       moves = p.getValidMoves(this);
+      }
+
      for(List<int> move in moves)
       {
        if(move[0] == row && move[1] == col)

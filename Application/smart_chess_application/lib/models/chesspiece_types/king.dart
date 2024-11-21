@@ -49,6 +49,40 @@ class King extends ChessPiece
     return moves;
   }
 
+  List<List<int>> getMovesForCheck(Chessboard currentBoard)
+  {
+    List<List<int>> moves = [];
+
+    //move up, down, left, right if those spaces are not in check
+    if (inBounds(col + 1) && !sameTeamInSpace(row, col + 1, currentBoard)) {
+      moves.add([row, col + 1]);
+    }
+    if (inBounds(col - 1) && !sameTeamInSpace(row, col - 1, currentBoard)) {
+      moves.add([row, col - 1]);
+    }
+    if (inBounds(row + 1) && !sameTeamInSpace(row + 1, col, currentBoard)) {
+      moves.add([row + 1, col]);
+    }
+    if (inBounds(row - 1) && !sameTeamInSpace(row - 1, col, currentBoard)) {
+      moves.add([row - 1, col]);
+    }
+    //diagonals
+    if (inBounds(row + 1) && inBounds(col + 1) && !sameTeamInSpace(row + 1, col + 1, currentBoard)) {
+      moves.add([row + 1, col + 1]);
+    }
+    if (inBounds(row + 1) && inBounds(col - 1) && !sameTeamInSpace(row + 1, col - 1, currentBoard)) {
+      moves.add([row + 1, col - 1]);
+    }
+    if (inBounds(row - 1) && inBounds(col + 1) && !sameTeamInSpace(row - 1, col + 1, currentBoard)) {
+      moves.add([row - 1, col + 1]);
+    }
+    if (inBounds(row - 1) && inBounds(col - 1) && !sameTeamInSpace(row - 1, col - 1, currentBoard)) {
+      moves.add([row - 1, col - 1]);
+    }
+
+    return moves;
+  }
+
   @override
   String getSymbol() {
     if(super.team == ChessPieceTeam.white) {
