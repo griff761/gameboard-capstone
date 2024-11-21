@@ -11,6 +11,8 @@ import 'chesspiece_types/empty.dart';
 class Chessboard
 {
 
+ bool requireTurns = true;
+
  List<List<ChessPiece>> board =
  [[],
  [],
@@ -199,6 +201,12 @@ board =
 
  bool move(int r1, int c1, int r2, int c2)
  {
+
+  if(requireTurns && turn != board[r1][c1].team)
+  {
+   return false;
+  }
+
   //get chesspiece
   ChessPiece piece = board[r1][c1];
   if(piece.validMove(r2, c2, this))
@@ -206,12 +214,30 @@ board =
     removePiece(r2, c2);
     //make move
     piece.move(r2, c2, this);
+    changeTurn();
     return true;
    }
   else
    {
     return false;
    }
+ }
+
+
+
+ void changeTurn()
+ {
+  // print("START CHANGE TURN: " + turn.toString());
+
+  if (turn == ChessPieceTeam.white)
+   {
+    turn = ChessPieceTeam.black;
+   }
+  else
+   {
+    turn = ChessPieceTeam.white;
+   }
+  // print("CHANGE TURN: " + turn.toString());
  }
 
  @override
