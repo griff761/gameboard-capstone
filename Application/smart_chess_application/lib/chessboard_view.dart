@@ -26,6 +26,7 @@ class ChessboardViewState extends State<ChessboardView> {
   Color color1 = Colors.black12;
   Color color2 = Colors.white;
   Color possibleMove = Colors.lightBlueAccent;
+  Color possibleMove2 = Colors.lightBlue;
 
   String text = "STARTING";
   bool pieceToMoveClick = false;
@@ -41,7 +42,7 @@ class ChessboardViewState extends State<ChessboardView> {
       int x = possibleMoves[i][0];
       int y = possibleMoves[i][1];
       // print("possible move:")
-      keys[x][y].currentState?.updateColor(possibleMove);
+      keys[x][y].currentState?.updateColor(((x + y)%2 == 0) ? possibleMove : possibleMove2);
     }
   }
   void clearMoveColors()
