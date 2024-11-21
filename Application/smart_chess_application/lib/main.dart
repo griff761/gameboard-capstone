@@ -45,7 +45,7 @@ class _AppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Button Pressing'),
+          title: const Text('Chess Demo'),
         ),
         body: Column(
           children: [

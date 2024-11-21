@@ -17,7 +17,6 @@ class ChessboardView extends StatefulWidget {
 class ChessboardViewState extends State<ChessboardView> {
 
   Chessboard c = Chessboard();
-  // List<List<String>> symbols = [[],[],[],[],[],[],[],[]];
   List<List<GlobalKey<ChessSquareState>>> keys = [[],[],[],[],[],[],[],[]];
   List<Widget> squares = [];
 
@@ -27,6 +26,21 @@ class ChessboardViewState extends State<ChessboardView> {
   Color color2 = Colors.white;
   Color possibleMove = Colors.lightBlueAccent;
   Color possibleMove2 = Colors.lightBlue;
+
+  Map<String, Widget> icons = {
+    "b": BlackBishop(),
+    "B": WhiteBishop(),
+    "k": BlackKing(),
+    "K": WhiteKing(),
+    "n": BlackKnight(),
+    "N": WhiteKnight(),
+    "p": BlackPawn(),
+    "P": WhitePawn(),
+    "q": BlackQueen(),
+    "Q": WhiteQueen(),
+    "r": BlackRook(),
+    "R": WhiteRook()
+  };
 
   String text = "STARTING";
   bool pieceToMoveClick = false;
@@ -41,7 +55,6 @@ class ChessboardViewState extends State<ChessboardView> {
     {
       int x = possibleMoves[i][0];
       int y = possibleMoves[i][1];
-      // print("possible move:")
       keys[x][y].currentState?.updateColor(((x + y)%2 == 0) ? possibleMove : possibleMove2);
     }
   }
@@ -57,13 +70,11 @@ class ChessboardViewState extends State<ChessboardView> {
 
 
   void boardUpdate(List<int> pos) {
-    // print("BOARD UPDATE: " + pos[0])
     pieceToMoveClick = !pieceToMoveClick; //toggle
     if(pieceToMoveClick)
       {
         x1 = pos[0];
         y1 = pos[1];
-        // print(x1.toString + ", " + y1.toString)
         possibleMoves = c.board[x1][y1].getValidMoves(c);
         setState(() {
           text = "move " + x1.toString() + "," + y1.toString() + " ";
@@ -88,8 +99,8 @@ class ChessboardViewState extends State<ChessboardView> {
         print(c.move(x1, y1, x2, y2));
         setState(() {
           clearMoveColors();
-          keys[x1][y1].currentState?.updateIcon(index[c.board[x1][y1].getSymbol()] ?? 0);
-          keys[x2][y2].currentState?.updateIcon(index[c.board[x2][y2].getSymbol()] ?? 0);
+          keys[x1][y1].currentState?.updateIcon(icons[c.board[x1][y1].getSymbol()] ?? Text(""));
+          keys[x2][y2].currentState?.updateIcon(icons[c.board[x2][y2].getSymbol()] ?? Text(""));
         });
         possibleMoves = [];
       }
@@ -100,27 +111,11 @@ class ChessboardViewState extends State<ChessboardView> {
 
   @override
   void initState() {
-    index["R"] = 0;
-    index["r"] = 1;
-    index["N"] = 2;
-    index["n"] = 3;
-    index["B"] = 4;
-    index["b"] = 5;
-    index["Q"] = 6;
-    index["q"] = 7;
-    index["K"] = 8;
-    index["k"] = 9;
-    index["P"] = 10;
-    index["p"] = 11;
-    index[""] = 12;
-
+    //setup chess squares for use in grid
     for(int i = 7; i >= 0; i--)
     {
       for(int j = 0; j < 8; j++)
         {
-          print(((i*8 + j)%2 == 0) ? color1 : color2);
-          // symbols[i].add(c.board[i][j].getSymbol());
-          print(c.board[i][j].getSymbol());
           keys[i].add(GlobalKey());
           squares.add(
               ChessSquare(
@@ -130,33 +125,11 @@ class ChessboardViewState extends State<ChessboardView> {
                 y: j,
                 color: ((i + j)%2 == 0) ? color1 : color2,
                 boardUpdate: boardUpdate,
-                icon: index[c.board[i][j].getSymbol()] ?? 0,));
+                icon:  icons[c.board[i][j].getSymbol()] ?? Text("")
+              ));
         }
     }
-    iconList.add(WhiteRook());
-    iconList.add(BlackRook());
-    iconList.add(WhiteKnight());
-    iconList.add(BlackKnight());
-    iconList.add(WhiteBishop());
-    iconList.add(BlackBishop());
-    iconList.add(WhiteQueen());
-    iconList.add(BlackQueen());
-    iconList.add(WhiteKing());
-    iconList.add(BlackKing());
-    iconList.add(WhitePawn());
-    iconList.add(BlackPawn());
-    iconList.add(const Icon(Icons.add, size: 0));
-
-    // for(int i = 0; i < 8; i++)
-    //   {
-    //     for(int j = 0; j < 8; j++)
-    //       {
-    //         keys[i][j].currentState?.updateIcon(index[c.board[i][j].getSymbol()] ?? 0);
-    //       }
-    //   }
   }
-  int cryIndex = 0;
-  String testString = "assets/chesspiece_blackBishop.png";
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -167,35 +140,12 @@ class ChessboardViewState extends State<ChessboardView> {
               children: squares)
         ),
         Text(text),
-        IconButton(icon: Image.asset(testString),
-          onPressed: () {
-            keys[5][4].currentState?.resetColor();
-
-            // c.move(1, 2, 3, 2);
-            // for(int i = 0; i < 64; i++)
-            //   {
-            //     // squares[i].update();
-            //   }
-            setState(() {
-              cryIndex++;
-            });
-          },),
-        IconButton(icon: iconList[cryIndex],
-        onPressed: () {
-          keys[5][4].currentState?.updateColor(Colors.blue);
-        })
+        Text("") //temporary -- use for spacer
       ]
     );
   }
 
-  Map<String, int> index = {};
-
-
 }
-
-// class ChessSquare extends StatelessWidget {
-//
-// }
 
 class ChessSquare extends StatefulWidget {
   final Chessboard c;
@@ -204,7 +154,7 @@ class ChessSquare extends StatefulWidget {
   final int y;
   final ValueChanged<List<int>> boardUpdate;
 
-  final int icon;
+  final Widget icon;
 
   const ChessSquare({
     super.key,
@@ -220,7 +170,7 @@ class ChessSquare extends StatefulWidget {
 
 class ChessSquareState extends State<ChessSquare> {
   bool toggle = false;
-  int icon = 12;
+  Widget icon = Text("");
 
   List<Widget> iconList = [];
 
@@ -240,53 +190,25 @@ class ChessSquareState extends State<ChessSquare> {
   bool firstLoad = true;
   @override
   Widget build(BuildContext context) {
-    iconList.add(WhiteRook());
-    iconList.add(BlackRook());
-    iconList.add(WhiteKnight());
-    iconList.add(BlackKnight());
-    iconList.add(WhiteBishop());
-    iconList.add(BlackBishop());
-    iconList.add(WhiteQueen());
-    iconList.add(BlackQueen());
-    iconList.add(WhiteKing());
-    iconList.add(BlackKing());
-    iconList.add(WhitePawn());
-    iconList.add(BlackPawn());
-    iconList.add(const Icon(Icons.add, size: 0));
 
-    // print(icons[widget.icon]);
-    // icon = widget.icon;
-    // iconIndex = index[widget.icon]!;
       return Container(
           color: color,
           child: IconButton(
         color: color,
-        icon: iconList[icon] ?? const Icon(Icons.add, size: 0),
+        icon: icon,
         onPressed: () {
           print(widget.x.toString() + ", " + widget.y.toString());
           print(widget.icon);
           widget.boardUpdate([widget.x, widget.y]);
-          setState(() {
-            // icon = "";
-            // icon = 0;
-            // help++;
-            // icon++;
-
-          });
           print(widget.icon);
         },));
   }
 
-  void symbolToNumber()
-  {
 
-  }
-
-  void updateIcon(int i)
+  void updateIcon(Widget i)
   {
     setState(() {
       icon = i;
-      help = i;
     });
     print(icon);
   }
@@ -303,51 +225,4 @@ class ChessSquareState extends State<ChessSquare> {
       color = widget.color;
     });
   }
-
-  // void update()
-  // {
-  //   setState(() {
-  //     icon = getIcon(widget.c.board[widget.x][widget.y]) ?? Icon(Icons.add, size: 0);
-  //   });
-  // }
-  //
-  //
-  // Widget getIcon(ChessPiece chesspiece)
-  // {
-  //   switch (chesspiece.type) {
-  //     case ChessPieceType.pawn:
-  //       if(chesspiece.team == ChessPieceTeam.white)
-  //         return WhitePawn();
-  //       else
-  //         return BlackPawn();
-  //     case ChessPieceType.bishop:
-  //       if(chesspiece.team == ChessPieceTeam.white)
-  //         return WhiteBishop();
-  //       else
-  //         return BlackBishop();
-  //     case ChessPieceType.king:
-  //       if(chesspiece.team == ChessPieceTeam.white)
-  //         return WhiteKing();
-  //       else
-  //         return BlackKing();
-  //     case ChessPieceType.knight:
-  //       if(chesspiece.team == ChessPieceTeam.white)
-  //         return WhiteKnight();
-  //       else
-  //         return BlackKnight();
-  //     case ChessPieceType.queen:
-  //       if(chesspiece.team == ChessPieceTeam.white)
-  //         return WhiteQueen();
-  //       else
-  //         return BlackQueen();
-  //     case ChessPieceType.rook:
-  //       if(chesspiece.team == ChessPieceTeam.white)
-  //         return WhiteRook();
-  //       else
-  //         return BlackRook();
-  //     default:
-  //         return Icon(Icons.add, size: 0);
-  //   }
-  // }
-
 }
