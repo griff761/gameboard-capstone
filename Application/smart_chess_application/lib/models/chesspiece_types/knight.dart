@@ -9,17 +9,50 @@ class Knight extends ChessPiece
 
   @override
   List<List<int>> getValidMoves(Chessboard currentBoard) {
-    int direction = team == ChessPieceTeam.black ? 1 : -1;
     List<List<int>> moves = [];
-    if(firstMove)
-      {
-        if (inBounds(col + 2*direction) && !sameTeamInSpace(row, col + 2*direction, currentBoard)) {
-          moves.add([row, col + 2*direction]);
-        }
-      }
-    if (inBounds(col + direction) && !sameTeamInSpace(row, col + 2*direction, currentBoard)) {
-      moves.add([row, col + direction]);
+
+    //up right (row + 1, col + 2) and (row + 2, col + 1)
+    if (inBounds(row+1) && inBounds(col+2) && !sameTeamInSpace(row+1, col+2, currentBoard))
+    {
+      moves.add([row+1,col+2]);
     }
+    if (inBounds(row+2) && inBounds(col+1) && !sameTeamInSpace(row+2, col+1, currentBoard))
+    {
+      moves.add([row+2,col+1]);
+    }
+
+    //up left (row + 1, col - 2) and (row + 2, col - 1)
+    if (inBounds(row+1) && inBounds(col-2) && !sameTeamInSpace(row+1, col-2, currentBoard))
+    {
+      moves.add([row+1,col-2]);
+    }
+    if (inBounds(row+2) && inBounds(col-1) && !sameTeamInSpace(row+2, col-1, currentBoard))
+    {
+      moves.add([row+2,col-1]);
+    }
+
+
+    //down right (row - 1, col + 2) and (row - 2, col + 1)
+    if (inBounds(row-1) && inBounds(col+2) && !sameTeamInSpace(row-1, col+2, currentBoard))
+    {
+      moves.add([row-1,col+2]);
+    }
+    if (inBounds(row-2) && inBounds(col+1) && !sameTeamInSpace(row-2, col+1, currentBoard))
+    {
+      moves.add([row-2,col+1]);
+    }
+
+    //down left (row - 1, col - 2) and (row - 2, col - 1)
+    if (inBounds(row-1) && inBounds(col-2) && !sameTeamInSpace(row-1, col-2, currentBoard))
+    {
+      moves.add([row-1,col-2]);
+    }
+    if (inBounds(row-2) && inBounds(col-1) && !sameTeamInSpace(row-2, col-1, currentBoard))
+    {
+      moves.add([row-2,col-1]);
+    }
+
+
     return moves;
   }
 
@@ -30,13 +63,6 @@ class Knight extends ChessPiece
     } else {
       return "n";
     }
-  }
-
-  @override
-  void move(int newX, int newY, Chessboard currentBoard) {
-    firstMove = false;
-    currentBoard.board[row][col] = Empty(row: row, col: col);
-    currentBoard.board[row][col] = this;
   }
 
 }

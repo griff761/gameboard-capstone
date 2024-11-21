@@ -66,27 +66,27 @@ class Chessboard
 
   //rook 1
   board[0].add(Rook(row: 0, col: 0, team: ChessPieceTeam.white));
-  board[7].add(Rook(row: 0, col: 7, team: ChessPieceTeam.black));
+  board[7].add(Rook(row: 7, col: 0, team: ChessPieceTeam.black));
   //knight 1
-  board[0].add(Knight(row: 1, col: 0, team: ChessPieceTeam.white));
-  board[7].add(Knight(row: 1, col: 7, team: ChessPieceTeam.black));
+  board[0].add(Knight(row: 0, col: 1, team: ChessPieceTeam.white));
+  board[7].add(Knight(row: 7, col: 1, team: ChessPieceTeam.black));
   //bishop 1
-  board[0].add(Bishop(row: 2, col: 0, team: ChessPieceTeam.white));
-  board[7].add(Bishop(row: 2, col: 7, team: ChessPieceTeam.black));
+  board[0].add(Bishop(row: 0, col: 2, team: ChessPieceTeam.white));
+  board[7].add(Bishop(row: 7, col: 2, team: ChessPieceTeam.black));
   //queen
-  board[0].add(Queen(row: 3, col: 0, team: ChessPieceTeam.white));
-  board[7].add(Queen(row: 3, col: 7, team: ChessPieceTeam.black));
+  board[0].add(Queen(row: 0, col: 3, team: ChessPieceTeam.white));
+  board[7].add(Queen(row: 7, col: 3, team: ChessPieceTeam.black));
   //king
-  board[0].add(King(row: 4, col: 0, team: ChessPieceTeam.white));
-  board[7].add(King(row: 4, col: 7, team: ChessPieceTeam.black));
+  board[0].add(King(row: 0, col: 4, team: ChessPieceTeam.white));
+  board[7].add(King(row: 7, col: 4, team: ChessPieceTeam.black));
   //bishop 2
-  board[0].add(Bishop(row: 5, col: 0, team: ChessPieceTeam.white));
-  board[7].add(Bishop(row: 5, col: 7, team: ChessPieceTeam.black));
+  board[0].add(Bishop(row: 0, col: 5, team: ChessPieceTeam.white));
+  board[7].add(Bishop(row: 7, col: 5, team: ChessPieceTeam.black));
   //knight 2
-  board[0].add(Knight(row: 6, col: 0, team: ChessPieceTeam.white));
-  board[7].add(Knight(row: 6, col: 7, team: ChessPieceTeam.black));
+  board[0].add(Knight(row: 0, col: 6, team: ChessPieceTeam.white));
+  board[7].add(Knight(row: 7, col: 6, team: ChessPieceTeam.black));
   //rook 1
-  board[0].add(Rook(row: 7, col: 0, team: ChessPieceTeam.white));
+  board[0].add(Rook(row: 0, col: 7, team: ChessPieceTeam.white));
   board[7].add(Rook(row: 7, col: 7, team: ChessPieceTeam.black));
 
   //setup extra trackers (for us)
@@ -133,13 +133,13 @@ board =
  }
 
 
- bool isOccupiedByOwnPieces(int x, int y, ChessPieceTeam team)
+ bool isOccupiedByOwnPieces(int row, int col, ChessPieceTeam team)
  {
-  return (board[x][y].team == team);
+  return (board[row][col].team == team);
  }
 
  /// Checks if a square is in check by the opposing team given a square's x and y coordinates
- bool inCheck(int x, int y, ChessPieceTeam team)
+ bool inCheck(int row, int col, ChessPieceTeam team)
  {
    late List<ChessPiece> pieces;
    if(team == ChessPieceTeam.white)
@@ -153,10 +153,10 @@ board =
 
    for(ChessPiece p in pieces)
     {
-     List<List<int>> moves = p.getValidMoves(this);
+     List<List<int>> moves = (p is Pawn) ? (p as Pawn).getValidTakingMoves(this, row, col) : p.getValidMoves(this);
      for(List<int> move in moves)
       {
-       if(move[0] == x && move[1] == y)
+       if(move[0] == row && move[1] == col)
         {
          return true;
         }
@@ -165,9 +165,9 @@ board =
    return false;
  }
 
- void removePiece(int x, int y)
+ void removePiece(int row, int col)
  {
-  ChessPiece p = board[x][y];
+  ChessPiece p = board[row][col];
   if(p.team == ChessPieceTeam.none)
    {
     return;
@@ -183,15 +183,15 @@ board =
  }
 
 
- bool move(int x1, int y1, int x2, int y2)
+ bool move(int r1, int c1, int r2, int c2)
  {
   //get chesspiece
-  ChessPiece piece = board[x1][y1];
-  if(piece.validMove(x2, y2, this))
+  ChessPiece piece = board[r1][c1];
+  if(piece.validMove(r2, c2, this))
    {
-    removePiece(x2, y2);
+    removePiece(r2, c2);
     //make move
-    piece.move(x2, y2, this);
+    piece.move(r2, c2, this);
     return true;
    }
   else

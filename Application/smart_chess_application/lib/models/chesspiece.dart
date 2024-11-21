@@ -47,22 +47,22 @@ abstract class ChessPiece
     return 0 <= a && a <= 7;
   }
 
-  bool sameTeamInSpace(int x, int y, Chessboard currentBoard)
+  bool sameTeamInSpace(int row, int col, Chessboard currentBoard)
   {
     ChessPieceTeam myTeam = team;
-    ChessPieceTeam otherTeam = currentBoard.board[x][y].team;
-    return currentBoard.board[x][y].team == team;
+    ChessPieceTeam otherTeam = currentBoard.board[row][col].team;
+    return currentBoard.board[row][col].team == team;
   }
 
-  bool otherTeamInSpace(int x, int y, Chessboard currentBoard)
+  bool otherTeamInSpace(int row, int col, Chessboard currentBoard)
   {
-    ChessPieceTeam pieceTeam = currentBoard.board[x][y].team;
+    ChessPieceTeam pieceTeam = currentBoard.board[row][col].team;
     return pieceTeam != team && pieceTeam != ChessPieceTeam.none;
   }
 
-  bool spaceEmpty(int x, int y, Chessboard currentBoard)
+  bool spaceEmpty(int row, int col, Chessboard currentBoard)
   {
-    return currentBoard.board[x][y].team == ChessPieceTeam.none;
+    return currentBoard.board[row][col].team == ChessPieceTeam.none;
   }
 
 }

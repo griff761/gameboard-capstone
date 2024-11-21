@@ -13,19 +13,31 @@ class King extends ChessPiece
     List<List<int>> moves = [];
 
     //move up, down, left, right if those spaces are not in check
-    if (inBounds(col + 1) && !sameTeamInSpace(row, col + 1, currentBoard) && currentBoard.inCheck(row, col + 1, team)) {
+    if (inBounds(col + 1) && !sameTeamInSpace(row, col + 1, currentBoard) && !currentBoard.inCheck(row, col + 1, team)) {
       moves.add([row, col + 1]);
     }
-    if (inBounds(col - 1) && !sameTeamInSpace(row, col - 1, currentBoard) && currentBoard.inCheck(row, col - 1, team)) {
+    if (inBounds(col - 1) && !sameTeamInSpace(row, col - 1, currentBoard) && !currentBoard.inCheck(row, col - 1, team)) {
       moves.add([row, col - 1]);
     }
-    if (inBounds(row + 1) && !sameTeamInSpace(row + 1, col, currentBoard) && currentBoard.inCheck(row + 1, col, team)) {
+    if (inBounds(row + 1) && !sameTeamInSpace(row + 1, col, currentBoard) && !currentBoard.inCheck(row + 1, col, team)) {
       moves.add([row + 1, col]);
     }
-    if (inBounds(row - 1) && !sameTeamInSpace(row - 1, col, currentBoard) && currentBoard.inCheck(row - 1, col, team)) {
+    if (inBounds(row - 1) && !sameTeamInSpace(row - 1, col, currentBoard) && !currentBoard.inCheck(row - 1, col, team)) {
       moves.add([row - 1, col]);
     }
-
+    //diagonals
+    if (inBounds(row + 1) && inBounds(col + 1) && !sameTeamInSpace(row + 1, col + 1, currentBoard) && !currentBoard.inCheck(row + 1, col + 1, team)) {
+      moves.add([row + 1, col + 1]);
+    }
+    if (inBounds(row + 1) && inBounds(col - 1) && !sameTeamInSpace(row + 1, col - 1, currentBoard) && !currentBoard.inCheck(row + 1, col - 1, team)) {
+      moves.add([row + 1, col - 1]);
+    }
+    if (inBounds(row - 1) && inBounds(col + 1) && !sameTeamInSpace(row - 1, col + 1, currentBoard) && !currentBoard.inCheck(row - 1, col + 1, team)) {
+      moves.add([row - 1, col + 1]);
+    }
+    if (inBounds(row - 1) && inBounds(col - 1) && !sameTeamInSpace(row - 1, col - 1, currentBoard) && !currentBoard.inCheck(row - 1, col - 1, team)) {
+      moves.add([row - 1, col - 1]);
+    }
 
 
 
@@ -49,8 +61,7 @@ class King extends ChessPiece
   @override
   void move(int newX, int newY, Chessboard currentBoard) {
     firstMove = false;
-    currentBoard.board[row][col] = Empty(row: row, col: col);
-    currentBoard.board[row][col] = this;
+    super.move(newX, newY, currentBoard);
   }
 
 }
