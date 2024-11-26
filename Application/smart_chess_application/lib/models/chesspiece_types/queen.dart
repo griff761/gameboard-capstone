@@ -1,5 +1,6 @@
 import '../chessboard.dart';
 import '../chesspiece.dart';
+import '../move.dart';
 import 'empty.dart';
 
 class Queen extends ChessPiece
@@ -8,14 +9,14 @@ class Queen extends ChessPiece
   Queen({required super.row, required super.col, required super.team, super.type = ChessPieceType.queen});
 
   @override
-  List<List<int>> getValidMoves(Chessboard currentBoard) {
-    List<List<int>> moves = [];
+  List<Move> getValidMoves(Chessboard currentBoard) {
+    List<Move> moves = [];
     //queen movement allows for rook or bishop type moves:
 
     //rook movement
     for(int i = row + 1; i <= 7 && !sameTeamInSpace(i, col, currentBoard); i++)
     {
-      moves.add([i, col]);
+      moves.add(Move(row: i, col: col));
       if(otherTeamInSpace(i, col, currentBoard))
       {
         break;
@@ -23,7 +24,7 @@ class Queen extends ChessPiece
     }
     for(int i = row - 1; i >= 0 && !sameTeamInSpace(i, col, currentBoard); i--)
     {
-      moves.add([i, col]);
+      moves.add(Move(row: i, col: col));
       if(otherTeamInSpace(i, col, currentBoard))
       {
         break;
@@ -32,7 +33,7 @@ class Queen extends ChessPiece
 
     for(int i = col + 1; i <= 7 && !sameTeamInSpace(row, i, currentBoard); i++)
     {
-      moves.add([row, i]);
+      moves.add(Move(row: row, col: i));
       if(otherTeamInSpace(row, i, currentBoard))
       {
         break;
@@ -40,7 +41,7 @@ class Queen extends ChessPiece
     }
     for(int i = col - 1; i >= 0 && !sameTeamInSpace(row, i, currentBoard); i--)
     {
-      moves.add([row, i]);
+      moves.add(Move(row: row, col: i));
       if(otherTeamInSpace(row, i, currentBoard))
       {
         break;
@@ -50,7 +51,7 @@ class Queen extends ChessPiece
     // add row add col
     for(int i = 1; (inBounds(row+i) && inBounds(col+i)) && !sameTeamInSpace(row+i, col+i, currentBoard); i++)
     {
-      moves.add([row+i, col+i]);
+      moves.add(Move(row: row+i, col: col+i));
       if(otherTeamInSpace(row+i, col+i, currentBoard))
       {
         break;
@@ -59,7 +60,7 @@ class Queen extends ChessPiece
     //add row sub col
     for(int i = 1; (inBounds(row+i) && inBounds(col-i)) && !sameTeamInSpace(row+i, col-i, currentBoard); i++)
     {
-      moves.add([row+i, col-i]);
+      moves.add(Move(row: row+i, col: col-i));
       if(otherTeamInSpace(row+i, col-i, currentBoard))
       {
         break;
@@ -69,7 +70,7 @@ class Queen extends ChessPiece
     // sub row add col
     for(int i = 1; (inBounds(row-i) && inBounds(col+i)) && !sameTeamInSpace(row-i, col+i, currentBoard); i++)
     {
-      moves.add([row-i, col+i]);
+      moves.add(Move(row: row-i, col: col+i));
       if(otherTeamInSpace(row-i, col+i, currentBoard))
       {
         break;
@@ -78,7 +79,7 @@ class Queen extends ChessPiece
     //sub row sub col
     for(int i = 1; (inBounds(row-i) && inBounds(col-i)) && !sameTeamInSpace(row-i, col-i, currentBoard); i++)
     {
-      moves.add([row-i, col-i]);
+      moves.add(Move(row: row-i, col: col-i));
       if(otherTeamInSpace(row-i, col-i, currentBoard))
       {
         break;

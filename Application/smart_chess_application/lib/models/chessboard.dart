@@ -5,6 +5,7 @@ import 'package:smart_chess_application/models/chesspiece_types/knight.dart';
 import 'package:smart_chess_application/models/chesspiece_types/pawn.dart';
 import 'package:smart_chess_application/models/chesspiece_types/queen.dart';
 import 'package:smart_chess_application/models/chesspiece_types/rook.dart';
+import 'package:smart_chess_application/models/move.dart';
 
 import 'chesspiece_types/empty.dart';
 
@@ -156,7 +157,7 @@ board =
 
    for(ChessPiece p in pieces)
     {
-     List<List<int>> moves = [];
+     List<Move> moves = [];
      if(p is Pawn)
       {
        moves = (p as Pawn).getValidTakingMoves(this, row, col);
@@ -170,9 +171,9 @@ board =
        moves = p.getValidMoves(this);
       }
 
-     for(List<int> move in moves)
+     for(Move move in moves)
       {
-       if(move[0] == row && move[1] == col)
+       if(move.row == row && move.col == col)
         {
          return true;
         }

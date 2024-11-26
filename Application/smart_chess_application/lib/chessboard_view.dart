@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:chess_vectors_flutter/chess_vectors_flutter.dart';
+import 'package:smart_chess_application/models/move.dart';
 
 import 'models/chessboard.dart';
 import 'models/chesspiece.dart';
@@ -20,7 +21,7 @@ class ChessboardViewState extends State<ChessboardView> {
   List<List<GlobalKey<ChessSquareState>>> keys = [[],[],[],[],[],[],[],[]];
   List<Widget> squares = [];
 
-  List<List<int>> possibleMoves = [];
+  List<Move> possibleMoves = [];
 
   Color color1 = Colors.black12;
   Color color2 = Colors.white;
@@ -53,8 +54,8 @@ class ChessboardViewState extends State<ChessboardView> {
   {
     for(int i = 0; i < possibleMoves.length; i++)
     {
-      int x = possibleMoves[i][0];
-      int y = possibleMoves[i][1];
+      int x = possibleMoves[i].row;
+      int y = possibleMoves[i].col;
       keys[x][y].currentState?.updateColor(((x + y)%2 == 0) ? possibleMove : possibleMove2);
     }
   }
@@ -62,8 +63,8 @@ class ChessboardViewState extends State<ChessboardView> {
   {
     for(int i = 0; i < possibleMoves.length; i++)
     {
-      int x = possibleMoves[i][0];
-      int y = possibleMoves[i][1];
+      int x = possibleMoves[i].row;
+      int y = possibleMoves[i].col;
       keys[x][y].currentState?.resetColor();
     }
   }

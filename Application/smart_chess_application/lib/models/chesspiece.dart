@@ -1,5 +1,6 @@
 import 'chessboard.dart';
 import 'chesspiece_types/empty.dart';
+import 'move.dart';
 
 enum ChessPieceType {pawn, rook, knight, bishop, queen, king, empty}
 enum ChessPieceTeam {black, white, none}
@@ -18,13 +19,13 @@ abstract class ChessPiece
   //piece type
   ChessPieceTeam team = ChessPieceTeam.none;
 
-  List<List<int>> getValidMoves(Chessboard currentBoard); //returns all valid moves for this piece
+  List<Move> getValidMoves(Chessboard currentBoard); //returns all valid moves for this piece
 
-  bool validMove(int newX, int newY, Chessboard currentBoard)
+  bool validMove(int newRow, int newCol, Chessboard currentBoard)
   {
-    for(List<int> move in getValidMoves(currentBoard))
+    for(Move move in getValidMoves(currentBoard))
     {
-      if(move[0] == newX && move[1] == newY)
+      if(move.row == newRow && move.col == newCol)
       {
         return true;
       }

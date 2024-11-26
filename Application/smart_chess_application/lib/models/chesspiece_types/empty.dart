@@ -1,5 +1,6 @@
 import '../chessboard.dart';
 import '../chesspiece.dart';
+import '../move.dart';
 
 class Empty extends ChessPiece
 {
@@ -7,8 +8,8 @@ class Empty extends ChessPiece
   Empty({required super.row, required super.col, super.team = ChessPieceTeam.none, super.type = ChessPieceType.empty});
 
   @override
-  List<List<int>> getValidMoves(Chessboard currentBoard) {
-    return [[]];
+  List<Move> getValidMoves(Chessboard currentBoard) {
+    return [];
   }
 
   @override

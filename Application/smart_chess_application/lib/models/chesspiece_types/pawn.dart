@@ -1,5 +1,6 @@
 import '../chessboard.dart';
 import '../chesspiece.dart';
+import '../move.dart';
 import 'empty.dart';
 
 class Pawn extends ChessPiece
@@ -8,28 +9,28 @@ class Pawn extends ChessPiece
   Pawn({required super.row, required super.col, required super.team, super.type = ChessPieceType.pawn});
 
   @override
-  List<List<int>> getValidMoves(Chessboard currentBoard) {
+  List<Move> getValidMoves(Chessboard currentBoard) {
     int direction = team == ChessPieceTeam.white ? 1 : -1;
-    List<List<int>> moves = [];
+    List<Move> moves = [];
     if(firstMove)
       {
         if (inBounds(row + 2*direction) && spaceEmpty(row + 2*direction, col, currentBoard)) {
-          moves.add([row + 2*direction, col]);
+          moves.add(Move(row: row + 2*direction, col: col));
         }
       }
     if (inBounds(row + direction) && spaceEmpty(row + direction, col, currentBoard)) {
-      moves.add([row + direction, col]);
+      moves.add(Move(row: row + direction, col: col));
     }
 
     //taking another piece
     if(inBounds(row + direction) && inBounds(col+1) && otherTeamInSpace(row+direction, col + 1, currentBoard))
       {
-        moves.add([row+direction, col+1]);
+        moves.add(Move(row: row+direction, col: col+1));
       }
 
     if(inBounds(row + direction) && inBounds(col-1) && otherTeamInSpace(row+direction, col - 1, currentBoard))
     {
-      moves.add([row+direction, col-1]);
+      moves.add(Move(row: row+direction, col: col-1));
     }
 
     //TODO -- implement en passant move
@@ -37,19 +38,19 @@ class Pawn extends ChessPiece
   }
 
   // need r and c for checking possible king location
-  List<List<int>> getValidTakingMoves(Chessboard currentBoard, int r, int c) {
+  List<Move> getValidTakingMoves(Chessboard currentBoard, int r, int c) {
     int direction = team == ChessPieceTeam.white ? 1 : -1;
-    List<List<int>> moves = [];
+    List<Move> moves = [];
 
     //taking another piece
     if(inBounds(row + direction) && inBounds(col+1) && (otherTeamInSpace(row+direction, col + 1, currentBoard) || (row+direction == r && col+1 == c)))
     {
-      moves.add([row+direction, col+1]);
+      moves.add(Move(row: row+direction, col: col+1));
     }
 
     if(inBounds(row + direction) && inBounds(col-1) && (otherTeamInSpace(row+direction, col - 1, currentBoard) || (row+direction == r && col-1 == c)))
     {
-      moves.add([row+direction, col-1]);
+      moves.add(Move(row: row+direction, col: col-1));
     }
 
     //TODO -- implement en passant move
