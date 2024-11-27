@@ -1,6 +1,6 @@
 import time
-from jacks_folder.request_handler import send_post_request_with_get_response
 from jacks_folder.wifi_connect import connect_wifi
+from request_handler import send_post_request_with_get_response
 
 # Replace the placeholder chess board with a sample 8x10 array
 chess_board = [[1] * 8 + [0, 0] for _ in range(8)]
