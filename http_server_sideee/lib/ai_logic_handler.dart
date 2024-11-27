@@ -3,23 +3,21 @@
 /// to generate an updated 2D array.
 
 class AILogicHandler {
-  /// Processes the current 2D array and replaces it with an explicitly defined array.
+  /// Processes the current 2D array, modifying only the 8x8 portion.
   static List<List<int>> processArray(List<List<int>> currentArray) {
-    print('AI Logic Handler: Processing the array with explicit values...');
+    print('AI Logic Handler: Processing the array with explicit logic...');
 
-    // Explicitly defined 2D array
-    final updatedArray = [
-      [1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-      [2, 2, 2, 2, 2, 2, 2, 2, 0, 0],
-      [3, 3, 3, 3, 3, 3, 3, 3, 0, 0],
-      [4, 4, 4, 4, 4, 4, 4, 4, 0, 0],
-      [5, 5, 5, 5, 5, 5, 5, 5, 0, 0],
-      [6, 6, 6, 6, 6, 6, 6, 6, 0, 0],
-      [7, 7, 7, 7, 7, 7, 7, 7, 0, 0],
-      [8, 8, 8, 8, 8, 8, 8, 8, 0, 0],
-    ];
+    // Deep copy the existing array to avoid direct mutation
+    final updatedArray = currentArray.map((row) => List<int>.from(row)).toList();
 
-    print('AI Logic Handler: Generated explicit array:');
+    // Apply AI logic only to rows 1–8 and columns 1–8
+    for (int row = 0; row < 8; row++) {
+      for (int col = 0; col < 8; col++) {
+        updatedArray[row][col] = row + 1; // Example logic for demonstration
+      }
+    }
+
+    print('AI Logic Handler: Updated array after processing:');
     for (var i = 0; i < updatedArray.length; i++) {
       print('Row $i: ${updatedArray[i]} // AIProcessed');
     }

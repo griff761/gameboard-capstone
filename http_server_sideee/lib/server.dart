@@ -12,7 +12,7 @@ class Server {
         .addHandler((Request request) async {
       // Handle GET requests
       if (request.method == 'GET' && request.url.path == 'config') {
-        final response = provideUpdated2DArray(); // Updated to call the correct method
+        final response = provideUpdated2DArray();
         print('GET request returning the following 2D array:');
         _printPrettyJson(response);
         return Response.ok(response, headers: {'Content-Type': 'application/json'});
