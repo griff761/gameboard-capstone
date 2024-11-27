@@ -34,7 +34,7 @@ while True:
     scaleFactor = vRef / steps
 
     # Read ADC0 (row 0)
-    for y in range(0,7):
+    for y in range(0,8):
         sleep_ms(3)
         read = scaleFactor * adc0.read(y)
         if ((read < defaultTriggerLow) or (read > defaultTriggerHigh)):
@@ -43,7 +43,7 @@ while True:
             chessBoard[0][y] = 0
 
     # Read ADC1 (row 1)
-    for y in range(0,7):
+    for y in range(0,8):
         sleep_ms(3)
         read = scaleFactor * adc1.read(y)
         if ((read < defaultTriggerLow) or (read > defaultTriggerHigh)):
@@ -52,7 +52,7 @@ while True:
             chessBoard[1][y] = 0
 
     # Read ADC2 (row 2)
-    for y in range(0,7):
+    for y in range(0,8):
         sleep_ms(3)
         read = scaleFactor * adc2.read(y)
         if ((read < defaultTriggerLow) or (read > defaultTriggerHigh)):
@@ -61,7 +61,7 @@ while True:
             chessBoard[2][y] = 0
 
     # Read ADC3 (row 3)
-    for y in range(0,7):
+    for y in range(0,8):
         sleep_ms(3)
         read = scaleFactor * adc3.read(y)
         if ((read < defaultTriggerLow) or (read > defaultTriggerHigh)):
@@ -70,7 +70,7 @@ while True:
             chessBoard[3][y] = 0
 
     # Read ADC4 (row 4)
-    for y in range(0,7):
+    for y in range(0,8):
         sleep_ms(3)
         read = scaleFactor * adc4.read(y)
         if ((read < defaultTriggerLow) or (read > defaultTriggerHigh)):
@@ -79,7 +79,7 @@ while True:
             chessBoard[4][y] = 0
 
     # Read ADC5 (row 5)
-    for y in range(0,7):
+    for y in range(0,8):
         sleep_ms(3)
         read = scaleFactor * adc5.read(y)
         if ((read < defaultTriggerLow) or (read > defaultTriggerHigh)):
@@ -88,7 +88,7 @@ while True:
             chessBoard[5][y] = 0
 
     # Read ADC6 (row 6)
-    for y in range(0,7):
+    for y in range(0,8):
         sleep_ms(3)
         read = scaleFactor * adc6.read(y)
         if ((read < defaultTriggerLow) or (read > defaultTriggerHigh)):
@@ -97,7 +97,7 @@ while True:
             chessBoard[6][y] = 0
 
     # Read ADC7 (row 7)
-    for y in range(0,7):
+    for y in range(0,8):
         sleep_ms(3)
         read = scaleFactor * adc7.read(y)
         if ((read < defaultTriggerLow) or (read > defaultTriggerHigh)):
