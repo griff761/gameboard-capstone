@@ -26,10 +26,8 @@ adc7 = MCP3008(spi, cs7)
 
 while True:
     #print(chip.read(0))
-    temp = (2.048 / 1023) * adc0.read(6)
-    temp2 = (2.048 / 1023) * adc3.read(6)
+    temp = (2.048 / 1023) * adc2.read(1)
     print(temp)
-    print(temp2)
     if (temp > 1.3) or (temp < 0.7):
         led.on()
     else:
