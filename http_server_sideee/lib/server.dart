@@ -3,6 +3,7 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'request_2d_array_interpreter.dart';
 import 'example_ai_move_maker.dart';
+import 'flag_checker.dart';
 
 class Server {
   /// Starts the server
@@ -12,6 +13,10 @@ class Server {
         .addHandler((Request request) async {
       // Handle GET requests
       if (request.method == 'GET' && request.url.path == 'config') {
+        // Execute flag checker before responding
+        FlagChecker.checkFlags();
+
+        // Provide updated array after any required changes
         final response = provideUpdated2DArray();
         print('GET request returning the following 2D array:');
         _printPrettyJson(response);

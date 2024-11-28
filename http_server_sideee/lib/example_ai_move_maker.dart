@@ -1,5 +1,6 @@
 import 'request_2d_array_interpreter.dart';
 import 'ai_logic_handler.dart';
+import 'flag_checker.dart';
 
 /// Example AI Move Maker
 /// This file uses the AI logic handler to process the 2D array.
@@ -25,5 +26,8 @@ class ExampleAIMoveMaker {
     for (var i = 0; i < updatedArray.length; i++) {
       print('Row $i: ${updatedArray[i]} // AfterMove');
     }
+
+    // Check for flags after updating the array
+    FlagChecker.checkFlags();
   }
 }

@@ -12,10 +12,11 @@ class Request2DArrayInterpreter {
 
   /// Updates the current 2D array with new values.
   static void updateArray(List<List<int>> newArray) {
-    _currentArray = List<List<int>>.from(newArray.map((row) => List<int>.from(row)));
+    _currentArray = List<List<int>>.from(
+        newArray.map((row) => List<int>.from(row)));
     print('Request2DArrayInterpreter: Updated current array:');
     for (var i = 0; i < _currentArray.length; i++) {
-      print('Row $i: ${_currentArray[i]} // UpdatedArray');
+      print('Row $i: ${_currentArray[i]}');
     }
   }
 
@@ -34,12 +35,12 @@ class Request2DArrayInterpreter {
           }
         }).toList();
 
-        if (validatedArray.length != 8 || validatedArray.any((row) => row.length != 10)) {
-          print('Invalid array size. Expected 8x10, but received ${validatedArray.length}x${validatedArray[0].length}.');
+        if (validatedArray.length != 8 ||
+            validatedArray.any((row) => row.length != 10)) {
           return 'Invalid array size. Expected 8x10.';
         }
 
-        updateArray(validatedArray);
+        updateArray(validatedArray); // Update the current array
         return '2D array successfully updated.';
       } else {
         return 'Invalid data format. Expected a 2D array.';
