@@ -3,6 +3,7 @@ from jacks_folder.wifi_connect import connect_wifi
 from request_handler import send_post_request_with_get_response
 from mcp3008 import MCP3008
 from machine import Pin
+import lib.copy as copy
 
 # Replace the placeholder chess board with a sample 8x10 array
 #chess_board = [[1] * 8 + [0, 0] for _ in range(8)]
@@ -66,7 +67,7 @@ while True:
             if ((read < defaultTriggerLow) or (read > defaultTriggerHigh)):
                 chessBoardCurr[0][y] = 1
             else:
-                chessBoardCurr[0][y] = 0  
+                chessBoardCurr[0][y] = 0
             if (chessBoardCurr[0][y] != chessBoardPrev[0][y]):
                 print("hit ADC0")
                 boardChange = True
@@ -149,7 +150,7 @@ while True:
 
         if (boardChange):
             print("test")
-            chessBoardPrev = chessBoardCurr.copy()
+            chessBoardPrev = copy.deepcopy(chessBoardCurr)
             boardChange = False
             send_post_request_with_get_response(chessBoardCurr)
 
