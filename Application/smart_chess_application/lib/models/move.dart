@@ -15,10 +15,13 @@ class Move
   bool promotion = false;
   bool enPassant = false;
 
-  bool capture = false;
-  String algebraicNotation = "";
+  // bool capture = false;
+  // String algebraicNotation = "";
 
   String promotionType = "";
+
+
+  String lAN = "";
 
   Move({required this.row, required this.col, this.castle = 0, this.promotion = false, this.enPassant = false, this.promotionType = "", required this.piece});
 
@@ -31,11 +34,22 @@ class Move
 
   void evaluate(Chessboard chessboard)
   {
-    if(piece.otherTeamInSpace(row, col, chessboard))
+    if(castle == 1)
       {
-        capture = true;
+        lAN = 'e${row+1}g${row+1}';
       }
-    // getAlgebraicNotation(chessboard);
+    else if(castle == -1)
+      {
+        lAN = 'e${row+1}c${row+1}';
+      }
+    else
+      {
+        lAN = getColLetter(piece.col) + (piece.row+1).toString() + getColLetter(col) + (row+1).toString();
+        if(promotion)
+          lAN += promotionType;
+      }
+
+
   }
 
 

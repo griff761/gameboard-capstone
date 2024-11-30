@@ -147,7 +147,7 @@ class ChessboardViewState extends State<ChessboardView> {
     });
     possibleMoves = [];
     if(move != null)
-      print(move.algebraicNotation);
+      print(move.lAN);
   }
 
   void promotionDialogue(ChessPieceTeam team, Move move)
