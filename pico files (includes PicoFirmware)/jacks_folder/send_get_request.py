@@ -1,4 +1,9 @@
-import urequests
+try:
+    import urequests
+except ImportError as e:
+    print(f"Error: urequests module not found. {e}")
+    urequests = None
+
 import json
 import time
 
@@ -6,6 +11,10 @@ def send_get_request(current_array, check_interval=2):
     """
     Sends a GET request and retrieves the 2D array from the server, whether or not it has changed.
     """
+    if not urequests:
+        print("Error: urequests is not available. Cannot send GET requests.")
+        return current_array  # Return the current array as a fallback
+
     url = "http://172.20.10.6:8080/config"  # Correct server address
 
     try:
