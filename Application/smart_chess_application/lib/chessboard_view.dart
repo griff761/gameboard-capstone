@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chess_vectors_flutter/chess_vectors_flutter.dart';
 import 'package:smart_chess_application/models/move.dart';
+import 'package:smart_chess_application/src/output_widget.dart';
 import 'package:stockfish/stockfish.dart';
 
 import 'models/chessboard.dart';
@@ -125,29 +126,46 @@ class ChessboardViewState extends State<ChessboardView> {
     Move? move = c.move(inputMove);
     setState(() {
       clearMoveColors();
+
+      updateAllSpaces();
+
       //handle special move logic here
       // TODO: OTHER SPECIAL MOVES HERE
-      if(move?.enPassant == true)
-        {
-          keys[(move as PassantMove).getPassantRow()][move.col]?.currentState?.updateIcon( Text(""));
-        }
-      else if(move?.castle == 1)
-        {
-          keys[x1][5].currentState?.updateIcon(icons[c.board[x1][5].getSymbol()] ?? Text(""));
-          keys[x1][7].currentState?.updateIcon(icons[c.board[x1][7].getSymbol()] ?? Text(""));
-        }
-      else if(move?.castle == -1)
-        {
-          keys[x1][3].currentState?.updateIcon(icons[c.board[x1][3].getSymbol()] ?? Text(""));
-          keys[x1][0].currentState?.updateIcon(icons[c.board[x1][0].getSymbol()] ?? Text(""));
-          // keys[x1][y1].currentState?.updateIcon(icons[c.board[x1][y1].getSymbol()] ?? Text(""));
-        }
-      keys[x1][y1].currentState?.updateIcon(icons[c.board[x1][y1].getSymbol()] ?? Text(""));
-      keys[x2][y2].currentState?.updateIcon(icons[c.board[x2][y2].getSymbol()] ?? Text(""));
+      // if(move?.enPassant == true)
+      //   {
+      //     keys[(move as PassantMove).getPassantRow()][move.col]?.currentState?.updateIcon( Text(""));
+      //   }
+      // else if(move?.castle == 1)
+      //   {
+      //     keys[x1][5].currentState?.updateIcon(icons[c.board[x1][5].getSymbol()] ?? Text(""));
+      //     keys[x1][7].currentState?.updateIcon(icons[c.board[x1][7].getSymbol()] ?? Text(""));
+      //   }
+      // else if(move?.castle == -1)
+      //   {
+      //     keys[x1][3].currentState?.updateIcon(icons[c.board[x1][3].getSymbol()] ?? Text(""));
+      //     keys[x1][0].currentState?.updateIcon(icons[c.board[x1][0].getSymbol()] ?? Text(""));
+      //     // keys[x1][y1].currentState?.updateIcon(icons[c.board[x1][y1].getSymbol()] ?? Text(""));
+      //   }
+      // keys[x1][y1].currentState?.updateIcon(icons[c.board[x1][y1].getSymbol()] ?? Text(""));
+      // keys[x2][y2].currentState?.updateIcon(icons[c.board[x2][y2].getSymbol()] ?? Text(""));
     });
     possibleMoves = [];
     if(move != null)
       print(move.lAN);
+  }
+
+  void updateAllSpaces()
+  {
+    //lets see how slow this is :/
+    setState(() {
+      for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+          keys[i][j].currentState?.updateIcon(
+              icons[c.board[i][j].getSymbol()] ?? Text(""));
+        }
+      }
+    });
+
   }
 
   void promotionDialogue(ChessPieceTeam team, Move move)
@@ -198,12 +216,28 @@ class ChessboardViewState extends State<ChessboardView> {
 
 
 
-
+Move? aIMove = null;
 
   List<Widget> iconList = [];
 
   @override
   void initState() {
+    super.initState();
+    //setup AI
+    stockfish = Stockfish();
+
+    final stockfishSubscription = stockfish.stdout.listen((message) {
+      print(message);
+      if(message.startsWith('bestmove'))
+        {
+          List<String> outputParts = message.split(" ");
+          String aIMoveString = outputParts[1];
+
+          aIMove = c.decipherAIMove(aIMoveString);
+          print(aIMove);
+        }
+    });
+
     //setup chess squares for use in grid
     for(int i = 7; i >= 0; i--)
     {
@@ -237,8 +271,31 @@ class ChessboardViewState extends State<ChessboardView> {
               crossAxisCount: 8,
               children: squares)
         ),
+        const Text("",style: TextStyle(fontSize: 50),), //temporary -- use for spacer
+        TextButton(onPressed: () async {
+          stockfish.stdin = c.getBoardStateForAI();
+          stockfish.stdin = 'go movetime 1500';
+        },
+          child: const Text(
+              "Calculate AI Move",
+              style:TextStyle(fontSize: 30)),
+        ),
+        const Text("",style: TextStyle(fontSize: 20),), //temporary -- use for spacer
         Text(text),
-        Text("") //temporary -- use for spacer
+        const Text("",style: TextStyle(fontSize: 20),), //temporary -- use for spacer
+        TextButton(onPressed: () async {
+          if(aIMove != null) {
+            movePiece(aIMove!);
+          }
+        }, child: Text("PLAY AI MOVE"),
+        ),
+        TextButton(onPressed: () async {
+          print("given to stockfish: ");
+          print(c.getBoardStateForAI());
+
+          stockfish.stdin = 'd';
+        }, child: Text("print current board"),
+        )
       ]
     );
   }

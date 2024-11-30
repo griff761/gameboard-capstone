@@ -46,7 +46,9 @@ class Move
       {
         lAN = getColLetter(piece.col) + (piece.row+1).toString() + getColLetter(col) + (row+1).toString();
         if(promotion)
+        {
           lAN += promotionType;
+        }
       }
 
 

@@ -66,7 +66,7 @@ class _AppState extends State<MyApp> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
               child: TextField(
                 autocorrect: false,
                 decoration: const InputDecoration(

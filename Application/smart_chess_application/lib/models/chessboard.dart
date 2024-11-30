@@ -14,6 +14,9 @@ class Chessboard
 
  bool requireTurns = true;
 
+ //list of all moves in long algebraic notation
+ List<String> allMoves = [];
+
  List<List<ChessPiece>> board =
  [[],
  [],
@@ -233,6 +236,7 @@ board =
     // removePiece(r2, c2);
     //evaluate
     move?.evaluate(this);
+    allMoves.add(move?.lAN ?? "");
     //make move
     piece.move(move!, this);
     changeTurn();
@@ -304,6 +308,52 @@ board =
    }
   }
   return boardRepresentation;
+ }
+
+
+ String getBoardStateForAI()
+ {
+  String boardState = "position startpos moves";
+  for(String move in allMoves)
+   {
+    boardState += " " + move;
+   }
+  return boardState;
+ }
+
+ Move? decipherAIMove(String aiMove)
+ {
+  List<String> chars = aiMove.split('');
+  int r1 = int.parse(chars[1])-1;
+  int c1 = _getColFromLetter(chars[0]);
+  int r2 = int.parse(chars[3])-1;
+  int c2 = _getColFromLetter(chars[2]);
+
+  return buildMove(r1, c1, r2, c2);
+ }
+
+ int _getColFromLetter(String letter)
+ {
+  switch(letter)
+  {
+   case('a'):
+    return 0;
+   case('b'):
+    return 1;
+   case('c'):
+    return 2;
+   case('d'):
+    return 3;
+   case('e'):
+    return 4;
+   case('f'):
+    return 5;
+   case('g'):
+    return 6;
+   case('h'):
+    return 7;
+  }
+  return -1;
  }
 
 }
