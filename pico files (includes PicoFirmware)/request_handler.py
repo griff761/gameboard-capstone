@@ -10,23 +10,20 @@ def send_post_request_with_get_response(chess_board):
     """
     try:
         # Send POST request
-        print("Initiating POST request...")
+        print("POST: Initiating request...")
         success = send_post_request(chess_board)
         if not success:
-            print("POST request failed. Skipping GET request.")
+            print("POST: request failed. Skipping GET request.")
             return None  # Explicitly return None for failure
 
         # Wait for GET response
-        print("Waiting for GET request response...")
+        print("GET: waiting on android to answer...")
         updated_array = send_get_request(chess_board)
 
         if updated_array is not None:
-            print("Updated chess board received via GET:")
-            for row in updated_array:
-                print(row)
             return copy.deepcopy(updated_array)  # Return a deep copy to prevent pointer issues
         else:
-            print("GET request failed to retrieve an updated board.")
+            print("GET: request failed to retrieve an updated board.")
             return None  # Explicitly return None for failure
 
     except Exception as e:

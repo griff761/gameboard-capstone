@@ -58,7 +58,7 @@ boardChange = False
 
 # Main execution loop
 while True:
-    try:
+    try:      
         # Read ADCs
         for row, adc in enumerate([adc0, adc1, adc2, adc3, adc4, adc5, adc6, adc7]):
             for y in range(8):
@@ -70,28 +70,27 @@ while True:
         if boardChange:
             chessBoardPrev = copy.deepcopy(chessBoardCurr)
             boardChange = False
+            
+            print("ADCs: Change detected, incoming Chessboard:")
+            for row in chessBoardCurr:
+                print(row)
 
             # Send POST request and receive updated board via GET
             updated_board = send_post_request_with_get_response(chessBoardCurr)
 
             if updated_board is not None:
-                # Update chessBoardCurr and chessboardLEDs with the new board
-                chessBoardCurr = copy.deepcopy(updated_board)
+                # Update chessboardLEDs with the new board
                 chessboardLEDs = copy.deepcopy(updated_board)
 
-                print("Chessboard LEDs Updated (via GET):")
+                print("LEDs: Chessboard Updated (via GET):")
                 for row in chessboardLEDs:
                     print(row)
 
                 # Pass the updated board to the LED handler
                 handle_leds(chessboardLEDs)
             else:
-                print("No updated board received from the server.")
-
-        # Print the current chess board state
-        print("Chess Board State:")
-        for row in chessBoardCurr:
-            print(row)
+                print("LEDs: No change, chessboard not updated yet...")
+                
             
         # Pause before the next cycle
         time.sleep_ms(3000)
