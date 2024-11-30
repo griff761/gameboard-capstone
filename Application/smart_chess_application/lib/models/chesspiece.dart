@@ -21,24 +21,37 @@ abstract class ChessPiece
 
   List<Move> getValidMoves(Chessboard currentBoard); //returns all valid moves for this piece
 
-  bool validMove(int newRow, int newCol, Chessboard currentBoard)
+  Move? validMove(Move inputMove, Chessboard currentBoard)
   {
     for(Move move in getValidMoves(currentBoard))
     {
-      if(move.row == newRow && move.col == newCol)
+      if(move.row == inputMove.row && move.col == inputMove.col)
       {
-        return true;
+        if(inputMove.promotion)
+          {
+            return inputMove;
+          }
+        return move;
       }
     }
-    return false;
+    return null;
   }
-  void move(int newX, int newY, Chessboard currentBoard) {
-    // firstMove = false;
-    currentBoard.removePiece(newX, newY);
+
+  Move buildMove(int row, int col, Chessboard currentBoard)
+  {
+    return Move(row: row, col: col, piece: this);
+  }
+
+  void move(Move move, Chessboard currentBoard) {
+    // if(otherTeamInSpace(move.row, move.col, currentBoard))
+    //   {
+    //     move.capture = true;
+    //   }
+    currentBoard.removePiece(move.row, move.col);
     currentBoard.board[row][col] = Empty(row: row, col: col);
-    currentBoard.board[newX][newY] = this;
-    row = newX;
-    col = newY;
+    currentBoard.board[move.row][move.col] = this;
+    row = move.row;
+    col = move.col;
   }
 
   String getSymbol();

@@ -14,7 +14,7 @@ class Bishop extends ChessPiece
     // add row add col
     for(int i = 1; (inBounds(row+i) && inBounds(col+i)) && !sameTeamInSpace(row+i, col+i, currentBoard); i++)
     {
-      moves.add(Move(row: row+i, col:col+i));
+      moves.add(Move(row: row+i, col:col+i, piece: this));
       if(otherTeamInSpace(row+i, col+i, currentBoard))
       {
         break;
@@ -23,7 +23,7 @@ class Bishop extends ChessPiece
     //add row sub col
     for(int i = 1; (inBounds(row+i) && inBounds(col-i)) && !sameTeamInSpace(row+i, col-i, currentBoard); i++)
     {
-      moves.add(Move(row: row+i, col:col-i));
+      moves.add(Move(row: row+i, col:col-i, piece: this));
       if(otherTeamInSpace(row+i, col-i, currentBoard))
       {
         break;
@@ -33,7 +33,7 @@ class Bishop extends ChessPiece
     // sub row add col
     for(int i = 1; (inBounds(row-i) && inBounds(col+i)) && !sameTeamInSpace(row-i, col+i, currentBoard); i++)
     {
-      moves.add(Move(row: row-i, col: col+i));
+      moves.add(Move(row: row-i, col: col+i, piece: this));
       if(otherTeamInSpace(row-i, col+i, currentBoard))
       {
         break;
@@ -42,7 +42,7 @@ class Bishop extends ChessPiece
     //sub row sub col
     for(int i = 1; (inBounds(row-i) && inBounds(col-i)) && !sameTeamInSpace(row-i, col-i, currentBoard); i++)
     {
-      moves.add(Move(row: row-i, col: col-i));
+      moves.add(Move(row: row-i, col: col-i, piece: this));
       if(otherTeamInSpace(row-i, col-i, currentBoard))
       {
         break;

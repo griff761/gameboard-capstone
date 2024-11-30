@@ -199,31 +199,59 @@ board =
    }
  }
 
+ void addPiece(ChessPiece p)
+ {
+  if(p.team == ChessPieceTeam.none)
+  {
+   return;
+  }
+  else if(p.team == ChessPieceTeam.black)
+  {
+   blackPieces.remove(p);
+  }
+  else
+  {
+   whitePieces.remove(p);
+  }
+  board[p.row][p.col] = p;
+ }
 
- bool move(int r1, int c1, int r2, int c2)
+
+ Move? move(Move inputMove)
  {
 
-  if(requireTurns && turn != board[r1][c1].team)
+  if(requireTurns && turn != inputMove.piece.team)
   {
-   return false;
+   return null;
   }
 
   //get chesspiece
-  ChessPiece piece = board[r1][c1];
-  if(piece.validMove(r2, c2, this))
+  ChessPiece piece =inputMove.piece;
+  Move? move;
+  if((move = piece.validMove(inputMove, this)) != null)
    {
-    removePiece(r2, c2);
+    // removePiece(r2, c2);
+    //evaluate
+    move?.evaluate(this);
     //make move
-    piece.move(r2, c2, this);
+    piece.move(move!, this);
     changeTurn();
-    return true;
+    return move;
    }
   else
    {
-    return false;
+    return null;
    }
  }
 
+ Move? buildMove(int r1, int c1, int r2, int c2)
+ {
+  if(r1 == r2 && c1 == c2)
+  {
+    return null;
+  }
+  return board[r1][c1].buildMove(r2, c2, this);
+ }
 
 
  void changeTurn()

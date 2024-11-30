@@ -6,14 +6,14 @@ import 'empty.dart';
 class Rook extends ChessPiece
 {
   bool firstMove = true;
-  Rook({required super.row, required super.col, required super.team, super.type = ChessPieceType.rook});
+  Rook({required super.row, required super.col, required super.team, super.type = ChessPieceType.rook, this.firstMove = true});
 
   @override
   List<Move> getValidMoves(Chessboard currentBoard) {
     List<Move> moves = [];
     for(int i = row + 1; i <= 7 && !sameTeamInSpace(i, col, currentBoard); i++)
     {
-      moves.add(Move(row: i, col: col));
+      moves.add(Move(row: i, col: col, piece: this));
       if(otherTeamInSpace(i, col, currentBoard))
         {
           break;
@@ -21,7 +21,7 @@ class Rook extends ChessPiece
     }
     for(int i = row - 1; i >= 0 && !sameTeamInSpace(i, col, currentBoard); i--)
     {
-      moves.add(Move(row: i, col: col));
+      moves.add(Move(row: i, col: col, piece: this));
       if(otherTeamInSpace(i, col, currentBoard))
       {
         break;
@@ -30,7 +30,7 @@ class Rook extends ChessPiece
 
     for(int i = col + 1; i <= 7 && !sameTeamInSpace(row, i, currentBoard); i++)
     {
-      moves.add(Move(row: row, col: i));
+      moves.add(Move(row: row, col: i, piece: this));
       if(otherTeamInSpace(row, i, currentBoard))
       {
         break;
@@ -38,7 +38,7 @@ class Rook extends ChessPiece
     }
     for(int i = col - 1; i >= 0 && !sameTeamInSpace(row, i, currentBoard); i--)
     {
-      moves.add(Move(row: row, col: i));
+      moves.add(Move(row: row, col: i, piece: this));
       if(otherTeamInSpace(row, i, currentBoard))
       {
         break;
@@ -63,9 +63,9 @@ class Rook extends ChessPiece
   }
 
   @override
-  void move(int newX, int newY, Chessboard currentBoard) {
+  void move(Move move, Chessboard currentBoard) {
     firstMove = false;
-    super.move(newX, newY, currentBoard);
+    super.move(move, currentBoard);
   }
 
 }

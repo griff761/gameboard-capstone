@@ -15,42 +15,42 @@ class Knight extends ChessPiece
     //up right (row + 1, col + 2) and (row + 2, col + 1)
     if (inBounds(row+1) && inBounds(col+2) && !sameTeamInSpace(row+1, col+2, currentBoard))
     {
-      moves.add(Move(row: row+1,col: col+2));
+      moves.add(Move(row: row+1,col: col+2, piece: this));
     }
     if (inBounds(row+2) && inBounds(col+1) && !sameTeamInSpace(row+2, col+1, currentBoard))
     {
-      moves.add(Move(row: row+2,col: col+1));
+      moves.add(Move(row: row+2,col: col+1, piece: this));
     }
 
     //up left (row + 1, col - 2) and (row + 2, col - 1)
     if (inBounds(row+1) && inBounds(col-2) && !sameTeamInSpace(row+1, col-2, currentBoard))
     {
-      moves.add(Move(row: row+1,col: col-2));
+      moves.add(Move(row: row+1,col: col-2, piece: this));
     }
     if (inBounds(row+2) && inBounds(col-1) && !sameTeamInSpace(row+2, col-1, currentBoard))
     {
-      moves.add(Move(row: row+2,col: col-1));
+      moves.add(Move(row: row+2,col: col-1, piece: this));
     }
 
 
     //down right (row - 1, col + 2) and (row - 2, col + 1)
     if (inBounds(row-1) && inBounds(col+2) && !sameTeamInSpace(row-1, col+2, currentBoard))
     {
-      moves.add(Move(row: row-1,col: col+2));
+      moves.add(Move(row: row-1,col: col+2, piece: this));
     }
     if (inBounds(row-2) && inBounds(col+1) && !sameTeamInSpace(row-2, col+1, currentBoard))
     {
-      moves.add(Move(row: row-2,col: col+1));
+      moves.add(Move(row: row-2,col: col+1, piece: this));
     }
 
     //down left (row - 1, col - 2) and (row - 2, col - 1)
     if (inBounds(row-1) && inBounds(col-2) && !sameTeamInSpace(row-1, col-2, currentBoard))
     {
-      moves.add(Move(row: row-1,col: col-2));
+      moves.add(Move(row: row-1,col: col-2, piece: this));
     }
     if (inBounds(row-2) && inBounds(col-1) && !sameTeamInSpace(row-2, col-1, currentBoard))
     {
-      moves.add(Move(row: row-2,col: col-1));
+      moves.add(Move(row: row-2,col: col-1, piece: this));
     }
 
 

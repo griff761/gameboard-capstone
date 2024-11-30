@@ -13,8 +13,8 @@ class Empty extends ChessPiece
   }
 
   @override
-  bool validMove(int newX, int newY, Chessboard currentBoard) {
-    return false;
+  Move? validMove(Move move, Chessboard currentBoard) {
+    return null;
   }
 
   @override
@@ -23,7 +23,7 @@ class Empty extends ChessPiece
   }
 
   @override
-  void move(int newX, int newY, Chessboard currentBoard)
+  void move(Move move, Chessboard currentBoard)
   {
     throw Exception("this should never happen, can't move null piece");
   }
