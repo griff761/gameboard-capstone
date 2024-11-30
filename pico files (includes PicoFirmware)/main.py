@@ -1,7 +1,7 @@
 import time
 from jacks_folder.wifi_connect import connect_wifi
 from request_handler import send_post_request_with_get_response
-from mcp3008 import MCP3008
+from lib.mcp3008 import MCP3008
 from machine import Pin
 import lib.copy as copy
 

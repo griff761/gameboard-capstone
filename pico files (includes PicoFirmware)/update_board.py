@@ -1,6 +1,6 @@
 from time import sleep
 from time import sleep_ms
-from mcp3008 import MCP3008
+from lib.mcp3008 import MCP3008
 from machine import Pin
 import lib.copy as copy
 
@@ -46,10 +46,6 @@ while True:
             if (chessBoardCurr[0][y] != chessBoardPrev[0][y]):
                 print("hit ADC0")
                 boardChange = True
-            else:
-                if (y==0):
-                    print(chessBoardCurr[0][y])
-                    print(chessBoardPrev[0][y])
     # Read ADC1 (row 1)
     for y in range(0,8):
         #sleep_ms(3)
@@ -124,9 +120,9 @@ while True:
         if (chessBoardCurr[7][y] != chessBoardPrev[7][y]):
             boardChange = True
 
+    print(chessBoardCurr)
     print(boardChange)
     if (boardChange):
-        print("test")
         chessBoardPrev = copy.deepcopy(chessBoardCurr)
         boardChange = False
         print("Post")
