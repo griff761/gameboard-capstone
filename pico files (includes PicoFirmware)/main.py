@@ -49,7 +49,7 @@ adc6 = MCP3008(spi, cs6)
 adc7 = MCP3008(spi, cs7)
 rows, cols = (8, 10)
 chessBoardCurr = [[0 for _ in range(cols)] for _ in range(rows)]
-chessBoardPrev = chessBoardCurr.copy()
+chessBoardPrev = [[0 for _ in range(cols)] for _ in range(rows)]
 defaultTriggerLow = 0.2 # Voltage where magnet definitely is being sensed
 defaultTriggerHigh = 1.8 # Voltage where magnet definitely is being sensed
 vRef = 2.048 # VREF of the ADC chips
@@ -69,11 +69,7 @@ while True:
             else:
                 chessBoardCurr[0][y] = 0
             if (chessBoardCurr[0][y] != chessBoardPrev[0][y]):
-                print("hit ADC0")
                 boardChange = True
-            else:
-                print(chessBoardCurr[0][y])
-                print(chessBoardPrev[0][y])
         # Read ADC1 (row 1)
         for y in range(0,8):
             #sleep_ms(3)
@@ -149,7 +145,6 @@ while True:
                 boardChange = True
 
         if (boardChange):
-            print("test")
             chessBoardPrev = copy.deepcopy(chessBoardCurr)
             boardChange = False
             send_post_request_with_get_response(chessBoardCurr)
@@ -163,7 +158,7 @@ while True:
             print(row)
 
         # Pause before the next cycle
-        time.sleep_ms(1000)
+        #time.sleep_ms(3000)
 
     except Exception as e:
         print(f"An error occurred: {e}")
