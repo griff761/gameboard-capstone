@@ -5,8 +5,10 @@ def connect_wifi():
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
 
-    ssid = "ShamWoW"  # Replace with your Wi-Fi SSID
-    password = "Magnolia1302"  # Replace with your Wi-Fi password
+    # ssid = "NicolePhone"  # Replace with your Wi-Fi SSID
+    ssid = 'NicolePhone'
+    password = '1234567890'
+    # password = "1234567890"  # Replace with your Wi-Fi password
 
     if not wlan.isconnected():
         print(f"Connecting to Wi-Fi network {ssid}...")

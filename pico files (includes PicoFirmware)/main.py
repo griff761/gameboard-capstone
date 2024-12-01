@@ -1,5 +1,5 @@
 import time
-from jacks_folder.wifi_connect import connect_wifi
+from jacks_folder.wifi_connect import connect_wifi, disconnect_wifi
 from request_handler import send_post_request_with_get_response
 from lib.mcp3008 import MCP3008
 from machine import Pin
@@ -10,8 +10,11 @@ from led_handler import handle_leds  # Import the LED handler
 def test_server_connection():
     import usocket
     try:
-        addr = usocket.getaddrinfo("172.20.10.6", 8080)[0][-1]
+        print(test)
+        addr = usocket.getaddrinfo("172.20.10.13", 8080)[0][-1]
+        print(test1)
         s = usocket.socket()
+        print('test2')
         s.connect(addr)
         print("Successfully connected to the server!")
         s.close()
@@ -19,6 +22,7 @@ def test_server_connection():
         print(f"Error connecting to the server: {e}. Check if the server is running and accessible.")
 
 # Ensure Wi-Fi is connected before starting
+# disconnect_wifi()
 connect_wifi()
 test_server_connection()
 

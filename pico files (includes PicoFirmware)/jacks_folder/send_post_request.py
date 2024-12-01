@@ -6,7 +6,7 @@ def send_post_request(array_2d, max_retries=5, retry_delay=2):
     """
     Sends a POST request to the server with retry logic.
     """
-    url = "http://172.20.10.6:8080/data"
+    url = "http://172.20.10.13:8080/data"
     headers = {"Content-Type": "application/json"}
     data = json.dumps({"chess_moves": array_2d})
 
