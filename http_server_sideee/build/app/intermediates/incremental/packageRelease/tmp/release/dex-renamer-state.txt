@@ -1,0 +1,4 @@
+#Sat Nov 30 15:42:15 PST 2024
+base.0=C\:\\Users\\Leigh\\Documents\\GitHub\\gameboard-capstone\\http_server_sideee\\build\\app\\intermediates\\dex\\release\\minifyReleaseWithR8\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
