@@ -1,74 +1,103 @@
-/// Flag Checker
-/// Processes flags in the last two columns of the 2D array and triggers specific actions.
-
-import 'request_2d_array_interpreter.dart';
+import 'dart:convert';
+import 'array_for_nicole.dart';
 
 class FlagChecker {
+  static List<List<int>> _currentArray =
+  List.generate(8, (_) => List.generate(10, (_) => 0));
+
+  /// Retrieves the current 2D array.
+  static List<List<int>> get currentArray => _currentArray;
+
+  /// Updates the current 2D array with new values.
+  static void updateArray(List<List<int>> newArray) {
+    _currentArray = List<List<int>>.from(
+        newArray.map((row) => List<int>.from(row)));
+    print('FlagChecker: Updated current array:');
+  }
+
   /// Checks flags and applies actions based on the 2D array's state.
   static void checkFlags() {
-    final currentArray = Request2DArrayInterpreter.currentArray;
+    print('FlagChecker: Checking flags in the 2D array...');
 
-    print('Flag Checker: Checking flags in the 2D array...');
-
-    // Check Row 1, Column 9 (Reset/beginning of game Flag)
-    if (currentArray[0][8] == 1) {
-      print('Flag Checker: Reset flag detected. Resetting the 2D array...');
-      _resetArray(currentArray);
+    // Check Row 1, Column 9 (Reset Flag)
+    if (_currentArray[0][8] == 1) {
+      print('FlagChecker: Reset flag detected. Resetting the 2D array...');
+      _resetArray();
     }
 
     // Check Row 1, Column 10 (Enter Flag)
-    if (currentArray[0][9] == 1) {
-      print('Flag Checker: Enter flag detected. Triggering enter action...');
-      _enterAction(currentArray);
+    if (_currentArray[0][9] == 1) {
+      print('FlagChecker: Enter flag detected. Triggering enter action...');
+      _enterAction();
     }
 
-    // Check Row 1, Column 9 (Gamemode 1 Flag)
-    if (currentArray[1][8] == 1) {
-      print('Flag Checker: Enter Gamemode 1 detected. Triggering gamemode 1 action...');
-      _gamemode1Action(currentArray);
+    // Check Row 1, Column 9 (Game Mode 1 Flag)
+    if (_currentArray[1][8] == 0) {
+      print('FlagChecker: Game Mode 1 detected. Triggering Game Mode 1 action...');
+      _gamemode1Action();
     }
 
     // Check Row 3, Column 9 (End Turn Flag)
-    if (currentArray[2][8] == 1) {
-      print('Flag Checker: End turn flag detected. Triggering end turn action...');
-      _endTurnAction(currentArray);
+    if (_currentArray[2][8] == 1) {
+      print('FlagChecker: End turn flag detected. Triggering end turn action...');
+      _endTurnAction();
     }
-
-    // Add additional flag checks as needed
-    Request2DArrayInterpreter.updateArray(currentArray); // Update array with changes
   }
 
-  /// Resets the 2D array (Row 1-8, Columns 1-8 set to 0).
-  static void _resetArray(List<List<int>> array) {
+  /// Saves a 2D array from a POST request payload.
+  static String save2DArray(String payload) {
+    try {
+      final parsedData = jsonDecode(payload);
+      final chessMoves = parsedData['chess_moves'];
+
+      if (chessMoves is List) {
+        final validatedArray = chessMoves.map<List<int>>((row) {
+          if (row is List) {
+            return row.map<int>((element) => element as int).toList();
+          } else {
+            throw FormatException('Row is not a valid List<int>.');
+          }
+        }).toList();
+
+        if (validatedArray.length != 8 ||
+            validatedArray.any((row) => row.length != 10)) {
+          return 'Invalid array size. Expected 8x10.';
+        }
+
+        updateArray(validatedArray);
+        return '2D array successfully updated.';
+      } else {
+        return 'Invalid data format. Expected a 2D array.';
+      }
+    } catch (e) {
+      print('Error parsing JSON: $e');
+      return 'Error parsing JSON.';
+    }
+  }
+
+  static void _resetArray() {
     for (int row = 0; row < 8; row++) {
       for (int col = 0; col < 8; col++) {
-        array[row][col] = 0;
+        _currentArray[row][col] = 0;
       }
     }
-    array[0][8] = 0; // Reset the flag itself
-    print('Flag Checker: Array reset complete.');
+    _currentArray[0][8] = 0; // Reset the flag
+    print('FlagChecker: Array reset complete.');
   }
 
-  /// Triggers the "Enter" action.
-  static void _enterAction(List<List<int>> array) {
-    // Example logic for "Enter" action
-    array[0][9] = 0; // Reset the flag itself
-    print('Flag Checker: Enter action executed.');
+  static void _enterAction() {
+    _currentArray[0][9] = 0; // Reset the flag
+    print('FlagChecker: Enter action executed.');
   }
 
-  /// Triggers the "Enter" action.
-  static void _gamemode1Action(List<List<int>> array) {
-    // Example logic for "Enter" action
-
-    //Not resetting this flag, gamemode aready indicated
-    //array[1][8] = 0; // Reset the flag itself
-    print('Flag Checker: Enter action executed.');
+  static void _gamemode1Action() {
+    final updatedArray = ArrayForNicole.handleArray(_currentArray);
+    updateArray(updatedArray); // Save changes back
+    print('FlagChecker: Game Mode 1 action executed.');
   }
 
-  /// Triggers the "End Turn" action.
-  static void _endTurnAction(List<List<int>> array) {
-    // Example logic for "End Turn" action
-    array[2][8] = 0; // Reset the flag itself
-    print('Flag Checker: End turn action executed.');
+  static void _endTurnAction() {
+    _currentArray[2][8] = 0; // Reset the flag
+    print('FlagChecker: End turn action executed.');
   }
 }

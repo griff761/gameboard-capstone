@@ -55,16 +55,28 @@ vRef = 2.048  # VREF of the ADC chips
 steps = 1023  # Steps of the ADC chip
 scaleFactor = vRef / steps
 boardChange = False
+TestingMode = False  # Initialize TestingMode to False
 
 # Main execution loop
 while True:
-    try:      
-        # Read ADCs
-        for row, adc in enumerate([adc0, adc1, adc2, adc3, adc4, adc5, adc6, adc7]):
-            for y in range(8):
-                read = scaleFactor * adc.read(y)
-                chessBoardCurr[row][y] = 1 if (read < defaultTriggerLow or read > defaultTriggerHigh) else 0
-                if chessBoardCurr[row][y] != chessBoardPrev[row][y]:
+    try:
+        if not TestingMode:  # Execute blocks only if TestingMode is False
+            # Copy columns 9 and 10 from chessboardLEDs to chessBoardCurr
+            for row in range(8):
+                chessBoardCurr[row][8] = chessboardLEDs[row][8]
+                chessBoardCurr[row][9] = chessboardLEDs[row][9]
+
+            # Read ADCs for columns 1-8
+            for row, adc in enumerate([adc0, adc1, adc2, adc3, adc4, adc5, adc6, adc7]):
+                for y in range(8):
+                    read = scaleFactor * adc.read(y)
+                    chessBoardCurr[row][y] = 1 if (read < defaultTriggerLow or read > defaultTriggerHigh) else 0
+                    if chessBoardCurr[row][y] != chessBoardPrev[row][y]:
+                        boardChange = True
+
+            # Check for changes in columns 9 and 10
+            for row in range(8):
+                if chessBoardCurr[row][8] != chessBoardPrev[row][8] or chessBoardCurr[row][9] != chessBoardPrev[row][9]:
                     boardChange = True
 
         if boardChange:
@@ -90,8 +102,20 @@ while True:
                 handle_leds(chessboardLEDs)
             else:
                 print("LEDs: No change, chessboard not updated yet...")
-                
-            
+
+        # ----------------- TEST example (to force 2 iterations, and test pre/current saves) --------
+        #chessBoardCurr = [[9, 9, 9, 9, 9, 9, 9, 9, 0, 0],
+        #                  [9, 9, 9, 9, 9, 9, 9, 9, 0, 0],
+        #                  [9, 9, 9, 9, 9, 9, 9, 9, 0, 0],
+        #                  [9, 9, 9, 9, 9, 9, 9, 9, 0, 0],
+        #                  [9, 9, 9, 9, 9, 9, 9, 9, 0, 0],
+        #                  [9, 9, 9, 9, 9, 9, 9, 9, 0, 0],
+        #                  [9, 9, 9, 9, 9, 9, 9, 9, 0, 0],
+        #                  [9, 9, 9, 9, 9, 9, 9, 9, 0, 0]]
+        #boardChange = True
+        TestingMode = False  # Set TestingMode to True after manual testing update
+        #print("Test values set for chessBoardCurr. TestingMode enabled.")
+
         # Pause before the next cycle
         time.sleep_ms(3000)
 

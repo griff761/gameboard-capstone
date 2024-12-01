@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
-import 'request_2d_array_interpreter.dart';
-import 'example_ai_move_maker.dart';
 import 'flag_checker.dart';
 
 class Server {
@@ -29,12 +27,9 @@ class Server {
         print('Received POST data:');
         _prettyPrintArrayFromPayload(payload);
         print('Attempting to update the 2D array...');
-        final result = Request2DArrayInterpreter.save2DArray(payload);
-        print(result);
+        final result = FlagChecker.save2DArray(payload);
 
         if (result == '2D array successfully updated.') {
-          ExampleAIMoveMaker.makeMove();
-          print('AI Move Maker successfully updated the manipulated array.');
           return Response.ok(result);
         } else {
           return Response.badRequest(body: result);
@@ -51,7 +46,7 @@ class Server {
 
   /// Provides the updated 2D array for GET requests.
   static String provideUpdated2DArray() {
-    final currentArray = Request2DArrayInterpreter.currentArray;
+    final currentArray = FlagChecker.currentArray;
     return jsonEncode({'chess_moves': currentArray});
   }
 
@@ -62,7 +57,6 @@ class Server {
         final decodedJson = jsonDecode(jsonData);
 
         if (decodedJson is Map && decodedJson.containsKey('chess_moves')) {
-          print('Chess Moves 2D Array:');
           for (var i = 0; i < decodedJson['chess_moves'].length; i++) {
             print('Row $i: ${decodedJson['chess_moves'][i]} // PrettyPrint');
           }
