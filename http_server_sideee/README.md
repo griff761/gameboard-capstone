@@ -1,10 +1,10 @@
-# smart_chess_application
+# http_server_sideee
 
-A new Flutter project.
+Jack's server-side stuff..
 
 ## Getting Started
 
-This project is a starting point for a Flutter application._
+This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
 
