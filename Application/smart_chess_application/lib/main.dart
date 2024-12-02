@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
 import 'chessboard_view.dart';
+import 'jack/server.dart';
 import 'src/output_widget.dart';
 
-void main() {
+void main() async{
   runApp(const MyApp());
+  print('Starting server...');
+  await Server.start();
 }
 
 class MyApp extends StatefulWidget {
