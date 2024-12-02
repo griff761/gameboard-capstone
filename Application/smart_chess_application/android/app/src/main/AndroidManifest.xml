@@ -1,5 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.smart_chess_application">
+
+
+    <!-- Added these permissions, for wifi connectivity, yours truly, JACK -->
+   <uses-permission android:name="android.permission.INTERNET" />
+   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
    <application
         android:label="smart_chess_application"
         android:name="${applicationName}"

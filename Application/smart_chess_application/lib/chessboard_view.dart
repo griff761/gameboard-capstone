@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:chess_vectors_flutter/chess_vectors_flutter.dart';
+import 'package:smart_chess_application/models/move.dart';
+import 'package:smart_chess_application/src/output_widget.dart';
+import 'package:stockfish/stockfish.dart';
 
 import 'models/chessboard.dart';
 import 'models/chesspiece.dart';
@@ -16,16 +19,20 @@ class ChessboardView extends StatefulWidget {
 
 class ChessboardViewState extends State<ChessboardView> {
 
+  bool needDialogue = false;
+
   Chessboard c = Chessboard();
   List<List<GlobalKey<ChessSquareState>>> keys = [[],[],[],[],[],[],[],[]];
   List<Widget> squares = [];
 
-  List<List<int>> possibleMoves = [];
+  List<Move> possibleMoves = [];
 
   Color color1 = Colors.black12;
   Color color2 = Colors.white;
   Color possibleMove = Colors.lightBlueAccent;
   Color possibleMove2 = Colors.lightBlue;
+
+  late Stockfish stockfish;
 
   Map<String, Widget> icons = {
     "b": BlackBishop(),
@@ -53,8 +60,8 @@ class ChessboardViewState extends State<ChessboardView> {
   {
     for(int i = 0; i < possibleMoves.length; i++)
     {
-      int x = possibleMoves[i][0];
-      int y = possibleMoves[i][1];
+      int x = possibleMoves[i].row;
+      int y = possibleMoves[i].col;
       keys[x][y].currentState?.updateColor(((x + y)%2 == 0) ? possibleMove : possibleMove2);
     }
   }
@@ -62,14 +69,14 @@ class ChessboardViewState extends State<ChessboardView> {
   {
     for(int i = 0; i < possibleMoves.length; i++)
     {
-      int x = possibleMoves[i][0];
-      int y = possibleMoves[i][1];
+      int x = possibleMoves[i].row;
+      int y = possibleMoves[i].col;
       keys[x][y].currentState?.resetColor();
     }
   }
 
 
-  void boardUpdate(List<int> pos) {
+  void handleBoardInput(List<int> pos) {
     pieceToMoveClick = !pieceToMoveClick; //toggle
     if(pieceToMoveClick)
       {
@@ -87,8 +94,11 @@ class ChessboardViewState extends State<ChessboardView> {
         setState(() {
           clearMoveColors();
           text = "";
+
         });
         possibleMoves = [];
+        // ChessPiece cp = c.board[x1][y1];
+        // promotionDialogue(cp.team);
       }
     else
       {
@@ -96,21 +106,138 @@ class ChessboardViewState extends State<ChessboardView> {
         y2 = pos[1];
         text = text + "to " + x2.toString() + "," + y2.toString();
         print(text);
-        print(c.move(x1, y1, x2, y2));
-        setState(() {
-          clearMoveColors();
-          keys[x1][y1].currentState?.updateIcon(icons[c.board[x1][y1].getSymbol()] ?? Text(""));
-          keys[x2][y2].currentState?.updateIcon(icons[c.board[x2][y2].getSymbol()] ?? Text(""));
-        });
-        possibleMoves = [];
+
+        Move? tempMove = c.buildMove(x1, y1, x2, y2);
+
+        if(tempMove?.promotion == true)
+          {
+            ChessPiece cp = c.board[x1][y1];
+            promotionDialogue(cp.team, tempMove!);
+          }
+        else if(tempMove != null)
+          {
+            movePiece(tempMove!);
+          }
       }
-    print(c.toString());
   }
+
+  void movePiece(Move inputMove)
+  {
+    Move? move = c.move(inputMove);
+    setState(() {
+      clearMoveColors();
+
+      updateAllSpaces();
+
+      //handle special move logic here
+      // TODO: OTHER SPECIAL MOVES HERE
+      // if(move?.enPassant == true)
+      //   {
+      //     keys[(move as PassantMove).getPassantRow()][move.col]?.currentState?.updateIcon( Text(""));
+      //   }
+      // else if(move?.castle == 1)
+      //   {
+      //     keys[x1][5].currentState?.updateIcon(icons[c.board[x1][5].getSymbol()] ?? Text(""));
+      //     keys[x1][7].currentState?.updateIcon(icons[c.board[x1][7].getSymbol()] ?? Text(""));
+      //   }
+      // else if(move?.castle == -1)
+      //   {
+      //     keys[x1][3].currentState?.updateIcon(icons[c.board[x1][3].getSymbol()] ?? Text(""));
+      //     keys[x1][0].currentState?.updateIcon(icons[c.board[x1][0].getSymbol()] ?? Text(""));
+      //     // keys[x1][y1].currentState?.updateIcon(icons[c.board[x1][y1].getSymbol()] ?? Text(""));
+      //   }
+      // keys[x1][y1].currentState?.updateIcon(icons[c.board[x1][y1].getSymbol()] ?? Text(""));
+      // keys[x2][y2].currentState?.updateIcon(icons[c.board[x2][y2].getSymbol()] ?? Text(""));
+    });
+    possibleMoves = [];
+    if(move != null)
+      print(move.lAN);
+  }
+
+  void updateAllSpaces()
+  {
+    //lets see how slow this is :/
+    setState(() {
+      for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+          keys[i][j].currentState?.updateIcon(
+              icons[c.board[i][j].getSymbol()] ?? Text(""));
+        }
+      }
+    });
+
+  }
+
+  void promotionDialogue(ChessPieceTeam team, Move move)
+  {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("PAWN PROMOTION"),
+        content: const Text("What would you like to promote this pawn to?"),
+        actions: <Widget>[
+          Wrap(
+            children:
+              (team == ChessPieceTeam.white ? [
+                [WhiteBishop(), 'B'],
+                [WhiteKnight(), 'N'],
+                [WhiteQueen(), 'Q'],
+                [WhiteRook(), 'R'],
+              ] : [
+                [BlackBishop(), 'b'],
+                [BlackKnight(), 'n'],
+                [BlackQueen(), 'q'],
+                [BlackRook(), 'r'],
+              ])
+
+                .map(
+                  (command) => Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    print(command);
+                    setState(() {
+                      needDialogue = false;
+                    });
+                    move.promotionType = command[1] as String;
+                    Navigator.of(ctx).pop();
+                    movePiece(move);
+                  },
+                  child: command[0] as Widget,//Text(command),
+                ),
+              ),
+            )
+                .toList(growable: false),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
+Move? aIMove = null;
 
   List<Widget> iconList = [];
 
   @override
   void initState() {
+    super.initState();
+    //setup AI
+    stockfish = Stockfish();
+
+    final stockfishSubscription = stockfish.stdout.listen((message) {
+      print(message);
+      if(message.startsWith('bestmove'))
+        {
+          List<String> outputParts = message.split(" ");
+          String aIMoveString = outputParts[1];
+
+          aIMove = c.decipherAIMove(aIMoveString);
+          print(aIMove);
+        }
+    });
+
     //setup chess squares for use in grid
     for(int i = 7; i >= 0; i--)
     {
@@ -124,7 +251,7 @@ class ChessboardViewState extends State<ChessboardView> {
                 x: i,
                 y: j,
                 color: ((i + j)%2 == 0) ? color1 : color2,
-                boardUpdate: boardUpdate,
+                boardUpdate: handleBoardInput,
                 icon:  icons[c.board[i][j].getSymbol()] ?? Text("")
               ));
         }
@@ -132,6 +259,11 @@ class ChessboardViewState extends State<ChessboardView> {
   }
   @override
   Widget build(BuildContext context) {
+
+    if(needDialogue){
+      Navigator.of(context).pop();
+    }
+
     return Column(
       children: [
         Expanded(
@@ -139,8 +271,31 @@ class ChessboardViewState extends State<ChessboardView> {
               crossAxisCount: 8,
               children: squares)
         ),
+        const Text("",style: TextStyle(fontSize: 50),), //temporary -- use for spacer
+        TextButton(onPressed: () async {
+          stockfish.stdin = c.getBoardStateForAI();
+          stockfish.stdin = 'go movetime 1500';
+        },
+          child: const Text(
+              "Calculate AI Move",
+              style:TextStyle(fontSize: 30)),
+        ),
+        const Text("",style: TextStyle(fontSize: 20),), //temporary -- use for spacer
         Text(text),
-        Text("") //temporary -- use for spacer
+        const Text("",style: TextStyle(fontSize: 20),), //temporary -- use for spacer
+        TextButton(onPressed: () async {
+          if(aIMove != null) {
+            movePiece(aIMove!);
+          }
+        }, child: Text("PLAY AI MOVE"),
+        ),
+        TextButton(onPressed: () async {
+          print("given to stockfish: ");
+          print(c.getBoardStateForAI());
+
+          stockfish.stdin = 'd';
+        }, child: Text("print current board"),
+        )
       ]
     );
   }

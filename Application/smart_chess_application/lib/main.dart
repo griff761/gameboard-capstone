@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 // import 'package';
 
 import 'package:logging/logging.dart';
-import 'package:stockfish/stockfish.dart';
-
 
 import 'chessboard_view.dart';
 import 'src/output_widget.dart';
@@ -27,18 +25,6 @@ class _AppState extends State<MyApp> {
     super.initState();
   }
 
-  int i = 0;
-
-  Icon buttonIcon = Icon(Icons.back_hand);
-
-  Icon i1 = Icon(Icons.add);
-  Icon i2 = Icon(Icons.abc);
-  Icon i3 = Icon(Icons.access_alarm);
-
-  int x1  = 0;
-  int x2 = 0;
-  int y1 = 0;
-  int y2 = 0;
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'chessboard.dart';
 import 'chesspiece_types/empty.dart';
+import 'move.dart';
 
 enum ChessPieceType {pawn, rook, knight, bishop, queen, king, empty}
 enum ChessPieceTeam {black, white, none}
@@ -18,26 +19,39 @@ abstract class ChessPiece
   //piece type
   ChessPieceTeam team = ChessPieceTeam.none;
 
-  List<List<int>> getValidMoves(Chessboard currentBoard); //returns all valid moves for this piece
+  List<Move> getValidMoves(Chessboard currentBoard); //returns all valid moves for this piece
 
-  bool validMove(int newX, int newY, Chessboard currentBoard)
+  Move? validMove(Move inputMove, Chessboard currentBoard)
   {
-    for(List<int> move in getValidMoves(currentBoard))
+    for(Move move in getValidMoves(currentBoard))
     {
-      if(move[0] == newX && move[1] == newY)
+      if(move.row == inputMove.row && move.col == inputMove.col)
       {
-        return true;
+        if(inputMove.promotion)
+          {
+            return inputMove;
+          }
+        return move;
       }
     }
-    return false;
+    return null;
   }
-  void move(int newX, int newY, Chessboard currentBoard) {
-    // firstMove = false;
-    currentBoard.removePiece(newX, newY);
+
+  Move buildMove(int row, int col, Chessboard currentBoard)
+  {
+    return Move(row: row, col: col, piece: this);
+  }
+
+  void move(Move move, Chessboard currentBoard) {
+    // if(otherTeamInSpace(move.row, move.col, currentBoard))
+    //   {
+    //     move.capture = true;
+    //   }
+    currentBoard.removePiece(move.row, move.col);
     currentBoard.board[row][col] = Empty(row: row, col: col);
-    currentBoard.board[newX][newY] = this;
-    row = newX;
-    col = newY;
+    currentBoard.board[move.row][move.col] = this;
+    row = move.row;
+    col = move.col;
   }
 
   String getSymbol();

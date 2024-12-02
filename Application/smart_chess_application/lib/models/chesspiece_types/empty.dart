@@ -1,5 +1,6 @@
 import '../chessboard.dart';
 import '../chesspiece.dart';
+import '../move.dart';
 
 class Empty extends ChessPiece
 {
@@ -7,13 +8,13 @@ class Empty extends ChessPiece
   Empty({required super.row, required super.col, super.team = ChessPieceTeam.none, super.type = ChessPieceType.empty});
 
   @override
-  List<List<int>> getValidMoves(Chessboard currentBoard) {
-    return [[]];
+  List<Move> getValidMoves(Chessboard currentBoard) {
+    return [];
   }
 
   @override
-  bool validMove(int newX, int newY, Chessboard currentBoard) {
-    return false;
+  Move? validMove(Move move, Chessboard currentBoard) {
+    return null;
   }
 
   @override
@@ -22,7 +23,7 @@ class Empty extends ChessPiece
   }
 
   @override
-  void move(int newX, int newY, Chessboard currentBoard)
+  void move(Move move, Chessboard currentBoard)
   {
     throw Exception("this should never happen, can't move null piece");
   }

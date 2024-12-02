@@ -29,10 +29,12 @@ void main() {
 
   test('pawn basic movement', () {
     Chessboard c = Chessboard();
-    print(c.board);
-
-    print(c.board[1][3].getValidMoves(c));
     print(c.toString());
+    c.move(1, 2, 3, 2);
+    print(c.toString());
+
+    // print(c.board[1][3].getValidMoves(c));
+    // print(c.toString());
   });
 
 

@@ -1,5 +1,6 @@
 import '../chessboard.dart';
 import '../chesspiece.dart';
+import '../move.dart';
 import 'empty.dart';
 
 class Knight extends ChessPiece
@@ -8,48 +9,48 @@ class Knight extends ChessPiece
   Knight({required super.row, required super.col, required super.team, super.type = ChessPieceType.knight});
 
   @override
-  List<List<int>> getValidMoves(Chessboard currentBoard) {
-    List<List<int>> moves = [];
+  List<Move> getValidMoves(Chessboard currentBoard) {
+    List<Move> moves = [];
 
     //up right (row + 1, col + 2) and (row + 2, col + 1)
     if (inBounds(row+1) && inBounds(col+2) && !sameTeamInSpace(row+1, col+2, currentBoard))
     {
-      moves.add([row+1,col+2]);
+      moves.add(Move(row: row+1,col: col+2, piece: this));
     }
     if (inBounds(row+2) && inBounds(col+1) && !sameTeamInSpace(row+2, col+1, currentBoard))
     {
-      moves.add([row+2,col+1]);
+      moves.add(Move(row: row+2,col: col+1, piece: this));
     }
 
     //up left (row + 1, col - 2) and (row + 2, col - 1)
     if (inBounds(row+1) && inBounds(col-2) && !sameTeamInSpace(row+1, col-2, currentBoard))
     {
-      moves.add([row+1,col-2]);
+      moves.add(Move(row: row+1,col: col-2, piece: this));
     }
     if (inBounds(row+2) && inBounds(col-1) && !sameTeamInSpace(row+2, col-1, currentBoard))
     {
-      moves.add([row+2,col-1]);
+      moves.add(Move(row: row+2,col: col-1, piece: this));
     }
 
 
     //down right (row - 1, col + 2) and (row - 2, col + 1)
     if (inBounds(row-1) && inBounds(col+2) && !sameTeamInSpace(row-1, col+2, currentBoard))
     {
-      moves.add([row-1,col+2]);
+      moves.add(Move(row: row-1,col: col+2, piece: this));
     }
     if (inBounds(row-2) && inBounds(col+1) && !sameTeamInSpace(row-2, col+1, currentBoard))
     {
-      moves.add([row-2,col+1]);
+      moves.add(Move(row: row-2,col: col+1, piece: this));
     }
 
     //down left (row - 1, col - 2) and (row - 2, col - 1)
     if (inBounds(row-1) && inBounds(col-2) && !sameTeamInSpace(row-1, col-2, currentBoard))
     {
-      moves.add([row-1,col-2]);
+      moves.add(Move(row: row-1,col: col-2, piece: this));
     }
     if (inBounds(row-2) && inBounds(col-1) && !sameTeamInSpace(row-2, col-1, currentBoard))
     {
-      moves.add([row-2,col-1]);
+      moves.add(Move(row: row-2,col: col-1, piece: this));
     }
 
 
