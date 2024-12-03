@@ -1,5 +1,3 @@
-
-
 import 'package:smart_chess_application/models/chesspiece.dart';
 
 class ArrayForNicole {
@@ -11,38 +9,44 @@ class ArrayForNicole {
 
     List<List<ChessPieceTeam>> chessboard = List<List<ChessPieceTeam>>.filled(8, List<ChessPieceTeam>.filled(8, ChessPieceTeam.none));
 
-    for(int i = 0; i < 8; i++)
-      {
-        for(int j = 0; j < 8; j++)
-          {
-            chessboard[i][j] = intToChessTeam(array[i][j]);
-          }
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        chessboard[i][j] = intToChessTeam(array[i][j]);
       }
+    }
 
-
-    // _storedArray is the one you will feed into the AI program. Return it here.
-    // something like _storedArray = nicole's_AI_handler(_storedArray);
+    // Store the array
     _storedArray = array.map((row) => List<int>.from(row)).toList(); // Save the array
 
-
     print('AIPlaceholder: Array received and stored.');
+
+    // Call printArray to display the array
+    printArray(_storedArray);
+
     return _storedArray; // Return unaltered array
   }
 
-  static ChessPieceTeam intToChessTeam(int i)
-  {
-    if(i > 0)
-      {
-        return ChessPieceTeam.white;
-      }
-    else if (i < 0)
-      {
-        return ChessPieceTeam.black;
-      }
-    else
-      {
-        return ChessPieceTeam.none;
-      }
+  static ChessPieceTeam intToChessTeam(int i) {
+    if (i > 0) {
+      return ChessPieceTeam.white;
+    } else if (i < 0) {
+      return ChessPieceTeam.black;
+    } else {
+      return ChessPieceTeam.none;
+    }
+  }
+
+
+  ///   --------------- DOESNT SEEM TO BE EXECUTING FOR SOME REASON! not sure if storing works yet. could be that array is null
+  ///   and thus it isnt overwriting what was passed into array_for_nicole.dart.
+  ///   thus could be because for now, the AI handling logic isn't implemented, thus it isn't altering any array its given before
+  ///   answering the pico's get request.
+  ///   so for now: android code is just giving back exactly what it was given from the pico with no changes....
+  /// Prints the 2D array in a readable format.
+  static void printArray(List<List<int>> array) {
+    print('Current Chessboard State:');
+    for (var row in array) {
+      print(row.map((e) => e.toString().padLeft(2)).join(' '));
+    }
   }
 }
-
