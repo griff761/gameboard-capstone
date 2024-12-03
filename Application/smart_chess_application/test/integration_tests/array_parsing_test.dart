@@ -26,7 +26,9 @@ void main() {
   // });
 
   test('pawn basic movement', () {
-
+    List<List<int>> ledArray = List<List<int>>.generate(8, (_) => new List<int>.generate(8,(_) => 0));
+    ledArray[5][6] = 27;
+    print(ledArray);
   });
 
 

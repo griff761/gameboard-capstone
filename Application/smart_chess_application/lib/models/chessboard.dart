@@ -139,6 +139,14 @@ board =
   bKing = Empty(row: -1,col: -1);
  }
 
+ List<Move> getValidPieceMoves(int row, int col)
+ {
+  return board[row][col].getValidMoves(this);
+ }
+
+
+
+
 
  bool isOccupiedByOwnPieces(int row, int col, ChessPieceTeam team)
  {

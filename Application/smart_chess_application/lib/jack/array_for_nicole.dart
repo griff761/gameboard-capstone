@@ -1,3 +1,4 @@
+import 'package:smart_chess_application/jack/server.dart';
 import 'package:smart_chess_application/models/chesspiece.dart';
 
 class ArrayForNicole {
@@ -7,11 +8,11 @@ class ArrayForNicole {
   static List<List<int>> handleArray(List<List<int>> array) {
     print('AIPlaceholder: Handling the 2D array...');
 
-    List<List<ChessPieceTeam>> chessboard = List<List<ChessPieceTeam>>.filled(8, List<ChessPieceTeam>.filled(8, ChessPieceTeam.none));
+    List<List<ChessPieceTeam>> chessboard = [[],[],[],[],[],[],[],[]];
 
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
-        chessboard[i][j] = intToChessTeam(array[i][j]);
+        chessboard[i].add(intToChessTeam(array[i][j]));
       }
     }
 
@@ -22,6 +23,8 @@ class ArrayForNicole {
 
     // Call printArray to display the array
     printArray(_storedArray);
+
+    Server.chessKey.currentState?.updateInt(); //update chessboard view here
 
     return _storedArray; // Return unaltered array
   }

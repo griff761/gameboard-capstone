@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
 import 'chessboard_view.dart';
+import 'chessboard_view_live.dart';
 import 'jack/server.dart';
 import 'src/output_widget.dart';
 
 void main() async{
   runApp(const MyApp());
-  print('Starting server...');
-  await Server.start();
+
 }
 
 class MyApp extends StatefulWidget {
@@ -23,9 +23,21 @@ class MyApp extends StatefulWidget {
 class _AppState extends State<MyApp> {
 
 
+  late ChessboardViewLive chessView;
+  late GlobalKey<ChessboardViewLiveState> chessKey;
+
   @override
   void initState() {
     super.initState();
+
+    chessKey = GlobalKey();
+
+    chessView = ChessboardViewLive(
+      key:chessKey
+    );
+    Server.chessKey = chessKey;
+    print('Starting server...');
+     Server.start();
   }
 
 
@@ -40,7 +52,7 @@ class _AppState extends State<MyApp> {
           children: [
 
             Expanded(
-              child: ChessboardView()
+              child: chessView
             ),
             // ChessSquare()
           ],

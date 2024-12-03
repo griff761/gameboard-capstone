@@ -29,7 +29,7 @@ def wait_for_user_input():
 def test_server_connection():
     import usocket
     try:
-        addr = usocket.getaddrinfo("172.20.10.6", 8080)[0][-1]
+        addr = usocket.getaddrinfo("172.20.10.13", 8080)[0][-1]
         s = usocket.socket()
         s.connect(addr)
         print("Successfully connected to the server!")

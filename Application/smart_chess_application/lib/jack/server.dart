@@ -1,9 +1,14 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
+import '../chessboard_view_live.dart';
 import 'flag_checker.dart';
 
 class Server {
+
+  static GlobalKey<ChessboardViewLiveState> chessKey = GlobalKey();
+
   /// Starts the server
   static Future<void> start() async {
     final handler = const Pipeline()
@@ -40,7 +45,7 @@ class Server {
       return Response.notFound('Page not found');
     });
 
-    final server = await io.serve(handler, '172.20.10.6', 8080);
+    final server = await io.serve(handler, '172.20.10.13', 8080);
     print('Server started successfully. Listening on http://${server.address.host}:${server.port}');
   }
 
