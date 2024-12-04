@@ -12,6 +12,9 @@ class LightsResult
 
   // let 3 be tentative move (before move confirmation)
 
+  // let 4 be AI MOVE FROM
+  // let 5 be AI MOVE TO
+
 
   List<List<int>> ledArray = List<List<int>>.generate(8, (_) => new List<int>.generate(8,(_) => 0)); //fill array with 0s
 
@@ -84,6 +87,34 @@ class LightsResult
   int getColor(int row, int col)
   {
     return ledArray[row][col];
+  }
+
+  //List<List<int>> -> [0] row [1] col [2] hardware team
+  void AIMove(Move move, List<List<int>> changes, bool taking)
+  {
+    reset();
+    //TODO: error tracking (red squares for invalid move portions)
+    ledArray[move.piece.row][move.piece.col] = 4;
+    ledArray[move.row][move.col] = 5;
+
+    for(List<int> change in changes)
+      {
+        //reset if moved
+        if(change[0] == move.piece.row && change[1] == move.piece.col)
+          {
+            ledArray[move.piece.row][move.piece.col] = 0;
+          }
+        else if(change[0] == move.row && change[1] == move.col && !taking) // only remove light if it's
+        {
+          ledArray[move.row][move.col] = 0;
+        }
+        else
+          {
+            ledArray[change[0]][change[1]] = -1;
+          }
+      }
+
+    // ledArray[]
   }
 
 

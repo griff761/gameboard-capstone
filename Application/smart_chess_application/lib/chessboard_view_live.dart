@@ -370,6 +370,13 @@ Move? aIMove = null;
         //   stockfish.stdin = 'd';
         // }, child: Text("print current board"),
         // ),
+        // Expanded(
+        //   child: Row(
+        //     children: [
+        //
+        //     ],
+        //   )
+        // ),
         TextButton(onPressed: () async {
           c.playingWithAI = !c.playingWithAI;
           print("PLAYING WITH AI: ${c.playingWithAI}");
@@ -456,6 +463,13 @@ class ChessSquareState extends State<ChessSquare> {
   Color tentative1 = const Color.fromRGBO(179, 255, 250, 1);
   Color tentative2 = const Color.fromRGBO(134, 191, 187, 1);
 
+
+  Color aIMoveFrom1 = const Color.fromRGBO(194, 133, 255, 1);
+  Color aIMoveFrom2 = const Color.fromRGBO(149, 102, 196, 1);
+
+  Color aIMoveTo1 = const Color.fromRGBO(255, 246, 145, 1);
+  Color aIMoveTo2 = const Color.fromRGBO(189, 182, 106, 1);
+
   Color uhoh = Colors.deepPurple;
 
   Map<String, Widget> icons = {
@@ -491,6 +505,8 @@ class ChessSquareState extends State<ChessSquare> {
       1:  ((widget.row + widget.col)%2 == 0) ? possible1 : possible2,
       2:  ((widget.row + widget.col)%2 == 0) ? continue1 : continue2,
       3:  ((widget.row + widget.col)%2 == 0) ? tentative1 : tentative2,
+      4:  ((widget.row + widget.col)%2 == 0) ? aIMoveFrom1 : aIMoveFrom2,
+      5:  ((widget.row + widget.col)%2 == 0) ? aIMoveTo1 : aIMoveTo2,
     };
   }
 

@@ -4,6 +4,10 @@ import 'chesspiece_types/king.dart';
 import 'lights_result.dart';
 import 'move.dart';
 
+import 'package:stockfish/stockfish.dart';
+
+
+
 /// chessboard specifically designed to integrate with hardware portion of the Capstone Project
 class IntegratedChessboard extends Chessboard
 {
@@ -22,7 +26,26 @@ class IntegratedChessboard extends Chessboard
 
   bool errorState = false;
 
+  late Stockfish stockfish;
+  Move? aIMove;
 
+  IntegratedChessboard()
+  {
+    stockfish = Stockfish();
+    final stockfishSubscription = stockfish.stdout.listen((message) {
+      print(message);
+      if(message.startsWith('bestmove'))
+        {
+          List<String> outputParts = message.split(" ");
+          String aIMoveString = outputParts[1];
+
+          aIMove = decipherAIMove(aIMoveString);
+          print(aIMove);
+          determiningResult = false;
+
+        }
+    });
+  }
 
 
   void update_hardware_state(List<List<ChessPieceTeam>> postArray)
@@ -472,11 +495,28 @@ class IntegratedChessboard extends Chessboard
     move(currentMove!);
     currentMove = null;
     validMoveState = false;
-    
 
-    determiningResult = false;
+
+
+    if(playingWithAI && turn == ChessPieceTeam.black)
+      {
+        getAIMove();
+      }
+
     return true;
 
+  }
+
+
+  void getAIMove()
+  {
+    stockfish.stdin = getBoardStateForAI();
+    stockfish.stdin = 'go movetime 1500';
+  }
+
+  void playAIMove()
+  {
+    //AI MOVE IS STORED IN aiMove
   }
 
 }
