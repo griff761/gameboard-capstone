@@ -91,7 +91,7 @@ class IntegratedChessboard extends Chessboard
       {
           //get pieces that changed
         ChessPiece chessPiece1 = board[changes[0][0]][changes[0][1]];
-        ChessPiece chessPiece2 = board[changes[1][0]][changes[0][1]];
+        ChessPiece chessPiece2 = board[changes[1][0]][changes[1][1]];
           //find (first) one that is on our team
         ChessPiece? ourPiece = null;
         ChessPiece otherPiece = chessPiece1;
@@ -116,7 +116,12 @@ class IntegratedChessboard extends Chessboard
               //check for king picked up and placed in castle spot
               //check for rook picked up and placed in castle spot
             // if(chessPiece1 is )
+            Move? castleMove = checkForCastlingTwoChanges(chessPiece1, chessPiece2);
 
+            if(castleMove != null)
+              {
+                //valid castle
+              }
 
             //check for en passant
               //check for pawn picked up and placed in en passant spot
@@ -126,9 +131,20 @@ class IntegratedChessboard extends Chessboard
             Move m = buildGuaranteeMove(ourPiece.row, ourPiece.col, otherPiece.row, otherPiece.col);
             if((currentMove = ourPiece.validMove(m, this)) != null)
               {
-                validMoveState = true;
-                leds.tentativeBoard(changes);
-                print("valid move: now confirm");
+                //unclear if this check is really needed but just in case
+                if(hardware_state[ourPiece.row][ourPiece.col] == ChessPieceTeam.none &&
+                hardware_state[otherPiece.row][otherPiece.col] == turn)
+                  {
+                    validMoveState = true;
+                    leds.tentativeBoard(changes);
+                    print("valid move: now confirm");
+                  }
+                else
+                  {
+                    leds.errorBoard(changes);
+                    print("wrong team piece placed in spot");
+                  }
+
               }
           }
 
@@ -152,27 +168,96 @@ class IntegratedChessboard extends Chessboard
   }
 
 
-  // Move? checkForCastlingTwoChanges(ChessPiece a, ChessPiece b)
-  // {
-  //   //check for king and rook picked up
-  //   if(a.team == b.team && ((a.type == ChessPieceType.king && b.type == ChessPieceType.rook) || (a.type == ChessPieceType.rook && b.type == ChessPieceType.king)))
-  //     {
-  //       if(a.type == ChessPieceType.king)
-  //         {
-  //           if((a as King).canQueensideCastle(this) && b.col == 0)
-  //             {
-  //
-  //             }
-  //         }
-  //       else
-  //         {
-  //
-  //         }
-  //     }
-  //   else if(a.team == )
-  //   //check for king picked up and placed in castle spot
-  //   //check for rook picked up and placed in castle spot
-  // }
+  Move? checkForCastlingTwoChanges(ChessPiece a, ChessPiece b)
+  {
+    //team playing is turn
+    King k = turn == ChessPieceTeam.white ? wKing : bKing;
+    bool qCastle = false;
+    bool kCastle = true;
+
+    //if castling not available, just return null
+    if(!(kCastle = k.canKingsideCastle(this)) && !(qCastle = k.canQueensideCastle(this)))
+      {
+        return null;
+      }
+
+    //check for king and rook picked up
+    if(a.team == b.team && ((a.type == ChessPieceType.king && b.type == ChessPieceType.rook) || (a.type == ChessPieceType.rook && b.type == ChessPieceType.king)))
+      {
+        King king;
+        ChessPiece other;
+
+        if(a.type == ChessPieceType.king)
+          {
+            king = a as King;
+            other = b;
+          }
+        else
+          {
+            king = b as King;
+            other = a;
+          }
+
+        if(qCastle && other.col == 0)
+        {
+          print("queenside castle valid");
+        }
+        else if(kCastle && other.col == 7)
+        {
+          print("kingside castle valid");
+        }
+        else
+        {
+          print("INVALID CASTLE ATTEMPT");
+        }
+      }
+    else if((a.team == turn  && b.team == ChessPieceTeam.none) || (a.team == ChessPieceTeam.none && b.team == turn))
+      {
+        if(a.type == ChessPieceType.king || b.type == ChessPieceType.king)
+          {
+            King king;
+            ChessPiece other;
+            if(a.type == ChessPieceType.king)
+            {
+              king = a as King;
+              other = b;
+            }
+            else
+            {
+              king = b as King;
+              other = a;
+            }
+
+
+            if(qCastle && b.row == a.row && b.col == (a.col-2))
+              {
+                //queenside castle valid
+              }
+            else if(kCastle && b.row == a.row && b.col == (a.col+2))
+              {
+                //kingside castle valid
+              }
+            else
+              {
+                //INVALID
+              }
+          }
+        else if(a.type == ChessPieceType.rook)
+          {
+
+          }
+        else if(b.type == ChessPieceType.rook)
+          {
+
+          }
+        else
+          {
+            //INVALID
+          }
+      }
+    //check for king picked up and placed in castle spot
+    //check for rook picked up and placed in castle spot
+  }
 
 
   Move buildGuaranteeMove(int r1, int c1, int r2, int c2)

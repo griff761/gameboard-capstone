@@ -53,6 +53,7 @@ class _AppState extends State<MyApp> {
 
             Expanded(
               child: chessView
+              // child: ChessboardView(),
             ),
             // ChessSquare()
           ],

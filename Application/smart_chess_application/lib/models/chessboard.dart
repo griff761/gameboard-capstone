@@ -30,8 +30,8 @@ class Chessboard
  List<ChessPiece> whitePieces = [];
  List<ChessPiece> blackPieces = [];
 
- ChessPiece wKing = Empty(row: -1,col: -1);
- ChessPiece bKing = Empty(row: -1,col: -1);
+ King wKing = King(row: -1,col: -1, team: ChessPieceTeam.none);
+ King bKing = King(row: -1,col: -1, team: ChessPieceTeam.none);
 
  ChessPieceTeam turn = ChessPieceTeam.white;
 
@@ -109,8 +109,8 @@ class Chessboard
     blackPieces.add(board[7][i]);
    }
 
-  wKing = board[4][0];
-  bKing = board[4][7];
+  wKing = board[0][4] as King;
+  bKing = board[7][4] as King;
  }
 
  void empty()
@@ -135,8 +135,8 @@ board =
 
   whitePieces = [];
   blackPieces = [];
-  wKing = Empty(row: -1,col: -1);
-  bKing = Empty(row: -1,col: -1);
+  wKing = King(row: -1,col: -1, team: ChessPieceTeam.none);
+  bKing = King(row: -1,col: -1, team: ChessPieceTeam.none);
  }
 
  List<Move> getValidPieceMoves(int row, int col)
@@ -176,6 +176,10 @@ board =
      else if(p is King)
       {
        moves = (p as King).getMovesForCheck(this);
+      }
+     else if(p is Rook)
+      {
+       moves = (p as Rook).getMovesforCheck(this);
       }
      else
       {

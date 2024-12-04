@@ -14,35 +14,20 @@ led = Pin("LED", Pin.OUT)
 chip = MCP3008(spi, cs)
 chip2 = MCP3008(spi, cs2)
 
-chessBoard = [0]*8
-chessBoard2 = matrix = [[0 for _ in range(8)] for _ in range(2)]
+# chessBoard = [0]*8
+chessboard = matrix = [[0 for _ in range(8)] for _ in range(2)]
 # chessBoard2 = [[0]///*8]*2
 
 # LED STRIP
 p = machine.Pin.board.GP15
-n = NeoPixel(p, 8)
+n = NeoPixel(p, 16)
 
-# Draw a red gradient.
-# for i in range(64):
-#     n[i] = (0,0,0)
-#     print(i)
-
-# i = 0
-# last = 63
-# # Update the strip.
-# while True:
-#   n[i] = (255,0,0)
-#   n.write()
-#   n[i] = (0,0,0)
-#   i = i+ 1
-#   if i > last:
-#       i = 0
 
 
 while True:
     #print(chip.read(0))
     
-    print(chessBoard)
+    print(chessboard)
     
     for i in range(0,8):
         
@@ -51,7 +36,7 @@ while True:
         if (temp > 1.3) or (temp < 0.7):
             # led.on()
             # chessBoard[i] = temp
-            chessBoard[i] = 1
+            chessboard[0][i] = 1
             # chessBoard2[0][i] = 1
             # chessBoard2[1][7-i] = 1
             n[i] = (255, 0, 0)
@@ -61,11 +46,33 @@ while True:
             # chessBoard2[0][i] = 0
             # chessBoard2[1][7-i] = 0
             # chessBoard[i] = temp
-            chessBoard[i] = 0
+            chessboard[0][i] = 0
 
             n[i] = (0,0,0)
         n.write()
         sleep_ms(12)
 
+    for i in range(0,8):
+        
+        temp = (3.3 / 1023) * chip2.read(i)
+        # print(temp)
+        if (temp > 1.3) or (temp < 0.7):
+            # led.on()
+            # chessBoard[i] = temp
+            chessboard[1][i] = 1
+            # chessBoard2[0][i] = 1
+            # chessBoard2[1][7-i] = 1
+            n[8+i] = (255, 0, 0)
+        else:
+            # led.off()
+            # chessBoard[i] = 0
+            # chessBoard2[0][i] = 0
+            # chessBoard2[1][7-i] = 0
+            # chessBoard[i] = temp
+            chessboard[1][i] = 0
+
+            n[8+i] = (0,0,0)
+        n.write()
+        sleep_ms(12)
     # print((2 / 1023) * chip2.read(0))
     sleep_ms(12)
