@@ -1,6 +1,11 @@
+// import 'dart:html';
+
+import 'package:flutter/cupertino.dart';
+
 import 'chessboard.dart';
 import 'chesspiece.dart';
 import 'chesspiece_types/king.dart';
+import 'chesspiece_types/pawn.dart';
 import 'lights_result.dart';
 import 'move.dart';
 
@@ -29,7 +34,12 @@ class IntegratedChessboard extends Chessboard
   late Stockfish stockfish;
   Move? aIMove;
 
-  IntegratedChessboard()
+  bool gettingAI = false;
+
+
+  final VoidCallback callback;
+
+  IntegratedChessboard(this.callback)
   {
     stockfish = Stockfish();
     final stockfishSubscription = stockfish.stdout.listen((message) {
@@ -41,18 +51,28 @@ class IntegratedChessboard extends Chessboard
 
           aIMove = decipherAIMove(aIMoveString);
           print(aIMove);
-          determiningResult = false;
 
+          AIChecking();
+          callback();
+          determiningResult = false;
+          gettingAI = false;
         }
     });
   }
 
-
   void update_hardware_state(List<List<ChessPieceTeam>> postArray)
   {
+
     determiningResult = true;
     hardware_state = postArray;
-    determine_spaces_changed();
+    if(playingWithAI && turn == ChessPieceTeam.black)
+      {
+        AIChecking();
+      }
+    else
+      {
+        determine_spaces_changed();
+      }
   }
 
   void determine_spaces_changed()
@@ -492,7 +512,7 @@ class IntegratedChessboard extends Chessboard
       return false;
     }
 
-    move(currentMove!);
+    print(move(currentMove!)?.lAN);
     currentMove = null;
     validMoveState = false;
 
@@ -503,6 +523,8 @@ class IntegratedChessboard extends Chessboard
         getAIMove();
       }
 
+    leds.reset();
+
     return true;
 
   }
@@ -510,13 +532,129 @@ class IntegratedChessboard extends Chessboard
 
   void getAIMove()
   {
+    gettingAI = true;
     stockfish.stdin = getBoardStateForAI();
     stockfish.stdin = 'go movetime 1500';
   }
 
-  void playAIMove()
+  void AIChecking()
   {
     //AI MOVE IS STORED IN aiMove
+    validMoveState = false;
+
+    changes = [];
+    for(int i = 0; i < 8; i++)
+    {
+      for(int j = 0; j < 8; j++)
+      {
+        if(board[i][j].team != hardware_state[i][j])
+        {
+
+          // print("change: type:${board[i][j].type}, team:${board[i][j].team}\t row:$i col:$j");
+          // print("hardware: ${hardware_state[i][j]}");
+          changes.add([i, j]);
+        }
+      }
+    }
+
+    //handle LEDs for AI move
+    List<List<int>> changesInfo = [];
+    for(int i = 0; i< changes.length; i++)
+    {
+      int pieceRep = 0;
+
+      if(hardware_state[changes[i][0]][changes[i][1]] == ChessPieceTeam.white)
+      {
+        pieceRep = 1;
+      }
+      else if(hardware_state[changes[i][0]][changes[i][1]] == ChessPieceTeam.black)
+      {
+        pieceRep = -1;
+      }
+      else if(hardware_state[changes[i][0]][changes[i][1]] == ChessPieceTeam.none)
+      {
+        pieceRep = 0;
+      }
+
+      changesInfo.add([changes[i][0], changes[i][1], pieceRep]);
+    }
+
+    bool takingPiece = board[aIMove!.row][aIMove!.col].type != ChessPieceType.empty;
+    leds.AIMove(aIMove!, changesInfo, takingPiece);
+
+    //determine if valid state
+    // if(changes.length == 2)
+    currentMove = aIMove;
+    validMoveState = determineAIMoveCompletion();
+    determiningResult = false;
+  }
+
+
+  bool determineAIMoveCompletion()
+  {
+    // List<List<int>> neededChanges = [];
+    if(aIMove!.enPassant)
+      {
+        //check initial piece, ending pawn location, removed enemy pawn
+        if(hardware_state[aIMove!.row][aIMove!.col] == turn &&
+            hardware_state[aIMove!.piece.row][aIMove!.piece.col] == ChessPieceTeam.none &&
+            hardware_state[aIMove!.piece.row][aIMove!.col] == ChessPieceTeam.none
+            && changes.length == 3)
+          {
+            return true;
+          }
+        else
+          {
+            return false;
+          }
+
+      }
+    else if(aIMove!.castle == -1)
+      {
+        //check new and old rook, new and old king
+        if(hardware_state[aIMove!.row][aIMove!.col] == turn && //king
+            hardware_state[aIMove!.row][3] == turn && //rook
+            hardware_state[aIMove!.piece.row][aIMove!.piece.col] == ChessPieceTeam.none && //old king
+            hardware_state[aIMove!.piece.row][0] == ChessPieceTeam.none
+            && changes.length == 4) //old rook
+        {
+          return true;
+        }
+        else
+        {
+          return false;
+        }
+      }
+    else if(aIMove!.castle == 1)
+      {
+        //check new and old rook, new and old king
+        if(hardware_state[aIMove!.row][aIMove!.col] == turn && //king
+            hardware_state[aIMove!.row][5] == turn && //rook
+            hardware_state[aIMove!.piece.row][aIMove!.piece.col] == ChessPieceTeam.none && //old king
+            hardware_state[aIMove!.piece.row][7] == ChessPieceTeam.none
+            && changes.length == 4) //old rook
+            {
+          return true;
+        }
+        else
+        {
+          return false;
+        }
+      }
+    else //standard move
+      {
+      //check new and old rook, new and old king
+      if(hardware_state[aIMove!.row][aIMove!.col] == turn && //new spot
+          hardware_state[aIMove!.piece.row][aIMove!.piece.col] == ChessPieceTeam.none
+          && changes.length == 2) //old spot
+        {
+          return true;
+        }
+        else
+        {
+          return false;
+        }
+      }
   }
 
 }

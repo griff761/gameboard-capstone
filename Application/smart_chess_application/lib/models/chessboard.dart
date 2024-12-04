@@ -341,7 +341,8 @@ board =
   int r2 = int.parse(chars[3])-1;
   int c2 = _getColFromLetter(chars[2]);
 
-  return buildMove(r1, c1, r2, c2);
+  Move? m1 = buildMove(r1, c1, r2, c2); //get initial move
+  return board[r1][c1].validMove(m1!, this);
  }
 
  int _getColFromLetter(String letter)

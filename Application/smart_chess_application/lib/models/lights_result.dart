@@ -97,6 +97,23 @@ class LightsResult
     ledArray[move.piece.row][move.piece.col] = 4;
     ledArray[move.row][move.col] = 5;
 
+    //special move cases:
+      //en passant
+    if(move.enPassant)
+      {
+        ledArray[move.piece.row][move.col] = 4;
+      }
+    else if(move.castle == -1) //queenside castle
+      {
+        ledArray[move.row][0] = 4;
+        ledArray[move.row][2] = 5;
+      }
+    else if(move.castle == 1) //kingside castle
+      {
+        ledArray[move.row][7] = 4;
+        ledArray[move.row][5] = 5;
+      }
+
     for(List<int> change in changes)
       {
         //reset if moved
@@ -104,7 +121,8 @@ class LightsResult
           {
             ledArray[move.piece.row][move.piece.col] = 0;
           }
-        else if(change[0] == move.row && change[1] == move.col && !taking) // only remove light if it's
+        else if(change[0] == move.row && change[1] == move.col &&
+            (!taking || (taking && change[2] != 0))) // only remove light if it's
         {
           ledArray[move.row][move.col] = 0;
         }
@@ -113,6 +131,8 @@ class LightsResult
             ledArray[change[0]][change[1]] = -1;
           }
       }
+
+    print(ledArray);
 
     // ledArray[]
   }

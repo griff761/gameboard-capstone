@@ -20,7 +20,15 @@ class ChessboardViewLive extends StatefulWidget {
 //START BY IMITATING DATA SENT WITH CLICKS
 class ChessboardViewLiveState extends State<ChessboardViewLive> {
 
+//TODO: RE-ADD PROMOTION DIALOGUE
 
+
+  void recieveDataFromPico(List<List<ChessPieceTeam>> hardwareState)
+  {
+    c.update_hardware_state(hardwareState);
+    updateLEDs();
+
+  }
 
 
   // List<List<int>> simulatedPhysicalBoard = List<List<int>>.filled(8, List<int>.filled(8,0));
@@ -66,10 +74,6 @@ class ChessboardViewLiveState extends State<ChessboardViewLive> {
       {
         updateAllSpaces();
       }
-    // if(c.validMoveState)
-    //   {
-    //     //show tentative moves with different color
-    //   }
   }
 
   void changeTouch(int i)
@@ -97,7 +101,7 @@ class ChessboardViewLiveState extends State<ChessboardViewLive> {
   {
     if(c.confirmMove())
       {
-        c.update_hardware_state(simulatedPhysicalBoard);
+        // c.update_hardware_state(simulatedPhysicalBoard);
         updateLEDs();
         updateAllSpaces();
       }
@@ -107,7 +111,8 @@ class ChessboardViewLiveState extends State<ChessboardViewLive> {
 
   bool needDialogue = false;
 
-  IntegratedChessboard c = IntegratedChessboard();
+  late IntegratedChessboard c;
+
   List<List<GlobalKey<ChessSquareState>>> keys = [[],[],[],[],[],[],[],[]];
   List<Widget> squares = [];
 
@@ -273,10 +278,6 @@ class ChessboardViewLiveState extends State<ChessboardViewLive> {
     );
   }
 
-
-
-Move? aIMove = null;
-
   List<Widget> iconList = [];
 
   String updatingText = "1";
@@ -285,20 +286,9 @@ Move? aIMove = null;
   @override
   void initState() {
     super.initState();
-    //setup AI
-    // stockfish = Stockfish();
-
-    // final stockfishSubscription = stockfish.stdout.listen((message) {
-    //   print(message);
-    //   if(message.startsWith('bestmove'))
-    //     {
-    //       List<String> outputParts = message.split(" ");
-    //       String aIMoveString = outputParts[1];
-    //
-    //       aIMove = c.decipherAIMove(aIMoveString);
-    //       print(aIMove);
-    //     }
-    // });
+    c = IntegratedChessboard(() {
+      updateLEDs();
+    });
 
     GlobalKey<ChessboardViewLiveState> k = widget.key as GlobalKey<ChessboardViewLiveState> ?? GlobalKey();
     //setup chess squares for use in grid
@@ -327,12 +317,12 @@ Move? aIMove = null;
     currentTouch = "currentTouch: " + piecePickedUp.toString();
 
     initSimulatedBoard();
-
   }
+
+
+
   @override
   Widget build(BuildContext context) {
-
-
 
     if(needDialogue){
       Navigator.of(context).pop();
@@ -345,38 +335,6 @@ Move? aIMove = null;
               crossAxisCount: 8,
               children: squares)
         ),
-        // const Text("",style: TextStyle(fontSize: 50),), //temporary -- use for spacer
-        // TextButton(onPressed: () async {
-        //   // stockfish.stdin = c.getBoardStateForAI();
-        //   // stockfish.stdin = 'go movetime 1500';
-        // },
-        //   child: const Text(
-        //       "Calculate AI Move",
-        //       style:TextStyle(fontSize: 30)),
-        // ),
-        // const Text("",style: TextStyle(fontSize: 20),), //temporary -- use for spacer
-        // Text(text),
-        // const Text("",style: TextStyle(fontSize: 20),), //temporary -- use for spacer
-        // TextButton(onPressed: () async {
-        //   if(aIMove != null) {
-        //     movePiece(aIMove!);
-        //   }
-        // }, child: Text("PLAY AI MOVE"),
-        // ),
-        // TextButton(onPressed: () async {
-        //   print("given to stockfish: ");
-        //   print(c.getBoardStateForAI());
-        //
-        //   stockfish.stdin = 'd';
-        // }, child: Text("print current board"),
-        // ),
-        // Expanded(
-        //   child: Row(
-        //     children: [
-        //
-        //     ],
-        //   )
-        // ),
         TextButton(onPressed: () async {
           c.playingWithAI = !c.playingWithAI;
           print("PLAYING WITH AI: ${c.playingWithAI}");
@@ -385,6 +343,7 @@ Move? aIMove = null;
 
         TextButton(onPressed: () async {
           confirmMove();
+          updateAllSpaces();
         },
             child: Text("CONFIRM MOVE")),
 
