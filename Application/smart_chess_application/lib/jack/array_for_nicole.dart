@@ -8,25 +8,36 @@ class ArrayForNicole {
   static List<List<int>> handleArray(List<List<int>> array) {
     print('AIPlaceholder: Handling the 2D array...');
 
-    List<List<ChessPieceTeam>> chessboard = [[],[],[],[],[],[],[],[]];
+    // Explicitly define each index of the chessboard, keeping the last two columns unchanged
+    List<List<int>> chessboard = [
+      [0, 0, 0, 0, 0, 0, 0, 0, array[0][8], array[0][9]], // Row 0
+      [0, 7, 0, 0, 0, 0, 0, 0, array[1][8], array[1][9]], // Row 1
+      [0, 7, 0, 0, 0, 0, 0, 0, array[2][8], array[2][9]], // Row 2
+      [0, 0, 0, 0, 0, 0, 0, 0, array[3][8], array[3][9]], // Row 3
+      [0, 0, 0, 0, 0, 0, 0, 0, array[4][8], array[4][9]], // Row 4
+      [0, 0, 0, 0, 0, 0, 0, 0, array[5][8], array[5][9]], // Row 5
+      [0, 0, 0, 0, 0, 0, 0, 0, array[6][8], array[6][9]], // Row 6
+      [0, 0, 0, 0, 0, 0, 0, 0, array[7][8], array[7][9]], // Row 7
+    ];
 
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 8; j++) {
-        chessboard[i].add(intToChessTeam(array[i][j]));
-      }
-    }
+    // Placeholder AI/Friend move logic (commented out the loop)
+    // for (int i = 0; i < 8; i++) {
+    //   for (int j = 0; j < 8; j++) {
+    //     chessboard[i].add(intToChessTeam(array[i][j]));
+    //   }
+    // }
 
-    // Store the array
-    _storedArray = array.map((row) => List<int>.from(row)).toList(); // Save the array
+    // Store the updated array
+    _storedArray = chessboard.map((row) => List<int>.from(row)).toList();
 
-    print('AIPlaceholder: Array received and stored.');
+    print('AIPlaceholder: Array received and updated.');
 
     // Call printArray to display the array
     printArray(_storedArray);
 
-    Server.chessKey.currentState?.updateInt(); //update chessboard view here
+    Server.chessKey.currentState?.updateInt(); // Update chessboard view here
 
-    return _storedArray; // Return unaltered array
+    return _storedArray; // Return updated array
   }
 
   static ChessPieceTeam intToChessTeam(int i) {
@@ -39,12 +50,6 @@ class ArrayForNicole {
     }
   }
 
-
-  ///   --------------- DOESNT SEEM TO BE EXECUTING FOR SOME REASON! not sure if storing works yet. could be that array is null
-  ///   and thus it isnt overwriting what was passed into array_for_nicole.dart.
-  ///   thus could be because for now, the AI handling logic isn't implemented, thus it isn't altering any array its given before
-  ///   answering the pico's get request.
-  ///   so for now: android code is just giving back exactly what it was given from the pico with no changes....
   /// Prints the 2D array in a readable format.
   static void printArray(List<List<int>> array) {
     print('Current Chessboard State:');
