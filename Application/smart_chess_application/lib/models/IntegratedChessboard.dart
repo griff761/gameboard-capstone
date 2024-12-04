@@ -17,8 +17,8 @@ class IntegratedChessboard extends Chessboard
   bool determiningResult = false;
   bool playingWithAI = false;
 
-  bool validMoveState = false;
-  Move? currentMove = null;
+  bool validMoveState = false; // if the current hardware state represents a valid move
+  Move? currentMove; // valid move represented by the hardware state (if applicable)
 
   bool errorState = false;
 
@@ -59,7 +59,7 @@ class IntegratedChessboard extends Chessboard
     print("SQUARES CHANGED: ${changes.length}");
 
     //CASE 0 -> no changes
-    if(changes.length == 0)
+    if(changes.isEmpty)
       {
         leds.reset();
       }
@@ -89,75 +89,271 @@ class IntegratedChessboard extends Chessboard
     //CASE 2 -> two squares have changed (a piece has been moved)
     else if(changes.length == 2)
       {
-          //get pieces that changed
+
         ChessPiece chessPiece1 = board[changes[0][0]][changes[0][1]];
         ChessPiece chessPiece2 = board[changes[1][0]][changes[1][1]];
-          //find (first) one that is on our team
-        ChessPiece? ourPiece = null;
-        ChessPiece otherPiece = chessPiece1;
-        if(chessPiece1.team == turn) {
-          ourPiece = chessPiece1;
-          otherPiece = chessPiece2;
-        } else if(chessPiece2.team == turn) {
-          ourPiece = chessPiece2;
-          otherPiece = chessPiece1;
-        }
 
-        //if neither piece is ours -> error state
-        if(ourPiece == null)
+        //check for valid move (would consist of 1 piece of turn type, and one not of turn type)
+        if(chessPiece1.team != chessPiece2.team && (chessPiece1.team == turn || chessPiece2.team == turn))
           {
-            leds.errorBoard(changes);
-            errorState = true;
+            ChessPiece p1 = (chessPiece1.team==turn) ? chessPiece1 : chessPiece2; //piece of type turn
+            ChessPiece p2 = (chessPiece1.team!=turn) ? chessPiece1 : chessPiece2;
+
+            // NOTE: in the case of moving a rook to a possible castle position we do not assume
+
+            //IF VALID MOVE => could be passant, castle, or standard (taking or not taking)
+            Move m = buildGuaranteeMove(p1.row, p1.col, p2.row, p2.col);
+            if((currentMove = p1.validMove(m, this)) != null)
+            {
+
+              if(currentMove!.enPassant)
+                {
+                  //partial enPassant -> need to pick up the other piece
+                    //determine piece to be removed
+                  int direction = turn == ChessPieceTeam.white ? 1 : -1;
+                    //should be in end position col and end position row - direction
+                  leds.continuedMoveReq([[p2.row-direction, p2.col]], changes);
+                  print([p2.row-direction, p2.col]);
+                }
+              else if(currentMove!.castle != 0)
+                {
+                  // queenside
+                  if(currentMove!.castle == -1)
+                    {
+                      List<List<int>> movesTODO = [[p1.row, 0], [p1.row, 3]];
+                      leds.continuedMoveReq(movesTODO, changes);
+                    }
+                  else
+                    {
+                      List<List<int>> movesTODO = [[p1.row, 7], [p1.row, 5]];
+                      leds.continuedMoveReq(movesTODO, changes);
+                    }
+                }
+              //check if piece has been placed down (if chess piece team is none, then we took a piece off but need to replace it with our piece)
+              else if(hardware_state[p2.row][p2.col] == ChessPieceTeam.none)
+              {
+                leds.continuedMoveReq([[p2.row, p2.col]], [[p1.row, p1.col]]);
+              }
+              else //TODO: do we need a check here to make sure the right team is placed or can we assume good?
+              {
+                validMoveState = true;
+                leds.tentativeBoard(changes);
+                print("valid move: now confirm");
+              }
+            }
+            //EN PASSANT ( both pawns lifted )
+            else if((p1.type == ChessPieceType.pawn && p2.type == ChessPieceType.pawn) && (p2.col == p1.col+1 || p2.col == p1.col-1))
+            {
+              int direction = turn == ChessPieceTeam.white ? 1 : -1;
+              leds.continuedMoveReq([[p1.row + direction, p2.col]], changes);
+              // print("direction: ${direction} \t p1: ${p1.row}, ${p1.col} \t p2: ${p2.row}, ${p2.col}");
+              // print([p1.row, p2.col + direction]);
+            }
+            //OTHERWISE ERROR
+            else
+            {
+              leds.errorBoard(changes);
+            }
           }
-        else
+          //CASTLING
+          else if(chessPiece1.team == chessPiece2.team && chessPiece1.team == turn &&
+            (chessPiece1.type == ChessPieceType.rook && chessPiece2.type == ChessPieceType.king ||
+             chessPiece1.type == ChessPieceType.king && chessPiece2.type == ChessPieceType.rook))
           {
-            //check for castling
-              //check for king and rook picked up
-              //check for king picked up and placed in castle spot
-              //check for rook picked up and placed in castle spot
-            // if(chessPiece1 is )
-            Move? castleMove = checkForCastlingTwoChanges(chessPiece1, chessPiece2);
+            King k = (chessPiece1.type==ChessPieceType.king) ? chessPiece1 as King: chessPiece2 as King; //piece of type turn
+            ChessPiece r = (chessPiece1.type==ChessPieceType.rook) ? chessPiece1: chessPiece2;
 
-            if(castleMove != null)
+            if(r.row == 0 && k.canQueensideCastle(this))
               {
-                //valid castle
+                //valid queenside castling attempt
+                List<List<int>> movesTODO = [[k.row, 2], [k.row, 3]];
+                leds.continuedMoveReq(movesTODO, changes);
               }
-
-            //check for en passant
-              //check for pawn picked up and placed in en passant spot
-              //check for pawn picked up and en passant capture picked up
-
-            //COMPLETE MOVE? -> tentative move set and valid game state!
-            Move m = buildGuaranteeMove(ourPiece.row, ourPiece.col, otherPiece.row, otherPiece.col);
-            if((currentMove = ourPiece.validMove(m, this)) != null)
+            else if(r.row == 7 && k.canKingsideCastle(this))
               {
-                //unclear if this check is really needed but just in case
-                if(hardware_state[ourPiece.row][ourPiece.col] == ChessPieceTeam.none &&
-                hardware_state[otherPiece.row][otherPiece.col] == turn)
-                  {
-                    validMoveState = true;
-                    leds.tentativeBoard(changes);
-                    print("valid move: now confirm");
-                  }
-                else
-                  {
-                    leds.errorBoard(changes);
-                    print("wrong team piece placed in spot");
-                  }
-
+                //valid kingside castling attempt
+                List<List<int>> movesTODO = [[k.row, 5], [k.row, 6]];
+                leds.continuedMoveReq(movesTODO, changes);
+              }
+            else
+              {
+                //invalid castle attempt
+                leds.errorBoard(changes);
               }
           }
-
+          else
+            {
+              leds.errorBoard(changes);
+            }
 
       }
     //CASE 3 -> SPECIAL CASE ** castling -> more than 2 pieces have been moved
     // (check for castling and show user spaces that still need to change)
-    else if(changes.length > 2)
+    else if(changes.length == 3)
       {
-        //check for castling
+        ChessPiece p1 = board[changes[0][0]][changes[0][1]];
+        ChessPiece p2 = board[changes[1][0]][changes[1][1]];
+        ChessPiece p3 = board[changes[2][0]][changes[2][1]];
+
+        //EN PASSANT PRE LOGIC
+        ChessPiece? ourPawn;
+        ChessPiece? theirPawn;
+        ChessPiece? e;
+        for(int i = 0; i < 3; i++)
+          {
+            if(board[changes[i][0]][changes[i][1]].team == turn && board[changes[i][0]][changes[i][1]].type == ChessPieceType.pawn)
+              {
+                ourPawn = board[changes[i][0]][changes[i][1]];
+              }
+            else if(board[changes[i][0]][changes[i][1]].type == ChessPieceType.pawn)
+              {
+                theirPawn = board[changes[i][0]][changes[i][1]];
+              }
+            else if(board[changes[i][0]][changes[i][1]].type == ChessPieceType.empty)
+              {
+                e = board[changes[i][0]][changes[i][1]];
+              }
+          }
+
+
+        //CASTLING PRE LOGIC
+        King? k; //king
+        ChessPiece? r; //rook
+        // ChessPiece? e; //empty (where king or rook was moved)
+        for(int i = 0; i < 3; i++)
+          {
+            if(board[changes[i][0]][changes[i][1]].type == ChessPieceType.king && board[changes[i][0]][changes[i][1]].team == turn)
+              {
+                k = board[changes[i][0]][changes[i][1]] as King;
+              }
+            else if(board[changes[i][0]][changes[i][1]].type == ChessPieceType.rook && board[changes[i][0]][changes[i][1]].team == turn)
+              {
+                r = board[changes[i][0]][changes[i][1]];
+              }
+            else if(board[changes[i][0]][changes[i][1]].type == ChessPieceType.empty)
+              {
+                e = board[changes[i][0]][changes[i][1]];
+              }
+          }
 
         //check for en passant
+        if(ourPawn != null && theirPawn != null && e != null) // if we are moving one of our pawns => then we can check for valid moves going to p2/p3 if was empty
+          {
+            // ChessPiece temp = p2.type == ChessPieceType.empty ? p2 : p3;
+            // ChessPiece temp2 = p2.type == ChessPieceType.empty ? p3 : p2;
 
+            Move m = buildGuaranteeMove(ourPawn.row, ourPawn.col, e.row, e.col);
+            if((currentMove = ourPawn.validMove(m, this)) != null && currentMove!.enPassant) {
+              List<int> enPassantSquare = currentMove?.getEnPassant() ?? [];
+              if(theirPawn.row == enPassantSquare[0] && theirPawn.col == enPassantSquare[1])
+                {
+                  //valid completed EN PASSANT
+                  validMoveState = true;
+                  leds.tentativeBoard(changes);
+                }
+              else
+                {
+                  leds.errorBoard(changes);
+                }
+            }
+            else
+              {
+                leds.errorBoard(changes);
+              }
+
+
+          }
+        //check for castling
+        else if(k != null && r != null && e != null)
+          {
+            if(r.col == 0 && k.canQueensideCastle(this) && (e.col == 2 || e.col == 3))
+              {
+                //valid queenside castling start -> still 1 move left
+                int lastCol = e.col == 2 ? 3 : 2;
+                leds.continuedMoveReq([[e.row,lastCol]], changes);
+
+              }
+            else if(r.col == 7 && k.canKingsideCastle(this) && (e.col == 5 || e.col == 6))
+              {
+                int lastCol = e.col == 5 ? 6 : 5;
+                leds.continuedMoveReq([[e.row,lastCol]], changes);
+
+              }
+            else
+              {
+                //invalid
+                leds.errorBoard(changes);
+              }
+          }
+        //else error
+        else
+          {
+            leds.errorBoard(changes);
+          }
+      }
+    else if(changes.length == 4)
+      {
+        //check for castling
+        // ChessPiece p1 = board[changes[0][0]][changes[0][1]];
+
+        King? k;
+        ChessPiece? r; //rook
+        ChessPiece? e1;
+        ChessPiece? e2;
+
+        for(int i = 0; i < 4; i++)
+          {
+            if(board[changes[i][0]][changes[i][1]].type == ChessPieceType.king && board[changes[i][0]][changes[i][1]].team == turn)
+            {
+              k = board[changes[i][0]][changes[i][1]] as King;
+            }
+            else if(board[changes[i][0]][changes[i][1]].type == ChessPieceType.rook && board[changes[i][0]][changes[i][1]].team == turn)
+            {
+              r = board[changes[i][0]][changes[i][1]];
+            }
+            else if(board[changes[i][0]][changes[i][1]].type == ChessPieceType.empty && e1 == null)
+            {
+              e1 = board[changes[i][0]][changes[i][1]];
+            }
+            else if(board[changes[i][0]][changes[i][1]].type == ChessPieceType.empty && e1 != null)
+            {
+              e2 = board[changes[i][0]][changes[i][1]];
+            }
+          }
+
+        if(k != null && r != null && e1 != null && e2 != null) //all necessary pieces for castling are in changes
+          {
+            if(r.col == 0 && k.canQueensideCastle(this) && (e1.col == 2 || e1.col == 3)  && (e2.col == 2 || e2.col == 3) && e1.col != e2.col)
+            {
+              currentMove = CastleQueenside(row: k.row, col: k.col-2, piece: k);
+              validMoveState = true;
+              leds.tentativeBoard(changes);
+
+            }
+            else if(r.col == 7 && k.canKingsideCastle(this) && (e1.col == 5 || e1.col == 6)  && (e2.col == 5 || e2.col == 6) && e1.col != e2.col)
+            {
+              currentMove = CastleKingside(row: k.row, col: k.col+2, piece: k);
+              validMoveState = true;
+              leds.tentativeBoard(changes);
+
+            }
+            else
+            {
+              //invalid
+              leds.errorBoard(changes);
+            }
+          }
+        else
+          {
+            leds.errorBoard(changes);
+          }
+
+
+      }
+    // ERROR STATE => should never have more than 4 pieces changed
+    else
+      {
+        leds.errorBoard(changes);
       }
 
     if(!playingWithAI)
@@ -165,6 +361,7 @@ class IntegratedChessboard extends Chessboard
         determiningResult = false;
       }
 
+    determiningResult = false;
   }
 
 
@@ -267,6 +464,7 @@ class IntegratedChessboard extends Chessboard
 
   bool confirmMove()
   {
+    determiningResult = true;
     if(!validMoveState) {
       return false;
     }
@@ -274,6 +472,9 @@ class IntegratedChessboard extends Chessboard
     move(currentMove!);
     currentMove = null;
     validMoveState = false;
+    
+
+    determiningResult = false;
     return true;
 
   }

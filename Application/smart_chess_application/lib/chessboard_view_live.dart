@@ -371,6 +371,12 @@ Move? aIMove = null;
         // }, child: Text("print current board"),
         // ),
         TextButton(onPressed: () async {
+          c.playingWithAI = !c.playingWithAI;
+          print("PLAYING WITH AI: ${c.playingWithAI}");
+        },
+            child: Text("Toggle AI")),
+
+        TextButton(onPressed: () async {
           confirmMove();
         },
             child: Text("CONFIRM MOVE")),

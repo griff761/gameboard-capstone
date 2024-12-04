@@ -36,12 +36,16 @@ class LightsResult
       }
   }
 
-  void continuedMoveReq(List<Move> moves)
+  void continuedMoveReq(List<List<int>> movesTODO, List<List<int>> movesDone)
   {
     reset();
-    for(Move move in moves)
+    for(List<int> move in movesTODO)
     {
-      ledArray[move.row][move.col] = 2;
+      ledArray[move[0]][move[1]] = 2;
+    }
+    for(List<int> move in movesDone)
+    {
+      ledArray[move[0]][move[1]] = 3;
     }
   }
 

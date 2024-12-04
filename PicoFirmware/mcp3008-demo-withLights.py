@@ -50,7 +50,7 @@ while True:
 
             n[i] = (0,0,0)
         n.write()
-        sleep_ms(12)
+        # sleep_ms(12)
 
     for i in range(0,8):
         
@@ -73,6 +73,6 @@ while True:
 
             n[8+i] = (0,0,0)
         n.write()
-        sleep_ms(12)
+        # sleep_ms(12)
     # print((2 / 1023) * chip2.read(0))
-    sleep_ms(12)
+    # sleep_ms(12)
