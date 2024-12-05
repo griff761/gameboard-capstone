@@ -3,6 +3,7 @@ from time import sleep_ms
 from mcp3008 import MCP3008
 from machine import Pin
 from neopixel import NeoPixel
+import machine
 
 
 # Define pins
