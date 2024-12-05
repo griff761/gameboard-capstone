@@ -2,6 +2,7 @@ from time import sleep
 from lib.mcp3008 import MCP3008
 from machine import Pin
 import lib.copy as copy
+import machine
 
 # SPI and pin configuration
 spi = machine.SPI(0, sck=Pin(18), mosi=Pin(19), miso=Pin(16), baudrate=100000)
