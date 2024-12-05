@@ -1,3 +1,10 @@
+# References:
+# - "Get Started with MicroPython on Raspberry Pi Pico: The Official Raspberry Pi Pico Guide (2nd Edition)"
+#   Author: Raspberry Pi Foundation
+#   Edition: 2nd
+#   Use: Guidance on button integration and OLED screen programming with MicroPython.
+#   URL: https://www.raspberrypi.org/documentation/microcontrollers/from machine import Pin, I2C
+
 from machine import Pin, I2C
 import sh1106
 import time
