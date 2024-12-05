@@ -50,8 +50,14 @@ class Move
           lAN += promotionType;
         }
       }
+  }
 
-
+  List<int>? getEnPassant()
+  {
+    if(!enPassant) {
+      return null;
+    }
+    return [piece.row, col];
   }
 
 

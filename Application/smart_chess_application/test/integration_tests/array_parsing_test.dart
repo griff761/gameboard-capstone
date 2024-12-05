@@ -9,9 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:smart_chess_application/main.dart';
-import 'package:smart_chess_application/models/chessboard.dart';
-import 'package:smart_chess_application/models/chesspiece.dart';
-import 'package:smart_chess_application/models/chesspiece_types/pawn.dart';
+
 
 void main() {
 
@@ -28,13 +26,9 @@ void main() {
   // });
 
   test('pawn basic movement', () {
-    Chessboard c = Chessboard();
-    print(c.toString());
-    // c.move(1, 2, 3, 2);
-    print(c.toString());
-
-    // print(c.board[1][3].getValidMoves(c));
-    // print(c.toString());
+    List<List<int>> ledArray = List<List<int>>.generate(8, (_) => new List<int>.generate(8,(_) => 0));
+    ledArray[5][6] = 27;
+    print(ledArray);
   });
 
 

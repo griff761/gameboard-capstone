@@ -30,8 +30,8 @@ class Chessboard
  List<ChessPiece> whitePieces = [];
  List<ChessPiece> blackPieces = [];
 
- ChessPiece wKing = Empty(row: -1,col: -1);
- ChessPiece bKing = Empty(row: -1,col: -1);
+ King wKing = King(row: -1,col: -1, team: ChessPieceTeam.none);
+ King bKing = King(row: -1,col: -1, team: ChessPieceTeam.none);
 
  ChessPieceTeam turn = ChessPieceTeam.white;
 
@@ -109,8 +109,8 @@ class Chessboard
     blackPieces.add(board[7][i]);
    }
 
-  wKing = board[4][0];
-  bKing = board[4][7];
+  wKing = board[0][4] as King;
+  bKing = board[7][4] as King;
  }
 
  void empty()
@@ -135,9 +135,17 @@ board =
 
   whitePieces = [];
   blackPieces = [];
-  wKing = Empty(row: -1,col: -1);
-  bKing = Empty(row: -1,col: -1);
+  wKing = King(row: -1,col: -1, team: ChessPieceTeam.none);
+  bKing = King(row: -1,col: -1, team: ChessPieceTeam.none);
  }
+
+ List<Move> getValidPieceMoves(int row, int col)
+ {
+  return board[row][col].getValidMoves(this);
+ }
+
+
+
 
 
  bool isOccupiedByOwnPieces(int row, int col, ChessPieceTeam team)
@@ -168,6 +176,10 @@ board =
      else if(p is King)
       {
        moves = (p as King).getMovesForCheck(this);
+      }
+     else if(p is Rook)
+      {
+       moves = (p as Rook).getMovesforCheck(this);
       }
      else
       {
@@ -329,7 +341,8 @@ board =
   int r2 = int.parse(chars[3])-1;
   int c2 = _getColFromLetter(chars[2]);
 
-  return buildMove(r1, c1, r2, c2);
+  Move? m1 = buildMove(r1, c1, r2, c2); //get initial move
+  return board[r1][c1].validMove(m1!, this);
  }
 
  int _getColFromLetter(String letter)
