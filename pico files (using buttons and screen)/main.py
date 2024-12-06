@@ -20,8 +20,6 @@ def test_server_connection():
     except Exception as e:
         print(f"Error connecting to the server: {e}. Check if the server is running and accessible.")
         
-        
-
 # Ensure Wi-Fi is connected before starting
 disconnect_wifi()
 connect_wifi()
@@ -215,10 +213,16 @@ while True:
 
             elif chessBoardCurr[1][8] == 1:  # Play AI mode
                 chessBoardCurr[3][8] = 0  # Ensure player turn flag is 0
-                gameon.oled.fill(0)
-                gameon.oled.text("Playing AI", 0, 0)
-                gameon.oled.text("Level: Hard", 0, 10)
-                gameon.oled.show()
+                print("POST: Sending player move to server.")
+                updated_board = send_post_request_with_get_response(chessBoardCurr)
+
+                if updated_board is not None:
+                    chessBoardCurr[0][8] = 0  # Clear reset flag
+                    chessBoardCurr[0][9] = 0  # Clear End of Turn flag
+                    handle_leds(updated_board, n)  # Process LEDs and update global chessboardLEDs
+                    print("LEDs: Chessboard updated with AI move.")
+                else:
+                    print("AI move retrieval failed after timeout.")
 
             if not TestingMode:
                 # Only copy changes for the first 8 columns (ignoring flag bits)
@@ -273,5 +277,3 @@ while True:
 
     except Exception as e:
         print(f"An error occurred: {e}")
-
-
