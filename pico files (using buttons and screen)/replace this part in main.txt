@@ -1,0 +1,11 @@
+if chessBoardCurr[1][8] == 1:  # Play AI mode
+    print("POST: Sending player move to server.")
+    updated_board = send_post_request_with_get_response(chessBoardCurr)
+
+    if updated_board is not None:
+        chessBoardCurr[0][8] = 0  # Clear reset flag
+        chessBoardCurr[0][9] = 0  # Clear End of Turn flag
+        handle_leds(updated_board, n)  # Process LEDs and update global chessboardLEDs
+        print("LEDs: Chessboard updated with AI move.")
+    else:
+        print("AI move retrieval failed after timeout.")

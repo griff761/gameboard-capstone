@@ -1,12 +1,6 @@
-import time
-import copy  # Ensure deep copying
-from jacks_folder.send_post_request import send_post_request
-from jacks_folder.send_get_request import send_get_request
-
 def send_post_request_with_get_response(chess_board):
     """
-    Sends a POST request and waits for a GET response. Ensures throttling between requests.
-    Returns the updated array if successful, or None if an error occurs.
+    Sends a POST request and waits for a GET response. Ensures persistent GET requests until success.
     """
     try:
         # Send POST request
@@ -16,15 +10,17 @@ def send_post_request_with_get_response(chess_board):
             print("POST: request failed. Skipping GET request.")
             return None  # Explicitly return None for failure
 
-        # Wait for GET response
-        print("GET: waiting on android to answer...")
-        updated_array = send_get_request(chess_board)
+        # Persistent GET response retrieval
+        print("GET: Waiting for server to provide AI move...")
+        start_time = time.time()
+        while time.time() - start_time <= 10:  # Retry for up to 10 seconds
+            updated_array = send_get_request(chess_board)
+            if updated_array is not current_array:  # Check if a valid update was received
+                print("GET: Successfully retrieved AI move.")
+                return updated_array
 
-        if updated_array is not None:
-            return copy.deepcopy(updated_array)  # Return a deep copy to prevent pointer issues
-        else:
-            print("GET: request failed to retrieve an updated board.")
-            return None  # Explicitly return None for failure
+        print("GET: Timeout reached. Unable to retrieve AI move.")
+        return None  # Return None if timeout occurs
 
     except Exception as e:
         print(f"Error in request handling: {e}")
