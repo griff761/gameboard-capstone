@@ -12,7 +12,7 @@ from neopixel import NeoPixel
 def test_server_connection():
     import usocket
     try:
-        addr = usocket.getaddrinfo("172.20.10.6", 8080)[0][-1]
+        addr = usocket.getaddrinfo("172.20.10.13", 8080)[0][-1]
         s = usocket.socket()
         s.connect(addr)
         print("Successfully connected to the server!")
@@ -69,8 +69,8 @@ game_over_occurred = False  # New flag to track game over state
 
 last_button_poll_time = 0  # For frequent button polling
 last_button_press_time = 0  # For debouncing
-player1_time = 20  # seconds
-player2_time = 20  # seconds
+player1_time = 300  # seconds
+player2_time = 300  # seconds
 last_timer_update = None  # Track the last time timers were updated
 
 # Debounce function for buttons
@@ -108,8 +108,8 @@ def reset_board_logic():
             chessboardLEDs[row][col] = 0
 
     # Reset timers
-    player1_time = 20
-    player2_time = 20
+    player1_time = 300
+    player2_time = 300
     last_timer_update = None  # Reset timer tracking
 
     # Indicate to later set the reset flag bit to 1 (row 1, column 9)
@@ -139,141 +139,143 @@ def update_timers(current_player):
             reset_board_logic()  # Player 2 ran out of time
 
 # Main execution loop
-while True:
-    try:
-        current_time = time.ticks_ms()
-        if time.ticks_diff(current_time, last_button_poll_time) > 50:  # Poll every 50ms
-            last_button_poll_time = current_time
+try:
+    while True:
+        try:
+            current_time = time.ticks_ms()
+            if time.ticks_diff(current_time, last_button_poll_time) > 50:  # Poll every 50ms
+                last_button_poll_time = current_time
 
-            # Handle back button press
-            if is_debounced_button_pressed(gameon.button_back):
-                print("Back button detected!")
-                if gameon.inGame:
-                    reset_board_logic()
+                # Handle back button press
+                if is_debounced_button_pressed(gameon.button_back):
+                    print("Back button detected!")
+                    if gameon.inGame:
+                        reset_board_logic()
 
-            # Handle select button press for "End of Turn"
-            if is_debounced_button_pressed(gameon.button_select):
-                print("Select button detected!")
-                if gameon.inGame:
-                    print("End of Turn triggered.")
-                    chessBoardCurr[0][9] = 1  # Set flag for End of Turn
-                    boardChange = True  # Force board change
+                # Handle select button press for "End of Turn"
+                if is_debounced_button_pressed(gameon.button_select):
+                    print("Select button detected!")
+                    if gameon.inGame:
+                        print("End of Turn triggered.")
+                        chessBoardCurr[0][9] = 1  # Set flag for End of Turn
+                        boardChange = True  # Force board change
 
-        # Start the gameon menu loop first
-        if not gameon.inGame:
-            gameon.display_menu()
-            if not gameon.button_up.value():
-                gameon.scroll_up()
-                time.sleep(0.2)  # Debounce
-            if not gameon.button_down.value():
-                gameon.scroll_down()
-                time.sleep(0.2)  # Debounce
-            if not gameon.button_select.value():
-                gameon.select_option()
+            # Start the gameon menu loop first
+            if not gameon.inGame:
+                gameon.display_menu()
+                if not gameon.button_up.value():
+                    gameon.scroll_up()
+                    time.sleep(0.2)  # Debounce
+                if not gameon.button_down.value():
+                    gameon.scroll_down()
+                    time.sleep(0.2)  # Debounce
+                if not gameon.button_select.value():
+                    gameon.select_option()
 
-                # Set the game mode flag bits based on the selected mode
-                if gameon.menu_options[gameon.selected_index] == "Play AI":
-                    chessBoardCurr[1][8] = 1  # Row 2, column 9
-                    chessBoardCurr[1][9] = 0  # Ensure only Play AI mode selected
-                    chessBoardCurr[3][8] = 0  # Set turn flag to 0 for Play AI mode
-                    game_over_occurred = False  # Reset game over flag
-                    last_timer_update = None  # Prevent timers from running
-                elif gameon.menu_options[gameon.selected_index] == "Play Friend":
-                    chessBoardCurr[1][9] = 1  # Row 2, column 10
-                    chessBoardCurr[1][8] = 0  # Ensure only Play Friend mode selected
-                    chessBoardCurr[3][8] = 1  # Initialize player 1's turn
-                    last_timer_update = time.time()  # Initialize timers
-                    game_over_occurred = False  # Reset game over flag
+                    # Set the game mode flag bits based on the selected mode
+                    if gameon.menu_options[gameon.selected_index] == "Play AI":
+                        chessBoardCurr[1][8] = 1  # Row 2, column 9
+                        chessBoardCurr[1][9] = 0  # Ensure only Play AI mode selected
+                        chessBoardCurr[3][8] = 0  # Set turn flag to 0 for Play AI mode
+                        game_over_occurred = False  # Reset game over flag
+                        last_timer_update = None  # Prevent timers from running
+                    elif gameon.menu_options[gameon.selected_index] == "Play Friend":
+                        chessBoardCurr[1][9] = 1  # Row 2, column 10
+                        chessBoardCurr[1][8] = 0  # Ensure only Play Friend mode selected
+                        chessBoardCurr[3][8] = 1  # Initialize player 1's turn
+                        last_timer_update = time.time()  # Initialize timers
+                        game_over_occurred = False  # Reset game over flag
 
-                time.sleep(0.2)  # Debounce
-            if not gameon.button_back.value():
-                gameon.exit_to_menu = True
-                time.sleep(0.2)  # Debounce
-            continue  # Skip the rest of the loop if in gameon menu
+                    time.sleep(0.2)  # Debounce
+                if not gameon.button_back.value():
+                    gameon.exit_to_menu = True
+                    time.sleep(0.2)  # Debounce
+                continue  # Skip the rest of the loop if in gameon menu
 
-        # Proceed only if inGame is True
-        if gameon.inGame:
-            # Display appropriate information
-            if chessBoardCurr[1][9] == 1:  # Play Friend mode
-                current_player = chessBoardCurr[3][8]
-                if current_player == 1:
-                    update_timers(1)
-                elif current_player == 2:
-                    update_timers(2)
-                else:
+            # Proceed only if inGame is True
+            if gameon.inGame:
+                # Display appropriate information
+                if chessBoardCurr[1][9] == 1:  # Play Friend mode
+                    current_player = chessBoardCurr[3][8]
+                    if current_player == 1:
+                        update_timers(1)
+                    elif current_player == 2:
+                        update_timers(2)
+                    else:
+                        gameon.oled.fill(0)
+                        gameon.oled.text("We have a problem!", 0, 0)
+                        gameon.oled.show()
+                        continue
+
                     gameon.oled.fill(0)
-                    gameon.oled.text("We have a problem!", 0, 0)
+                    gameon.oled.text(f"P1: {int(player1_time)}s", 0, 0)
+                    gameon.oled.text(f"P2: {int(player2_time)}s", 0, 10)
                     gameon.oled.show()
-                    continue
 
-                gameon.oled.fill(0)
-                gameon.oled.text(f"P1: {int(player1_time)}s", 0, 0)
-                gameon.oled.text(f"P2: {int(player2_time)}s", 0, 10)
-                gameon.oled.show()
+                elif chessBoardCurr[1][8] == 1:  # Play AI mode
+                    chessBoardCurr[3][8] = 0  # Ensure player turn flag is 0
+                    gameon.oled.fill(0)
+                    gameon.oled.text("Playing AI", 0, 0)
+                    gameon.oled.text("Level: Hard", 0, 10)
+                    gameon.oled.show()
 
-            elif chessBoardCurr[1][8] == 1:  # Play AI mode
-                chessBoardCurr[3][8] = 0  # Ensure player turn flag is 0
-                print("POST: Sending player move to server.")
-                updated_board = send_post_request_with_get_response(chessBoardCurr)
+                if not TestingMode:
+                    # Only copy changes for the first 8 columns (ignoring flag bits)
+                    for row in range(8):
+                        for col in range(8):
+                            chessBoardCurr[row][col] = chessboardLEDs[row][col]
 
-                if updated_board is not None:
-                    chessBoardCurr[0][8] = 0  # Clear reset flag
-                    chessBoardCurr[0][9] = 0  # Clear End of Turn flag
-                    handle_leds(updated_board, n)  # Process LEDs and update global chessboardLEDs
-                    print("LEDs: Chessboard updated with AI move.")
-                else:
-                    print("AI move retrieval failed after timeout.")
+                    # ADC reading logic
+                    for row, adc in enumerate([adc0, adc1, adc2, adc3, adc4, adc5, adc6, adc7]):
+                        for y in range(8):
+                            read = scaleFactor * adc.read(y)
+                            
+                            if (read < defaultTriggerLow):
+                                chessBoardCurr[row][y] = -1
+                            elif (read > defaultTriggerHigh):
+                                chessBoardCurr[row][y] = 1
+                            else:
+                                chessBoardCurr[row][y] = 0
+                            if chessBoardCurr[row][y] != chessBoardPrev[row][y]:
+                                boardChange = True
 
-            if not TestingMode:
-                # Only copy changes for the first 8 columns (ignoring flag bits)
-                for row in range(8):
-                    for col in range(8):
-                        chessBoardCurr[row][col] = chessboardLEDs[row][col]
+                # Ensure the reset flag is only set after ADC updates
+                if reset_board_occurred or startOfProgram:
+                    chessBoardCurr[0][8] = 1
+                    reset_board_occurred = False  # Reset the state
+                    startOfProgram = False
 
-                # ADC reading logic
-                for row, adc in enumerate([adc0, adc1, adc2, adc3, adc4, adc5, adc6, adc7]):
-                    for y in range(8):
-                        read = scaleFactor * adc.read(y)
-                        
-                        if (read < defaultTriggerLow):
-                            chessBoardCurr[row][y] = -1
-                        elif (read > defaultTriggerHigh):
-                            chessBoardCurr[row][y] = 1
-                        else:
-                            chessBoardCurr[row][y] = 0
-                        if chessBoardCurr[row][y] != chessBoardPrev[row][y]:
-                            boardChange = True
+                if boardChange and not game_over_occurred:  # Prevent POST and GET after game over
+                    chessBoardPrev = copy.deepcopy(chessBoardCurr)
+                    boardChange = False
 
-            # Ensure the reset flag is only set after ADC updates
-            if reset_board_occurred or startOfProgram:
-                chessBoardCurr[0][8] = 1
-                reset_board_occurred = False  # Reset the state
-                startOfProgram = False
+                    print("ADCs: Change detected, incoming Chessboard:")
+                    for row in chessBoardCurr:
+                        print(row)
 
-            if boardChange and not game_over_occurred:  # Prevent POST and GET after game over
-                chessBoardPrev = copy.deepcopy(chessBoardCurr)
-                boardChange = False
+                    # POST request with the End of Turn flag
+                    chessBoardCurr[3][8] = 0  # Ensure turn flag is 0 before POST request
+                    updated_board = send_post_request_with_get_response(chessBoardCurr)
 
-                print("ADCs: Change detected, incoming Chessboard:")
-                for row in chessBoardCurr:
-                    print(row)
+                    if updated_board is not None:
+                        chessBoardCurr[0][8] = 0  # Clear reset flag
+                        chessBoardCurr[0][9] = 0  # Clear End of Turn flag
+                        if chessBoardCurr[1][9] == 1:  # Only update turn indicator in Play Friend mode
+                            chessBoardCurr[3][8] = updated_board[3][8]  # Update player turn based on server response
+                        handle_leds(updated_board, n)  # Process LEDs and update global chessboardLEDs
 
-                # POST request with the End of Turn flag
-                chessBoardCurr[3][8] = 0  # Ensure turn flag is 0 before POST request
-                updated_board = send_post_request_with_get_response(chessBoardCurr)
+                        print("LEDs: Chessboard Updated and processed.")
+                    else:
+                        print("LEDs: No change, chessboard not updated yet...")
 
-                if updated_board is not None:
-                    chessBoardCurr[0][8] = 0  # Clear reset flag
-                    chessBoardCurr[0][9] = 0  # Clear End of Turn flag
-                    if chessBoardCurr[1][9] == 1:  # Only update turn indicator in Play Friend mode
-                        chessBoardCurr[3][8] = updated_board[3][8]  # Update player turn based on server response
-                    handle_leds(updated_board, n)  # Process LEDs and update global chessboardLEDs
+                TestingMode = False
 
-                    print("LEDs: Chessboard Updated and processed.")
-                else:
-                    print("LEDs: No change, chessboard not updated yet...")
-
-            TestingMode = False
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+except KeyboardInterrupt as e:
+    for row in range(8):
+        for col in range(8):  # Clear all columns including flag bits
+            n[row * 8 + col] = (0, 0, 0)
+    n.write()
+    gameon.clear_display()
+    print(f"Keyboard interrupt detected")

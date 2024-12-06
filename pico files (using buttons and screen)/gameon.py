@@ -37,6 +37,10 @@ def display_menu():
             oled.text(option, 10, i * 10)  # Regular menu text
     oled.show()  # Show everything on the screen
 
+def clear_display():
+    oled.fill(0)
+    oled.show()
+
 # Move up in the menu
 def scroll_up():
     global selected_index
