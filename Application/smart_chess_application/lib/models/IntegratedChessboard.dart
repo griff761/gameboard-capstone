@@ -1,7 +1,5 @@
 // import 'dart:html';
 
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 
 import 'chessboard.dart';
@@ -41,31 +39,28 @@ class IntegratedChessboard extends Chessboard
 
   final VoidCallback callback;
 
-  Stream<bool> readyToSend = Stream.empty();
 
   IntegratedChessboard(this.callback)
   {
-    readyToSend = Stream.value(true);
-
     stockfish = Stockfish();
-    // final stockfishSubscription = stockfish.stdout.listen((message) {
-    //   print(message);
-    //   if(message.startsWith('bestmove'))
-    //     {
-    //       List<String> outputParts = message.split(" ");
-    //       String aIMoveString = outputParts[1];
-    //
-    //       aIMove = decipherAIMove(aIMoveString);
-    //       print(aIMove);
-    //
-    //       AIChecking();
-    //       determiningResult = false;
-    //       callback();
-    //       determiningResult = false;
-    //       gettingAI = false;
-    //       print("Stockfish callback: ${determiningResult}");
-    //     }
-    // });
+    final stockfishSubscription = stockfish.stdout.listen((message) {
+      print(message);
+      if(message.startsWith('bestmove'))
+        {
+          List<String> outputParts = message.split(" ");
+          String aIMoveString = outputParts[1];
+
+          aIMove = decipherAIMove(aIMoveString);
+          print(aIMove);
+
+          AIChecking();
+          determiningResult = false;
+          callback();
+          determiningResult = false;
+          gettingAI = false;
+          print("Stockfish callback: ${determiningResult}");
+        }
+    });
   }
 
   void reset()
@@ -75,7 +70,7 @@ class IntegratedChessboard extends Chessboard
 
   void update_hardware_state(List<List<ChessPieceTeam>> postArray)
   {
-    readyToSend = Stream.value(false);
+
     determiningResult = true;
     // hardware_state = postArray;
     hardware_state = List<List<ChessPieceTeam>>.generate(8, (_)=>List<ChessPieceTeam>.generate(8, (_)=>ChessPieceTeam.none));
@@ -97,7 +92,6 @@ class IntegratedChessboard extends Chessboard
       {
         determine_spaces_changed();
         determiningResult = false;
-        readyToSend = Stream.value(false);
       }
   }
 
@@ -572,35 +566,12 @@ class IntegratedChessboard extends Chessboard
 
   }
 
-  int time = 1500;
 
-  Future<void> getAIMove()
-  async {
+  void getAIMove()
+  {
     determiningResult = true;
     stockfish.stdin = getBoardStateForAI();
-    stockfish.stdin = 'go movetime ${time}';
-    print("AI GO NOW");
-
-    // sleep(Duration(milliseconds: time+25));
-    String output = await stockfish.stdout.last;
-    print("AI DONE NOW: $output}");
-
-    print(stockfish.stdout);
-    if(output.startsWith('bestmove'))
-    {
-      List<String> outputParts = output.split(" ");
-      String aIMoveString = outputParts[1];
-
-      aIMove = decipherAIMove(aIMoveString);
-      print(aIMove);
-
-      AIChecking();
-      determiningResult = false;
-      callback();
-      determiningResult = false;
-      gettingAI = false;
-      print("Stockfish callback: ${determiningResult}");
-    }
+    stockfish.stdin = 'go movetime 1500';
   }
 
   void AIChecking()
@@ -653,7 +624,6 @@ class IntegratedChessboard extends Chessboard
     currentMove = aIMove;
     validMoveState = determineAIMoveCompletion();
     determiningResult = false;
-    readyToSend = Stream.value(true);
   }
 
 

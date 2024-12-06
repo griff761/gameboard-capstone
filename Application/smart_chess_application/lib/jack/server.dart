@@ -13,12 +13,12 @@ class Server {
   static bool readyToSend = true;
 
 
-  static void startListening()
-  {
-    chessKey.currentState!.c.readyToSend.listen( (flag) {
-      readyToSend = flag;
-    });
-  }
+  // static void startListening()
+  // {
+  //   chessKey.currentState!.c.readyToSend.listen( (flag) {
+  //     readyToSend = flag;
+  //   });
+  // }
 
   /// Starts the server
   static Future<void> start() async {
