@@ -7,6 +7,8 @@ Firmware files are written in MicroPython and are available in the pico files (u
 # Android Software/Server
 The Android App that runs the HTTP server and Android app companion for the board are written in Flutter and can be found in the Application folder.
 
+# Fusion 360 files for PCB
+
 # Pinout List
 ## Raspberry Pi Pico WH Pinout 
 Pin 1/GP0 - I2C SDA for OLED Display  
