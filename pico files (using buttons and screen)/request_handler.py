@@ -1,3 +1,8 @@
+import time
+import copy  # Ensure deep copying
+from jacks_folder.send_post_request import send_post_request
+from jacks_folder.send_get_request import send_get_request
+
 def send_post_request_with_get_response(chess_board):
     """
     Sends a POST request and waits for a GET response. Ensures persistent GET requests until success.
