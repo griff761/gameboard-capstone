@@ -33,6 +33,7 @@ num_to_color = {
     3: (179, 250, 255),      # Tentative move (before move confirmation)
     4: (194, 255, 133),      # AI MOVE FROM
     5: (255, 145, 246),      # AI MOVE TO
+    6: (0, 255, 0),          # Checkmate/Game Over
     -1: (255, 82, 82),       # Error state
     -2: (255, 64, 171),      # Exempt error state (tells user which pieces to swap again)
 }

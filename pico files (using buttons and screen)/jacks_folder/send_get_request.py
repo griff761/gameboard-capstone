@@ -7,7 +7,7 @@ except ImportError as e:
 import json
 import time
 
-def send_get_request(current_array, check_interval=0.5, timeout=10):
+def send_get_request(current_array, check_interval=0.2, timeout=10):
     """
     Sends a GET request and retrieves the 2D array from the server, retrying until success or timeout.
     """

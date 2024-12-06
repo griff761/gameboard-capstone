@@ -274,7 +274,7 @@ try:
             print(f"An error occurred: {e}")
 except KeyboardInterrupt as e:
     for row in range(8):
-        for col in range(8):  # Clear all columns including flag bits
+        for col in range(8):
             n[row * 8 + col] = (0, 0, 0)
     n.write()
     gameon.clear_display()
