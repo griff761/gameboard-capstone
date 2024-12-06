@@ -186,20 +186,20 @@ class FlagChecker {
 
   /// Updates the current 2D array with new values.
   static void updateArray(List<List<int>> newArray) {
-    print("print input");
-    for(List<int> row in newArray)
-      {
-        print(row);
-      }
+    // print("print input");
+    // for(List<int> row in newArray)
+    //   {
+    //     print(row);
+    //   }
     _currentArray = List<List<int>>.from(
         newArray.map((row) => List<int>.from(row)));
     print('FlagChecker: Updated current array:');
 
-    print("print cur_array");
-    for(List<int> row in _currentArray)
-    {
-      print(row);
-    }
+    // print("print cur_array");
+    // for(List<int> row in _currentArray)
+    // {
+    //   print(row);
+    // }
   }
 
   /// Checks flags and applies actions based on the 2D array's state.
@@ -207,7 +207,7 @@ class FlagChecker {
     print('FlagChecker: Checking flags in the 2D array...');
 
     bool resetBoard = _currentArray[0][8] == 1;
-    bool friendMode = _currentArray[1][9] == 0;
+    bool friendMode = _currentArray[1][9] == 1;
     bool AIMode = _currentArray[1][8] == 1;
     bool confirmMove = _currentArray[0][9] == 1;
 
@@ -227,7 +227,7 @@ class FlagChecker {
         Server.chessKey.currentState!.c.playingWithAI = true;
         print("flag: playing with AI");
       }
-    if(confirmMove)
+    if(confirmMove && !resetBoard)
     {
       Server.chessKey.currentState?.confirmMove();
       print("flag: confirm move");
@@ -279,8 +279,8 @@ class FlagChecker {
       final parsedData = jsonDecode(payload);
       final chessMoves = parsedData['chess_moves'];
 
-      print("payload:");
-      print(payload);
+      // print("payload:");
+      // print(payload);
 
       if (chessMoves is List) {
         final validatedArray = chessMoves.map<List<int>>((row) {
@@ -291,14 +291,14 @@ class FlagChecker {
           }
         }).toList();
 
-        print("test1");
+        // print("test1");
 
         if (validatedArray.length != 8 ||
             validatedArray.any((row) => row.length != 10)) {
           return 'Invalid array size. Expected 8x10.';
         }
 
-        print("test2");;
+        // print("test2");;
 
         updateArray(validatedArray);
         return '2D array successfully updated.';
@@ -319,11 +319,11 @@ class FlagChecker {
     List<List<int>> finalArray = [[],[],[],[],[],[],[],[]];
 
     //print _currentArray
-    print("PRINT CURRENT ARRAY");
-    for(List<int> row in _currentArray)
-      {
-        print(row);
-      }
+    // print("PRINT CURRENT ARRAY");
+    // for(List<int> row in _currentArray)
+    //   {
+    //     print(row);
+    //   }
 
 
     for(int i = 0; i < 8; i++)
@@ -334,10 +334,10 @@ class FlagChecker {
           }
         for(int j = 0; j < 2; j++)
           {
-            print("row:$i\tcol:$j}");
-
-            print(_currentArray[i][j+8]);
-            finalArray[i].add(_currentArray[i][j+7]);
+            // print("row:$i\tcol:$j}");
+            //
+            // print(_currentArray[i][j+8]);
+            finalArray[i].add(_currentArray[i][j+8]);
           }
       }
      // 3 8 turn

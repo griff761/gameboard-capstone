@@ -33,9 +33,21 @@ class Server {
 
         print('Received GET request:');
 
+        // await chessKey.currentState!.c.stateUpdateCompleter.future;
+        // final updatedState = chessKey.currentState!.c.getUpdatedState();
+
         // Execute flag checker before responding
         FlagChecker.checkFlags();
+        // await chessKey.currentState!.c.stateUpdateCompleter.future;
 
+        print("Playing with AI: ${chessKey.currentState!.c.playingWithAI}");
+        print("turn: ${chessKey.currentState!.c.turn}");
+
+        if(chessKey.currentState!.c.playingWithAI && chessKey.currentState!.c.turn == ChessPieceTeam.black)
+          {
+            print("WAITING");
+            await chessKey.currentState!.c.stateUpdateCompleter.future;
+          }
         // TODO: new logic for returning LEDS
         // if(chessKey.currentState!.c.playingWithAI && chessKey.currentState!.c.turn == ChessPieceTeam.black)
         // if()
@@ -54,6 +66,7 @@ class Server {
 
             List<List<int>> fullArray = FlagChecker.updateLEDs(chessKey.currentState!.c.leds.ledArray);
             final response = provideUpdated2DArrayFromParam(fullArray);
+            print('sending GET response: ');
             _printPrettyJson(response);
             return Response.ok(response, headers: {'Content-Type': 'application/json'});
 
@@ -70,7 +83,7 @@ class Server {
       if (request.method == 'POST' && request.url.path == 'data') {
         final payload = await request.readAsString();
         print('Received POST data:');
-        _prettyPrintArrayFromPayload(payload);
+        // _prettyPrintArrayFromPayload(payload);
         print('Attempting to update the 2D array...');
         final result = FlagChecker.save2DArray(payload);
 
@@ -81,7 +94,7 @@ class Server {
               print(a);
             }
 
-          print("WHYYYYYYYY");
+          // print("WHYYYYYYYY");
 
           return Response.ok(result);
         } else {

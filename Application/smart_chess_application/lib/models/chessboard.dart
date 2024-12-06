@@ -143,8 +143,46 @@ board =
   bKing = King(row: -1,col: -1, team: ChessPieceTeam.none);
  }
 
+ bool kingInCheck()
+ {
+  King k = turn == ChessPieceTeam.white ? wKing : bKing;
+  return inCheck(k.row, k.col, k.team);
+ }
+
  List<Move> getValidPieceMoves(int row, int col)
  {
+  King k = turn == ChessPieceTeam.white ? wKing : bKing;
+  if(inCheck(k.row, k.col, k.team))
+   {
+    print("${turn} in check *** (getValidPieceMoves)");
+    List<Move> moves = board[row][col].getValidMoves(this);
+    List<Move> validMoves = [];
+    for(Move m in moves)
+    {
+      Chessboard temp = clone();
+      Move cloneM = m.clone();
+      cloneM.piece = temp.board[cloneM.piece.row][cloneM.piece.col];
+      temp.forceMove(cloneM);
+
+      print("*****************");
+      print("PIECE NEW COORDS: row: ${cloneM.piece.row}  col: ${cloneM.piece.col}");
+      print("*****************");
+
+      print("board state: ${temp.toString()}");
+
+      if(!temp.kingInCheck())
+       {
+        validMoves.add(m);
+        print("FOUND AVAIL MOVE: Move ${cloneM.piece} to ${cloneM.row}, ${cloneM.col}");
+       }
+      else
+       {
+        print("Move ${cloneM.piece} to ${cloneM.row}, ${cloneM.col} not valid");
+       }
+    }
+    return validMoves;
+   }
+
   return board[row][col].getValidMoves(this);
  }
 
@@ -160,6 +198,7 @@ board =
  /// Checks if a square is in check by the opposing team given a square's x and y coordinates
  bool inCheck(int row, int col, ChessPieceTeam team)
  {
+  print("row: $row, col: $col, team: $team");
    late List<ChessPiece> pieces;
    if(team == ChessPieceTeam.white)
     {
@@ -194,6 +233,7 @@ board =
       {
        if(move.row == row && move.col == col)
         {
+         print("IN CHECK: piece: ${move.piece}\trow:$row\tcol:$col");
          return true;
         }
       }
@@ -249,6 +289,25 @@ board =
   Move? move;
   if((move = piece.validMove(inputMove, this)) != null)
    {
+    //if king is in check , we need to do extra checking
+////////////////////////////////////////////////////////////////////////////////
+   King k = turn == ChessPieceTeam.white ? wKing : bKing;
+   if(inCheck(k.row, k.col, k.team))
+   {
+    print("${turn} in check ***");
+
+     Chessboard temp = clone();
+     Move cloneM = move!.clone();
+     cloneM.piece = temp.board[cloneM.piece.row][cloneM.piece.col];
+     temp.forceMove(cloneM);
+
+     if(temp.kingInCheck())
+     {
+      return null;
+     }
+    }
+
+
     // removePiece(r2, c2);
     //evaluate
     move?.evaluate(this);
@@ -374,6 +433,7 @@ board =
  }
 
 
+ /// FOR DETERMINING CHECK MOVES
  Chessboard clone()
  {
   Chessboard clone = Chessboard();
@@ -387,15 +447,15 @@ board =
       clone.board[i][j] = board[i][j].copy();
 
       if (board[i][j].team == ChessPieceTeam.white) {
-          clone.whitePieces.add(board[i][j]);
+          clone.whitePieces.add(clone.board[i][j]);
           if (board[i][j].type == ChessPieceType.king) {
-           clone.wKing = board[i][j] as King;
+           clone.wKing = clone.board[i][j] as King;
           }
        }
         else if (board[i][j].team == ChessPieceTeam.black) {
-        clone.blackPieces.add(board[i][j]);
+        clone.blackPieces.add(clone.board[i][j]);
           if (board[i][j].type == ChessPieceType.king) {
-           clone.bKing = board[i][j] as King;
+           clone.bKing =clone. board[i][j] as King;
           }
         }
      }
@@ -407,20 +467,23 @@ board =
  }
 
 
+ /// FOR DETERMINING CHECK MOVES
  Move forceMove(Move inputMove)
   {
    //get chesspiece
    ChessPiece piece =inputMove.piece;
-   Move? move;
+   // Move? move;
 
     // removePiece(r2, c2);
     //evaluate
-    move?.evaluate(this);
-    allMoves.add(move?.lAN ?? "");
+   inputMove.evaluate(this);
+   print("FORCEMOVE: ${inputMove.lAN}");
+    // allMoves.add(inputMove?.lAN ?? "");
     //make move
-    piece.move(move!, this);
-    changeTurn();
-    return move;
+    piece.move(inputMove, this);
+    print("newPos: ${inputMove.piece.row}\t${inputMove.piece.col}");
+    // changeTurn();
+    return inputMove;
   }
 
 }
