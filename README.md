@@ -8,6 +8,7 @@ Firmware files are written in MicroPython and are available in the pico files (u
 The Android App that runs the HTTP server and Android app companion for the board are written in Flutter and can be found in the Application folder.
 
 # Fusion 360 files for PCB
+Open the Chess Sensing PCBs.f3d file with Fusion 360. We sent the design to OSHPark and validated its functionality.
 
 # Pinout List
 ## Raspberry Pi Pico WH Pinout 
