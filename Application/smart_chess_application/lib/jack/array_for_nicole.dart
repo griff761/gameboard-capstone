@@ -12,8 +12,8 @@ class ArrayForNicole {
     // Explicitly define each index of the chessboard, keeping the last two columns unchanged
     List<List<int>> chessboard = [
       [0, 0, 0, 0, 0, 0, 0, 0, array[0][8], array[0][9]], // Row 0
-      [0, 7, 0, 0, 0, 0, 0, 0, array[1][8], array[1][9]], // Row 1
-      [0, 7, 0, 0, 0, 0, 0, 0, array[2][8], array[2][9]], // Row 2
+      [0, 2, 0, 0, 0, 0, 0, 0, array[1][8], array[1][9]], // Row 1
+      [0, 3, 0, 0, 0, 0, 0, 0, array[2][8], array[2][9]], // Row 2
       [0, 0, 0, 0, 0, 0, 0, 0, normalTurnScenario(), array[3][9]], // Row 3
       [0, 0, 0, 0, 0, 0, 0, 0, array[4][8], array[4][9]], // Row 4
       [0, 0, 0, 0, 0, 0, 0, 0, array[5][8], array[5][9]], // Row 5

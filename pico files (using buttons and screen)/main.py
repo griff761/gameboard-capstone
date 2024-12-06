@@ -1,11 +1,12 @@
 import time
-from jacks_folder.wifi_connect import connect_wifi
+from jacks_folder.wifi_connect import connect_wifi, disconnect_wifi
 from request_handler import send_post_request_with_get_response
 from lib.mcp3008 import MCP3008
 from machine import Pin
 import lib.copy as copy
 from led_handler import handle_leds
-import gameon
+import gameon, machine
+from neopixel import NeoPixel
 
 # Test server connectivity
 def test_server_connection():
@@ -18,8 +19,11 @@ def test_server_connection():
         s.close()
     except Exception as e:
         print(f"Error connecting to the server: {e}. Check if the server is running and accessible.")
+        
+        
 
 # Ensure Wi-Fi is connected before starting
+disconnect_wifi()
 connect_wifi()
 test_server_connection()
 
@@ -45,13 +49,17 @@ adc5 = MCP3008(spi, cs5)
 adc6 = MCP3008(spi, cs6)
 adc7 = MCP3008(spi, cs7)
 
+# LED STRIP
+p = machine.Pin.board.GP6
+n = NeoPixel(p, 64)
+
 rows, cols = (8, 10)
 chessBoardCurr = [[0 for _ in range(cols)] for _ in range(rows)]
 chessBoardPrev = [[0 for _ in range(cols)] for _ in range(rows)]
 chessboardLEDs = [[0 for _ in range(cols)] for _ in range(rows)]
 
-defaultTriggerLow = 0.2
-defaultTriggerHigh = 1.8
+defaultTriggerLow = 0.94
+defaultTriggerHigh = 1.06
 vRef = 2.048
 steps = 1023
 scaleFactor = vRef / steps
@@ -222,7 +230,13 @@ while True:
                 for row, adc in enumerate([adc0, adc1, adc2, adc3, adc4, adc5, adc6, adc7]):
                     for y in range(8):
                         read = scaleFactor * adc.read(y)
-                        chessBoardCurr[row][y] = 1 if (read < defaultTriggerLow or read > defaultTriggerHigh) else 0
+                        
+                        if (read < defaultTriggerLow):
+                            chessBoardCurr[row][y] = -1
+                        elif (read > defaultTriggerHigh):
+                            chessBoardCurr[row][y] = 1
+                        else:
+                            chessBoardCurr[row][y] = 0
                         if chessBoardCurr[row][y] != chessBoardPrev[row][y]:
                             boardChange = True
 
@@ -249,7 +263,7 @@ while True:
                     chessBoardCurr[0][9] = 0  # Clear End of Turn flag
                     if chessBoardCurr[1][9] == 1:  # Only update turn indicator in Play Friend mode
                         chessBoardCurr[3][8] = updated_board[3][8]  # Update player turn based on server response
-                    handle_leds(updated_board)  # Process LEDs and update global chessboardLEDs
+                    handle_leds(updated_board, n)  # Process LEDs and update global chessboardLEDs
 
                     print("LEDs: Chessboard Updated and processed.")
                 else:
