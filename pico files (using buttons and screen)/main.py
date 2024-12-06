@@ -20,8 +20,6 @@ def test_server_connection():
     except Exception as e:
         print(f"Error connecting to the server: {e}. Check if the server is running and accessible.")
         
-        
-
 # Ensure Wi-Fi is connected before starting
 disconnect_wifi()
 connect_wifi()
@@ -281,4 +279,3 @@ except KeyboardInterrupt as e:
     n.write()
     gameon.clear_display()
     print(f"Keyboard interrupt detected")
-
