@@ -36,6 +36,9 @@ chessboard = matrix = [[0 for _ in range(8)] for _ in range(8)]
 p = machine.Pin.board.GP6
 n = NeoPixel(p, 64)
 
+n[2] = (110, 0, 34)
+
+
 defaultTriggerLow = 0.2 # Voltage where magnet definitely is being sensed
 defaultTriggerHigh = 1.8 # Voltage where magnet definitely is being sensed
 vRef = 2.048 # VREF of the ADC chips
