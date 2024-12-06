@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:smart_chess_application/jack/server.dart';
+
+import '../models/chesspiece.dart';
 import 'array_for_nicole.dart';
 
 /// NOTES FOR NICOLE:
@@ -130,6 +133,8 @@ class FlagChecker {
   static List<List<int>> _currentArray =
   List.generate(8, (_) => List.generate(10, (_) => 0));
 
+  // static bool arrayReady = false;
+
   /// Retrieves the current 2D array.
   static List<List<int>> get currentArray => _currentArray;
 
@@ -162,7 +167,6 @@ class FlagChecker {
   //                 Check Row 2, Column 9 (Gamemode 1)
   static void _gamemode1_Array() {
     // UPDATE LOGIC HERE FOR HOW'D YOU LIKE TO HANDLE THIS
-
     final updatedArray = ArrayForNicole.handleArray(_currentArray);
     updateArray(updatedArray); // Save changes back
     print('FlagChecker: Reset detected, Gamemode 2 selected.');
@@ -182,45 +186,91 @@ class FlagChecker {
 
   /// Updates the current 2D array with new values.
   static void updateArray(List<List<int>> newArray) {
+    print("print input");
+    for(List<int> row in newArray)
+      {
+        print(row);
+      }
     _currentArray = List<List<int>>.from(
         newArray.map((row) => List<int>.from(row)));
     print('FlagChecker: Updated current array:');
+
+    print("print cur_array");
+    for(List<int> row in _currentArray)
+    {
+      print(row);
+    }
   }
 
   /// Checks flags and applies actions based on the 2D array's state.
   static void checkFlags() {
     print('FlagChecker: Checking flags in the 2D array...');
-    if (_currentArray[0][8] == 1) { // if reset/new game happened, then....
-      if (_currentArray[1][8] == 1 && _currentArray[1][9] == 0) { // if in gamemode 1 (Play AI)
-        _reset_gamemode1_Array();
+
+    bool resetBoard = _currentArray[0][8] == 1;
+    bool friendMode = _currentArray[1][9] == 0;
+    bool AIMode = _currentArray[1][8] == 1;
+    bool confirmMove = _currentArray[0][9] == 1;
+
+    if(resetBoard)
+      {
+        Server.chessKey.currentState?.resetChessboard();
+        print("flag: reset board");
       }
-      else if (_currentArray[1][8] == 0 && _currentArray[1][9] == 1) { // if in game mode 2 (Play Friend)
-        _reset_gamemode2_Array();
+
+    if(friendMode && !AIMode)
+      {
+        Server.chessKey.currentState!.c.playingWithAI = false;
+        print("flag: playing with friend");
       }
-      else {
-        print(
-            'Problem with flags, seems gamemode flag got deleted somewhere along the way. Otherwise, other issue with flags');
+    else
+      {
+        Server.chessKey.currentState!.c.playingWithAI = true;
+        print("flag: playing with AI");
+      }
+    if(confirmMove)
+    {
+      Server.chessKey.currentState?.confirmMove();
+      print("flag: confirm move");
+    }
+    else
+      {
         final updatedArray = ArrayForNicole.handleArray(_currentArray);
+        updateArray(updatedArray);
       }
-    }
-    else if (_currentArray[0][8] == 0) { // If in on-going game (already sent initial post)
-      if (_currentArray[1][8] == 1 && _currentArray[1][9] == 0) { // if in gamemode 1 (Play AI)
-        _gamemode1_Array();
-      }
-      else if (_currentArray[1][8] == 0 && _currentArray[1][9] == 1) { // if in game mode 2 (Play Friend)
-        _gamemode2_Array();
-      }
-      else {
-        print(
-            'Problem with flags, seems gamemode flag got deleted somewhere along the way. Otherwise, other issue with flags');
-        final updatedArray = ArrayForNicole.handleArray(_currentArray);
-      }
-    }
-    else {
-      print(
-          'Problem with flags, seems gamemode flag got deleted somewhere along the way. Otherwise, other issue with flags');
-      final updatedArray = ArrayForNicole.handleArray(_currentArray);
-    }
+
+
+
+    // if (_currentArray[0][8] == 1) { // if reset/new game happened, then....
+    //   if (_currentArray[1][8] == 1 && _currentArray[1][9] == 0) { // if in gamemode 1 (Play AI)
+    //     _reset_gamemode1_Array();
+    //   }
+    //   else if (_currentArray[1][8] == 0 && _currentArray[1][9] == 1) { // if in game mode 2 (Play Friend)
+    //     _reset_gamemode2_Array();
+    //   }
+    //   else {
+    //     print(
+    //         'Problem with flags, seems gamemode flag got deleted somewhere along the way. Otherwise, other issue with flags');
+    //     final updatedArray = ArrayForNicole.handleArray(_currentArray);
+    //   }
+    // }
+    // else if (_currentArray[0][8] == 0) { // If in on-going game (already sent initial post)
+    //   if (_currentArray[1][8] == 1 && _currentArray[1][9] == 0) { // if in gamemode 1 (Play AI)
+    //     _gamemode1_Array();
+    //   }
+    //   else if (_currentArray[1][8] == 0 && _currentArray[1][9] == 1) { // if in game mode 2 (Play Friend)
+    //     _gamemode2_Array();
+    //   }
+    //   else {
+    //     print(
+    //         'Problem with flags, seems gamemode flag got deleted somewhere along the way. Otherwise, other issue with flags');
+    //     final updatedArray = ArrayForNicole.handleArray(_currentArray);
+    //   }
+    // }
+    // else {
+    //   print(
+    //       'Problem with flags, seems gamemode flag got deleted somewhere along the way. Otherwise, other issue with flags');
+    //   final updatedArray = ArrayForNicole.handleArray(_currentArray);
+    // }
   }
 
   /// Saves a 2D array from a POST request payload.
@@ -228,6 +278,9 @@ class FlagChecker {
     try {
       final parsedData = jsonDecode(payload);
       final chessMoves = parsedData['chess_moves'];
+
+      print("payload:");
+      print(payload);
 
       if (chessMoves is List) {
         final validatedArray = chessMoves.map<List<int>>((row) {
@@ -238,10 +291,14 @@ class FlagChecker {
           }
         }).toList();
 
+        print("test1");
+
         if (validatedArray.length != 8 ||
             validatedArray.any((row) => row.length != 10)) {
           return 'Invalid array size. Expected 8x10.';
         }
+
+        print("test2");;
 
         updateArray(validatedArray);
         return '2D array successfully updated.';
@@ -252,5 +309,48 @@ class FlagChecker {
       print('Error parsing JSON: $e');
       return 'Error parsing JSON.';
     }
+  }
+
+
+  static List<List<int>> updateLEDs(List<List<int>> ledArray)
+  {
+    //_currentArray
+
+    List<List<int>> finalArray = [[],[],[],[],[],[],[],[]];
+
+    //print _currentArray
+    print("PRINT CURRENT ARRAY");
+    for(List<int> row in _currentArray)
+      {
+        print(row);
+      }
+
+
+    for(int i = 0; i < 8; i++)
+      {
+        for(int j = 0; j < 8; j++)
+          {
+            finalArray[i].add(ledArray[7-i][j]);
+          }
+        for(int j = 0; j < 2; j++)
+          {
+            print("row:$i\tcol:$j}");
+
+            print(_currentArray[i][j+8]);
+            finalArray[i].add(_currentArray[i][j+7]);
+          }
+      }
+     // 3 8 turn
+
+    if(Server.chessKey.currentState!.c.turn == ChessPieceTeam.white)
+      {
+        finalArray[3][8] = 1;
+      }
+    else
+      {
+        finalArray[3][8] = 2;
+      }
+
+    return finalArray;
   }
 }

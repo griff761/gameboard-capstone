@@ -61,4 +61,9 @@ class Bishop extends ChessPiece
     }
   }
 
+  @override
+  ChessPiece copy() {
+    return Bishop(row: row, col: col, team: team, type: type);
+  }
+
 }

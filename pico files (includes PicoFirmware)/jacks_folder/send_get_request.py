@@ -15,8 +15,9 @@ def send_get_request(current_array, check_interval=2):
         print("Error: urequests is not available. Cannot send GET requests.")
         return current_array  # Return the current array as a fallback
 
-    url = "http://172.20.10.6:8080/config"  # Correct server address
-
+    url = "http://172.20.10.13:8080/config"  # Correct server address
+    # url = "http://172.20.10.6:8080/config"  # Correct server address
+# 
     try:
         response = urequests.get(url)
         if response.status_code == 200:

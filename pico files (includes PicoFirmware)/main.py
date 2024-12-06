@@ -10,8 +10,8 @@ from led_handler import handle_leds  # Import the LED handler
 def test_server_connection():
     import usocket
     try:
-        #addr = usocket.getaddrinfo("172.20.10.11", 8080)[0][-1]
-        addr = usocket.getaddrinfo("172.20.10.6", 8080)[0][-1]
+        addr = usocket.getaddrinfo("172.20.10.13", 8080)[0][-1]
+        # addr = usocket.getaddrinfo("172.20.10.6", 8080)[0][-1]
         s = usocket.socket()
         s.connect(addr)
         print("Successfully connected to the server!")
@@ -22,6 +22,7 @@ def test_server_connection():
 # Ensure Wi-Fi is connected before starting
 connect_wifi()
 test_server_connection()
+print("connection done")
 
 # Define pins
 spi = machine.SPI(0, sck=Pin(18), mosi=Pin(19), miso=Pin(16), baudrate=100000)

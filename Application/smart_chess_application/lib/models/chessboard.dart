@@ -46,6 +46,10 @@ class Chessboard
 
  void setup()
  {
+
+  turn = ChessPieceTeam.white;
+
+  allMoves = [];
   board =
   [[],
    [],
@@ -368,5 +372,55 @@ board =
   }
   return -1;
  }
+
+
+ Chessboard clone()
+ {
+  Chessboard clone = Chessboard();
+
+  clone.empty();
+
+  for(int i = 0; i < 8; i++)
+   {
+    for(int j = 0; j < 8; j++)
+     {
+      clone.board[i][j] = board[i][j].copy();
+
+      if (board[i][j].team == ChessPieceTeam.white) {
+          clone.whitePieces.add(board[i][j]);
+          if (board[i][j].type == ChessPieceType.king) {
+           clone.wKing = board[i][j] as King;
+          }
+       }
+        else if (board[i][j].team == ChessPieceTeam.black) {
+        clone.blackPieces.add(board[i][j]);
+          if (board[i][j].type == ChessPieceType.king) {
+           clone.bKing = board[i][j] as King;
+          }
+        }
+     }
+   }
+ clone.turn = turn;
+  // board + white / black + kings
+
+  return clone;
+ }
+
+
+ Move forceMove(Move inputMove)
+  {
+   //get chesspiece
+   ChessPiece piece =inputMove.piece;
+   Move? move;
+
+    // removePiece(r2, c2);
+    //evaluate
+    move?.evaluate(this);
+    allMoves.add(move?.lAN ?? "");
+    //make move
+    piece.move(move!, this);
+    changeTurn();
+    return move;
+  }
 
 }

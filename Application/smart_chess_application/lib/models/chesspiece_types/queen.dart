@@ -97,4 +97,9 @@ class Queen extends ChessPiece
     }
   }
 
+  @override
+  ChessPiece copy() {
+    return Queen(row: row, col: col, team: team, type: type);
+  }
+
 }

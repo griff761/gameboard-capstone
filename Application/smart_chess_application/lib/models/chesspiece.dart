@@ -79,5 +79,7 @@ abstract class ChessPiece
     return currentBoard.board[row][col].team == ChessPieceTeam.none;
   }
 
+  ChessPiece copy();
+
 }
 

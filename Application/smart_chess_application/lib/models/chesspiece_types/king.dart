@@ -180,4 +180,11 @@ class King extends ChessPiece
       }
   }
 
+  @override
+  ChessPiece copy() {
+    King k =  King(row: row, col: col, team: team, type: type);
+    k.firstMove = firstMove;
+    return k;
+  }
+
 }

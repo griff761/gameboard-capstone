@@ -76,26 +76,36 @@ scaleFactor = vRef / steps
 boardChange = False
 TestingMode = False  # Initialize TestingMode to False
 
+chessBoardCur = [[1, 1, 1, 1, 1, 1, 1, 1,   0,0],
+                [1, 1, 1, 1, 1, 1, 1, 1,   0,0],
+                [0, 0, 0, 0, 0, 0, 0, 0,   0,0],
+                [0, 0, 0, 0, 0, 0, 0, 0,   0,0],
+                [0, 0, 0, 0, 0, 0, 0, 0,   0,0],
+                [0, 0, 0, 0, 0, 0, 0, 0,   0,0],
+                [-1, -1, -1, -1, -1, -1, -1, -1,   0,0],
+                [-1, -1, -1, -1, -1, -1, -1, -1,   0,0]]
+                
+for row in chessBoardCur:
+            print(row)
+
 # Main execution loop
-print("Listening for user input. Enter all 80 indices as space-separated values for the 8x10 chessboard.")
+print("Enter the change (row, col, value):")
+
+
 
 while True:
     try:
         # Get input from the user
-        print("Enter the entire board (80 indices, space-separated):")
+        print("Enter the change (row, col, value):")
         input_line = wait_for_user_input()
 
         # Parse input into a list of integers
         input_values = input_line.strip().split()
         num_values = len(input_values)
         
-        if num_values < 80:
-            print(f"Invalid input: Only {num_values} values entered. Expected 80. Try again.")
-            continue
-        elif num_values > 80:
-            print(f"Invalid input: {num_values} values entered. Expected 80. Try again.")
-            continue
-
+        if num_values < 3 or num_values > 3:
+            print(f"Invalid input: Only {num_values} values entered. Expected 3. Try again.")
+        
         try:
             # Convert to integers
             input_values = list(map(int, input_values))
@@ -103,16 +113,35 @@ while True:
             print("Invalid input: Non-numeric values detected. Try again.")
             continue
 
-        # Populate chessBoardCurr with input values
-        for row in range(8):
-            chessBoardCurr[row] = input_values[row * 10:(row + 1) * 10]
+        # change chessboardCur with input values
+        chessBoardCur[input_values[0]][input_values[1]] = input_values[2]
+        # for row in range(8):
+        #     chessBoardCurr[row] = input_values[row * 10:(row + 1) * 10]
+
+        # if num_values < 80:
+        #     print(f"Invalid input: Only {num_values} values entered. Expected 80. Try again.")
+        #     continue
+        # elif num_values > 80:
+        #     print(f"Invalid input: {num_values} values entered. Expected 80. Try again.")
+        #     continue
+
+        # try:
+        #     # Convert to integers
+        #     input_values = list(map(int, input_values))
+        # except ValueError:
+        #     print("Invalid input: Non-numeric values detected. Try again.")
+        #     continue
+
+        # # Populate chessBoardCurr with input values
+        # for row in range(8):
+        #     chessBoardCurr[row] = input_values[row * 10:(row + 1) * 10]
 
         print("Complete 8x10 board entered by user:")
-        for row in chessBoardCurr:
+        for row in chessBoardCur:
             print(row)
 
         # Send the 2D array via POST request and retrieve the response via GET
-        updated_board = send_post_request_with_get_response(chessBoardCurr)
+        updated_board = send_post_request_with_get_response(chessBoardCur)
 
         if updated_board is not None:
             print("GET Response: Updated Board")
@@ -128,8 +157,19 @@ while True:
         # Reset for the next input
         print("Ready for new input.")
 
+        if input_values[0] == 0 and input_values[1] == 8 and input_values[3] == 1:
+            print("reset")
+            chessBoardCur = [[1, 1, 1, 1, 1, 1, 1, 1,   0,0],
+                [1, 1, 1, 1, 1, 1, 1, 1,   0,0],
+                [0, 0, 0, 0, 0, 0, 0, 0,   0,0],
+                [0, 0, 0, 0, 0, 0, 0, 0,   0,0],
+                [0, 0, 0, 0, 0, 0, 0, 0,   0,0],
+                [0, 0, 0, 0, 0, 0, 0, 0,   0,0],
+                [-1, -1, -1, -1, -1, -1, -1, -1,   0,0],
+                [-1, -1, -1, -1, -1, -1, -1, -1,   0,0]]
+
         # Wait before the next iteration
-        time.sleep(3)
+        # time.sleep(3)
 
     except Exception as e:
         print(f"An error occurred: {e}")

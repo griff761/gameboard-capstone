@@ -1,29 +1,69 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
+import 'package:smart_chess_application/models/chesspiece.dart';
 import '../chessboard_view_live.dart';
 import 'flag_checker.dart';
 
 class Server {
 
   static GlobalKey<ChessboardViewLiveState> chessKey = GlobalKey();
+  static bool readyToSend = true;
+
+
+  static void startListening()
+  {
+    chessKey.currentState!.c.readyToSend.listen( (flag) {
+      readyToSend = flag;
+    });
+  }
 
   /// Starts the server
   static Future<void> start() async {
+
+
+
     final handler = const Pipeline()
         .addMiddleware(logRequests())
         .addHandler((Request request) async {
       // Handle GET requests
       if (request.method == 'GET' && request.url.path == 'config') {
+
+        print('Received GET request:');
+
         // Execute flag checker before responding
         FlagChecker.checkFlags();
 
-        // Provide updated array after any required changes
-        final response = provideUpdated2DArray();
-        print('GET request returning the following 2D array:');
-        _printPrettyJson(response);
-        return Response.ok(response, headers: {'Content-Type': 'application/json'});
+        // TODO: new logic for returning LEDS
+        // if(chessKey.currentState!.c.playingWithAI && chessKey.currentState!.c.turn == ChessPieceTeam.black)
+        // if()
+        //   sleep(const Duration(milliseconds: 20));
+        // if(!readyToSend)
+        if(chessKey.currentState!.c.determiningResult)
+          {
+            // return Response.notFound("RESULT TBD");
+            // sleep(const Duration(seconds:1));
+
+            return Response.notFound("RESULT TBD");
+
+            print(chessKey.currentState!.c.determiningResult);
+          }
+
+
+            List<List<int>> fullArray = FlagChecker.updateLEDs(chessKey.currentState!.c.leds.ledArray);
+            final response = provideUpdated2DArrayFromParam(fullArray);
+            _printPrettyJson(response);
+            return Response.ok(response, headers: {'Content-Type': 'application/json'});
+
+
+        //
+        // // Provide updated array after any required changes
+        // final response = provideUpdated2DArray();
+        // print('GET request returning the following 2D array:');
+        // _printPrettyJson(response);
+        // return Response.ok(response, headers: {'Content-Type': 'application/json'});
       }
 
       // Handle POST requests
@@ -35,6 +75,14 @@ class Server {
         final result = FlagChecker.save2DArray(payload);
 
         if (result == '2D array successfully updated.') {
+
+          for(List<int> a in FlagChecker.currentArray)
+            {
+              print(a);
+            }
+
+          print("WHYYYYYYYY");
+
           return Response.ok(result);
         } else {
           return Response.badRequest(body: result);
@@ -45,7 +93,7 @@ class Server {
       return Response.notFound('Page not found');
     });
 
-    final server = await io.serve(handler, '172.20.10.6', 8080);
+    final server = await io.serve(handler, '172.20.10.13', 8080);
     print('Server started successfully. Listening on http://${server.address.host}:${server.port}');
   }
 
@@ -53,6 +101,11 @@ class Server {
   static String provideUpdated2DArray() {
     final currentArray = FlagChecker.currentArray;
     return jsonEncode({'chess_moves': currentArray});
+  }
+
+  /// Provides the updated 2D array for GET requests.
+  static String provideUpdated2DArrayFromParam(List<List<int>> array) {
+    return jsonEncode({'chess_moves': array});
   }
 
   /// Prints JSON in a pretty format.

@@ -66,4 +66,9 @@ class Knight extends ChessPiece
     }
   }
 
+  @override
+  ChessPiece copy() {
+    return Knight(row: row, col: col, team: team, type: type);
+  }
+
 }

@@ -4,6 +4,7 @@ import 'package:smart_chess_application/models/move.dart';
 import 'package:smart_chess_application/src/output_widget.dart';
 import 'package:stockfish/stockfish.dart';
 
+import 'jack/server.dart';
 import 'models/IntegratedChessboard.dart';
 import 'models/chessboard.dart';
 import 'models/chesspiece.dart';
@@ -20,7 +21,16 @@ class ChessboardViewLive extends StatefulWidget {
 //START BY IMITATING DATA SENT WITH CLICKS
 class ChessboardViewLiveState extends State<ChessboardViewLive> {
 
-//TODO: RE-ADD PROMOTION DIALOGUE
+  bool updated = false;
+
+  void resetChessboard()
+  {
+    c.setup();
+
+
+    updateLEDs();
+    updateAllSpaces();
+  }
 
 
   void recieveDataFromPico(List<List<ChessPieceTeam>> hardwareState)
@@ -28,6 +38,34 @@ class ChessboardViewLiveState extends State<ChessboardViewLive> {
     c.update_hardware_state(hardwareState);
     updateLEDs();
 
+    // keys[row][col].currentState?.clearIcon();
+    for(List<int> coords in c.changes) {
+      int i;
+      switch(c.hardware_state[coords[0]][coords[1]])
+      {
+        case ChessPieceTeam.white:
+          i =1;
+          break;
+        case ChessPieceTeam.black:
+          i = -1;
+          break;
+        case ChessPieceTeam.none:
+          i = 0;
+      }
+      keys[coords[0]][coords[1]].currentState?.tempIcon(i);
+    }
+  }
+
+  List<List<int>>? getLEDDataForPico()
+  {
+    if(c.determiningResult)
+      {
+        return null;
+      }
+    else
+      {
+        return c.leds.ledArray;
+      }
   }
 
 
@@ -66,6 +104,7 @@ class ChessboardViewLiveState extends State<ChessboardViewLive> {
     //board change -> check with integrated chessboard
     c.update_hardware_state(simulatedPhysicalBoard);
 
+
     //change board with LEDs
     updateLEDs();
 
@@ -75,6 +114,18 @@ class ChessboardViewLiveState extends State<ChessboardViewLive> {
         updateAllSpaces();
       }
   }
+
+  void boardUpdate(List<List<ChessPieceTeam>> updatedBoardState)
+  {
+    c.update_hardware_state(simulatedPhysicalBoard);
+    updateLEDs();
+    if(c.changes.isEmpty || c.errorState)
+    {
+      updateAllSpaces();
+    }
+    updated = true;
+  }
+
 
   void changeTouch(int i)
   {
@@ -99,9 +150,13 @@ class ChessboardViewLiveState extends State<ChessboardViewLive> {
 
   void confirmMove()
   {
-    if(c.confirmMove())
+    Move? m = c.needPromotionDialogue();
+    if(m != null)
       {
-        // c.update_hardware_state(simulatedPhysicalBoard);
+        promotionDialogue(c.turn, m);
+      }
+    else if(c.confirmMove())
+      {
         updateLEDs();
         updateAllSpaces();
       }
@@ -265,7 +320,17 @@ class ChessboardViewLiveState extends State<ChessboardViewLive> {
                     });
                     move.promotionType = command[1] as String;
                     Navigator.of(ctx).pop();
-                    movePiece(move);
+                    if(c.confirmMove())
+                      {
+                        // c.update_hardware_state(simulatedPhysicalBoard);
+                        updateLEDs();
+                        updateAllSpaces();
+                      }
+                    else
+                      {
+                        print("ERROR PROMOTING PIECE");
+                      }
+                    // movePiece(move);
                   },
                   child: command[0] as Widget,//Text(command),
                 ),
@@ -317,6 +382,8 @@ class ChessboardViewLiveState extends State<ChessboardViewLive> {
     currentTouch = "currentTouch: " + piecePickedUp.toString();
 
     initSimulatedBoard();
+
+    Server.startListening();
   }
 
 
@@ -402,7 +469,7 @@ class ChessSquareState extends State<ChessSquare> {
 
   List<Widget> iconList = [];
 
-  Color color = Colors.white;
+  Color color = Colors.white; //255, 255, 255
 
   Color color1 = Colors.black12;
   Color color2 = Colors.white;
@@ -449,11 +516,14 @@ class ChessSquareState extends State<ChessSquare> {
   Map<int, Color> colors = {
   };
 
-
+  late Chessboard chess;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    chess = widget.c;
+
     icon = icons[widget.c.board[widget.row][widget.col].getSymbol()] ?? Text("");
     color = ((widget.row + widget.col)%2 == 0) ? color1 : color2;
 
@@ -487,8 +557,8 @@ class ChessSquareState extends State<ChessSquare> {
           // print(widget.icon);
 
           // TOUCH
-          widget.chessboardKey.currentState?.touch(widget.row, widget.col);
-
+          // widget.chessboardKey.currentState?.touch(widget.row, widget.col);
+          //TODO: SO RIGHT NOW THIS ISNT DOING ANYTHING SO WE CAN TEST HARDWARE INTEGRATION
         },));
   }
 
@@ -496,7 +566,7 @@ class ChessSquareState extends State<ChessSquare> {
   void updateIcon()
   {
     setState(() {
-      icon = icons[widget.c.board[widget.row][widget.col].getSymbol()] ?? Text("");
+      icon = icons[chess.board[widget.row][widget.col].getSymbol()] ?? Text("");
     });
   }
 
@@ -504,6 +574,13 @@ class ChessSquareState extends State<ChessSquare> {
   {
     setState(() {
       icon = Text(i.toString());
+    });
+  }
+
+  void clearIcon()
+  {
+    setState(() {
+      icon = Text("");
     });
   }
 
@@ -517,6 +594,12 @@ class ChessSquareState extends State<ChessSquare> {
   {
     setState(() {
       color = widget.color;
+    });
+  }
+  void updateBoard(Chessboard c)
+  {
+    setState(() {
+      chess = c;
     });
   }
 }

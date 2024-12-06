@@ -1,5 +1,7 @@
 // import 'dart:html';
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 
 import 'chessboard.dart';
@@ -39,32 +41,54 @@ class IntegratedChessboard extends Chessboard
 
   final VoidCallback callback;
 
+  Stream<bool> readyToSend = Stream.empty();
+
   IntegratedChessboard(this.callback)
   {
+    readyToSend = Stream.value(true);
+
     stockfish = Stockfish();
-    final stockfishSubscription = stockfish.stdout.listen((message) {
-      print(message);
-      if(message.startsWith('bestmove'))
-        {
-          List<String> outputParts = message.split(" ");
-          String aIMoveString = outputParts[1];
+    // final stockfishSubscription = stockfish.stdout.listen((message) {
+    //   print(message);
+    //   if(message.startsWith('bestmove'))
+    //     {
+    //       List<String> outputParts = message.split(" ");
+    //       String aIMoveString = outputParts[1];
+    //
+    //       aIMove = decipherAIMove(aIMoveString);
+    //       print(aIMove);
+    //
+    //       AIChecking();
+    //       determiningResult = false;
+    //       callback();
+    //       determiningResult = false;
+    //       gettingAI = false;
+    //       print("Stockfish callback: ${determiningResult}");
+    //     }
+    // });
+  }
 
-          aIMove = decipherAIMove(aIMoveString);
-          print(aIMove);
+  void reset()
+  {
 
-          AIChecking();
-          callback();
-          determiningResult = false;
-          gettingAI = false;
-        }
-    });
   }
 
   void update_hardware_state(List<List<ChessPieceTeam>> postArray)
   {
-
+    readyToSend = Stream.value(false);
     determiningResult = true;
-    hardware_state = postArray;
+    // hardware_state = postArray;
+    hardware_state = List<List<ChessPieceTeam>>.generate(8, (_)=>List<ChessPieceTeam>.generate(8, (_)=>ChessPieceTeam.none));
+
+    for(int i = 0; i < 8; i++)
+      {
+        for(int j = 0; j < 8; j++)
+          {
+            hardware_state[i][j] = postArray[7-i][j];
+          }
+      }
+
+
     if(playingWithAI && turn == ChessPieceTeam.black)
       {
         AIChecking();
@@ -72,6 +96,8 @@ class IntegratedChessboard extends Chessboard
     else
       {
         determine_spaces_changed();
+        determiningResult = false;
+        readyToSend = Stream.value(false);
       }
   }
 
@@ -505,12 +531,29 @@ class IntegratedChessboard extends Chessboard
     return board[r1][c1].buildMove(r2, c2, this);
   }
 
+
+  Move? needPromotionDialogue()
+  {
+    if(validMoveState && currentMove!.promotion)
+      {
+        return currentMove;
+      }
+    else
+      {
+        return null;
+      }
+  }
+
+
   bool confirmMove()
   {
+    print("confirming move");
     determiningResult = true;
     if(!validMoveState) {
       return false;
     }
+
+    print("Promotion: ${currentMove!.promotion}");
 
     print(move(currentMove!)?.lAN);
     currentMove = null;
@@ -529,12 +572,35 @@ class IntegratedChessboard extends Chessboard
 
   }
 
+  int time = 1500;
 
-  void getAIMove()
-  {
-    gettingAI = true;
+  Future<void> getAIMove()
+  async {
+    determiningResult = true;
     stockfish.stdin = getBoardStateForAI();
-    stockfish.stdin = 'go movetime 1500';
+    stockfish.stdin = 'go movetime ${time}';
+    print("AI GO NOW");
+
+    // sleep(Duration(milliseconds: time+25));
+    String output = await stockfish.stdout.last;
+    print("AI DONE NOW: $output}");
+
+    print(stockfish.stdout);
+    if(output.startsWith('bestmove'))
+    {
+      List<String> outputParts = output.split(" ");
+      String aIMoveString = outputParts[1];
+
+      aIMove = decipherAIMove(aIMoveString);
+      print(aIMove);
+
+      AIChecking();
+      determiningResult = false;
+      callback();
+      determiningResult = false;
+      gettingAI = false;
+      print("Stockfish callback: ${determiningResult}");
+    }
   }
 
   void AIChecking()
@@ -587,6 +653,7 @@ class IntegratedChessboard extends Chessboard
     currentMove = aIMove;
     validMoveState = determineAIMoveCompletion();
     determiningResult = false;
+    readyToSend = Stream.value(true);
   }
 
 

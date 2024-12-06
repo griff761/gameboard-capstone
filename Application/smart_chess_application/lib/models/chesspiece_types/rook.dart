@@ -116,4 +116,11 @@ class Rook extends ChessPiece
     super.move(move, currentBoard);
   }
 
+  @override
+  ChessPiece copy() {
+    Rook r =  Rook(row: row, col: col, team: team, type: type);
+    r.firstMove = firstMove;
+    return r;
+  }
+
 }

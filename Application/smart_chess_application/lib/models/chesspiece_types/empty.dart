@@ -28,4 +28,9 @@ class Empty extends ChessPiece
     throw Exception("this should never happen, can't move null piece");
   }
 
+  @override
+  ChessPiece copy() {
+    return Empty(row: row, col: col, team: team, type: type);
+  }
+
 }

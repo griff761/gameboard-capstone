@@ -32,18 +32,18 @@ class Pawn extends ChessPiece
     // TODO: PROMOTION
 
     if (inBounds(row + direction) && spaceEmpty(row + direction, col, currentBoard)) {
-      moves.add(Move(row: row + direction, col: col, piece: this));
+      moves.add(Move(row: row + direction, col: col, piece: this, promotion: (row+direction == 0 || row+direction == 7)));
     }
 
     //taking another piece
     if(inBounds(row + direction) && inBounds(col+1) && otherTeamInSpace(row+direction, col + 1, currentBoard))
       {
-        moves.add(Move(row: row+direction, col: col+1, piece: this));
+        moves.add(Move(row: row+direction, col: col+1, piece: this, promotion: (row+direction == 0 || row+direction == 7)));
       }
 
     if(inBounds(row + direction) && inBounds(col-1) && otherTeamInSpace(row+direction, col - 1, currentBoard))
     {
-      moves.add(Move(row: row+direction, col: col-1, piece: this));
+      moves.add(Move(row: row+direction, col: col-1, piece: this, promotion: (row+direction == 0 || row+direction == 7)));
     }
 
     //TODO -- implement en passant move
@@ -153,15 +153,15 @@ class Pawn extends ChessPiece
         currentBoard.removePiece(row, col);
         currentBoard.board[row][col] = Empty(row:row, col:col);
         ChessPiece promotionPiece;
-        if(move.promotionType == ChessPieceType.bishop)
+        if(move.promotionType == 'b' || move.promotionType == 'B')
           {
             promotionPiece = Bishop(row: move.row, col: move.col, team: team);
           }
-        else if(move.promotionType == ChessPieceType.knight)
+        else if(move.promotionType == 'n' || move.promotionType == 'N')
           {
             promotionPiece = Knight(row: move.row, col: move.col, team: team);
           }
-        else if(move.promotionType == ChessPieceType.queen)
+        else if(move.promotionType == 'q' || move.promotionType == 'Q')
           {
             promotionPiece = Queen(row: move.row, col: move.col, team: team);
           }
@@ -183,6 +183,13 @@ class Pawn extends ChessPiece
   {
     bool promotion = (row+direction) == promotionRow;
     return Move(row: r, col: c, piece: this, promotion: promotion);
+  }
+
+  @override
+  ChessPiece copy() {
+    Pawn p = Pawn(row: row, col: col, team: team, type: type);
+    p.firstMove = firstMove;
+    return p;
   }
 
 }
