@@ -7,7 +7,7 @@ except ImportError as e:
 import json
 import time
 
-def send_get_request(current_array, check_interval=2, timeout=10):
+def send_get_request(current_array, check_interval=0.5, timeout=10):
     """
     Sends a GET request and retrieves the 2D array from the server, retrying until success or timeout.
     """
@@ -15,7 +15,7 @@ def send_get_request(current_array, check_interval=2, timeout=10):
         print("Error: urequests is not available. Cannot send GET requests.")
         return current_array  # Return the current array as a fallback
 
-    url = "http://172.20.10.6:8080/config"  # Correct server address
+    url = "http://172.20.10.13:8080/config"  # Correct server address
     start_time = time.time()
 
     while True:
