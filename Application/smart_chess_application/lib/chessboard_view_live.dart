@@ -383,7 +383,7 @@ class ChessboardViewLiveState extends State<ChessboardViewLive> {
 
     initSimulatedBoard();
 
-    Server.startListening();
+    // Server.startListening();
   }
 
 
