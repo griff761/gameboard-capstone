@@ -496,6 +496,8 @@ class ChessSquareState extends State<ChessSquare> {
   Color aIMoveTo1 = const Color.fromRGBO(255, 246, 145, 1);
   Color aIMoveTo2 = const Color.fromRGBO(189, 182, 106, 1);
 
+  Color checkmate = Colors.green;
+
   Color uhoh = Colors.deepPurple;
 
   Map<String, Widget> icons = {
@@ -536,6 +538,7 @@ class ChessSquareState extends State<ChessSquare> {
       3:  ((widget.row + widget.col)%2 == 0) ? tentative1 : tentative2,
       4:  ((widget.row + widget.col)%2 == 0) ? aIMoveFrom1 : aIMoveFrom2,
       5:  ((widget.row + widget.col)%2 == 0) ? aIMoveTo1 : aIMoveTo2,
+      6: checkmate
     };
   }
 

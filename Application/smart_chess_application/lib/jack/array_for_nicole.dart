@@ -56,7 +56,7 @@ class ArrayForNicole {
       }
       for(int j = 0; j < 2; j++)
       {
-        returnArray[i].add(array[i][7+j]);
+        returnArray[i].add(array[i][8+j]);
       }
     }
     print('RETURN ARRAY: ');

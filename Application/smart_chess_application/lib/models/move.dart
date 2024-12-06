@@ -60,6 +60,12 @@ class Move
     return [piece.row, col];
   }
 
+  Move clone()
+  {
+    return Move(row: row, col: col, castle: castle, promotion: promotion, enPassant: enPassant, promotionType: promotionType, piece: piece);
+        // {required this.row, required this.col, this.castle = 0, this.promotion = false, this.enPassant = false, this.promotionType = "", required this.piece});
+  }
+
 
   // void getAlgebraicNotation(Chessboard chessboard)
   // {

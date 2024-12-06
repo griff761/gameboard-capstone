@@ -1,5 +1,7 @@
 // import 'dart:html';
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 
 import 'chessboard.dart';
@@ -40,6 +42,8 @@ class IntegratedChessboard extends Chessboard
   final VoidCallback callback;
 
 
+  Completer<void> stateUpdateCompleter = Completer<void>();
+
   IntegratedChessboard(this.callback)
   {
     stockfish = Stockfish();
@@ -54,6 +58,12 @@ class IntegratedChessboard extends Chessboard
           print(aIMove);
 
           AIChecking();
+
+          // Complete the completer to signal that state update is done
+          if (!stateUpdateCompleter.isCompleted) {
+            stateUpdateCompleter.complete();
+          }
+
           determiningResult = false;
           callback();
           determiningResult = false;
@@ -63,6 +73,8 @@ class IntegratedChessboard extends Chessboard
     });
   }
 
+
+
   void reset()
   {
 
@@ -70,7 +82,6 @@ class IntegratedChessboard extends Chessboard
 
   void update_hardware_state(List<List<ChessPieceTeam>> postArray)
   {
-
     determiningResult = true;
     // hardware_state = postArray;
     hardware_state = List<List<ChessPieceTeam>>.generate(8, (_)=>List<ChessPieceTeam>.generate(8, (_)=>ChessPieceTeam.none));
@@ -548,12 +559,38 @@ class IntegratedChessboard extends Chessboard
     }
 
     print("Promotion: ${currentMove!.promotion}");
-
+    if(playingWithAI && turn == ChessPieceTeam.black)
+      {
+        stateUpdateCompleter = Completer<void>();
+      }
     print(move(currentMove!)?.lAN);
     currentMove = null;
     validMoveState = false;
 
-
+    //CHECK CHECKMATE
+    if(kingInCheck())
+      {
+        bool checkmate = true;
+        List<ChessPiece> pieces = turn == ChessPieceTeam.white ? whitePieces : blackPieces;
+        for(ChessPiece p in pieces)
+          {
+            if(getValidPieceMoves(p.row, p.col).length > 0)
+              {
+                checkmate = false;
+              }
+          }
+        if(checkmate)
+          {
+            print("checkmate found");
+            leds.checkmate();
+            determiningResult = false;
+            return true;
+          }
+        else
+          {
+            print("check, no checkmate");
+          }
+      }
 
     if(playingWithAI && turn == ChessPieceTeam.black)
       {
@@ -562,6 +599,7 @@ class IntegratedChessboard extends Chessboard
 
     leds.reset();
 
+    determiningResult = false;
     return true;
 
   }
@@ -571,7 +609,7 @@ class IntegratedChessboard extends Chessboard
   {
     determiningResult = true;
     stockfish.stdin = getBoardStateForAI();
-    stockfish.stdin = 'go movetime 1500';
+    stockfish.stdin = 'go movetime 500';
   }
 
   void AIChecking()
