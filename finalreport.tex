@@ -47,19 +47,19 @@
 
 
 \begin{abstract}
-Chess is an incredibly fun game, but can often feel extremely intimidating to newcomers. With a variety of specialized pieces that each have their own movement scheme, learning and having fun with chess can feel like a lofty goal for those that have never played before. Furthermore, increasing your skill and understanding of chess can be difficult when games become complicated and difficult to recall. For these reasons, the Smart Chessboard was created.  The Smart Chessboard is a chessboard that teaches players how to play chess by clearly indicating possible moves when pieces are lifted.  The board also records moves alongside an application that tracks game statistics and more so that even seasoned chess players can retrospectively analyze their gameplay. The board will indicate possible moves via LEDs under the chess squares and will keep track of pieces lifted or moved. An application will also display the results and progress of the match per account. An AI algorithm will allow the player to play on the chessboard against a computer player so that learning can happen even without a chess partner. 
+Chess is an incredibly fun game, but can often feel extremely intimidating to newcomers. With a variety of specialized pieces that each have their own movement scheme, learning and having fun with chess can feel like a lofty goal for those that have never played before. Furthermore, increasing your skill and understanding of chess can be difficult when games become complicated and difficult to recall. For these reasons, the Smart Chessboard was created.  The Smart Chessboard is a chessboard that teaches players how to play chess by clearly indicating possible moves when pieces are lifted. The board will indicate possible moves via LEDs under the chess squares and will keep track of pieces lifted or moved. An application will also display the results and progress of the match per account. An AI algorithm will allow the player to play on the chessboard against a computer player so that learning can happen even without a chess partner. 
 \end{abstract}
 
 \section{Introduction}
 
 \IEEEPARstart{C}{hess} is a world-known and widely enjoyed game. However, its complexity leaves many potential players struggling due to the many pieces, rules, and movement schemes. In an effort to create a fun and easy way to teach new chess players along with supplement the learning of more experienced players, the Smart Chessboard was created. 
 
-This chessboard allows new and experienced chess players to benefit by showing possible moves and checking rules but also recording match history for virtual playback through the companion application. The Smart Chessboard shows players legal moves by lighting up the squares when pieces are lifted. The board also detects invalid or illegal moves and alerts the players with the board lights as well.  The chessboard will work alongside the companion application to record times and game history, allowing for clear growth and progress to be shown to players as they look through their previous games. The board also allows single-player mode where users can learn without the need of another physical chess player, allowing for easy learning at any time or place.
+This chessboard allows new and experienced chess players to benefit by showing possible moves and checking rules but also recording match history for virtual playback through the companion application. The Smart Chessboard shows players legal moves by lighting up the squares when pieces are lifted. The board also detects invalid or illegal moves and alerts the players with the board lights as well. The board also allows single-player mode where users can learn without the need of another physical chess player, allowing for easy learning at any time or place.
 
-Using sensors and bluetooth connectivity, the board is able to determine when pieces are picked up or put down and record game data. Through algorithmic checking and the use of LED lights the board will also determine move legality and visualize legal moves when a piece is picked up.
+Using sensors and wifi connectivity, the board is able to determine when pieces are picked up or put down and record game data. Through algorithmic checking and the use of LED lights the board will also determine move legality and visualize legal moves when a piece is picked up.
 
 %** \textbf{TODO: describe comparisons to other solutions, advantages to this one} **
-There are programs designed to teach newcomers chess, but they do not often pair with a physical board. The creation of a physical board allows for more tactile learning styles and for users to learn in a more hands-on way that promotes a better understanding of the game overall. On top of this, these programs often do not allow for virtual replaying matches to determine mistakes or errors made or saving and tallying game statistics to show overall progress. Because of this, the Smart Chessboard is a more active and well rounded solution that is better able to engage the audience.
+There are programs designed to teach newcomers chess, but they do not often pair with a physical board. The creation of a physical board allows for more tactile learning styles and for users to learn in a more hands-on way that promotes a better understanding of the game overall.  Because of this, the Smart Chessboard is a more active and well rounded solution that is better able to engage the audience.
 
 
 % Refer to figures as follows:
@@ -68,7 +68,7 @@ There are programs designed to teach newcomers chess, but they do not often pair
 % Citations are as follows
 % Algorithm returning longest netlist delay path \cite{knuth:book1973}.
 %\subsection{Project Demonstration}
-To demonstrate the Smart Chessboard, the physical custom chessboard along with the running companion app will be available to interested parties. When they lift a piece on the board, all valid moves and their associated squares will light up on the board, and once the piece is placed on a valid square, that move is logged by our app that is connected to the board. The player would also have the option of playing against a chess AI, and the opposite end of the board will indicate which pieces needed to be moved on behalf of the AI when the AI takes its move. The application will also have a co-demonstration where we can showcase the game history functionality and allow the user to play back previously played games.
+To demonstrate the Smart Chessboard, the physical custom chessboard along with the running companion app will be available to interested parties. When they lift a piece on the board, all valid moves and their associated squares will light up on the board, and once the piece is placed on a valid square, that move is logged by our app that is connected to the board. The player would also have the option of playing against a chess AI, and the opposite end of the board will indicate which pieces needed to be moved on behalf of the AI when the AI takes its move.
 
 \section{Background}
 
@@ -175,6 +175,7 @@ The Smart Chessboard needs a physical, custom made body in addition to several h
 \subsubsection{MicroPython Firmware}
 Jack will contribute here
 \subsubsection{Android App}
+The accompanying android application is a flutter application, allowing for the potential of running this application on a variety of platforms including ios and desktop. The app keeps track of all chess logic and includes a chess engine that tracks pieces, move history, board state, and all other statistics for the game. To create this, a standard chessboard class was created to allow for standard chess play and an extended integrated chessboard class was created to take input from the board and update both the visual and model representation of the board accordingly. Separate classes were also made for each type of chess piece in order to determine possible moves and state updating. These classes extended an abstract chesspiece class that outlined standard use cases for chess pieces including compiling possible moves, moving the actual piece in the gameboard, and determining data like string representations for each piece. To bring the chess pieces and chessboard logic together, a move class was made to keep track of piece information, ending coordinate locations, and special move determinations (such as if the move was part of a promotion, en passant, or castling move). The AI integration for the computer chess player was made using the stockfish library, which allows you to determine the best move based on a specific depth of search of the current chess state. \cite{stockfish} The app also allowed for a difficulty setting on the AI player (easy, medium, hard) which corresponded with the depth of search allowed for AI moves.
 \subsubsection{Communication Protocols}
 Jack will contribute here
 
@@ -190,12 +191,12 @@ Jack will contribute here
 
 
 \section{Conclusion}
-
+Kenan will contribute here
 
 
 \section*{Acknowledgment}
 
-The authors would like to thank Romilly Cocking on GitHub for their MCP3008 MicroPython library. We would have had to spend a considerable amount of time writing a library ourselves and going over the documentation for the MCP3008 if not for their work.\cite{cocking_pico_code_2023}
+The authors would like to thank Romilly Cocking on GitHub for their MCP3008 MicroPython library. We would have had to spend a considerable amount of time writing a library ourselves and going over the documentation for the MCP3008 if not for their work.\cite{cocking_pico_code_2023} The authors would also like to thank Arjan Aswal and other contributors to the Stockfish Chess Engine along with its flutter package which allowed us to determine possible AI moves at a variety of different difficulties. \cite{stockfish}
 
 
 
